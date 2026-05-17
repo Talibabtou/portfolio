@@ -42,14 +42,15 @@ const Banner = () => {
       >
         <div className="max-md:grow max-md:flex flex-col justify-center items-start max-w-[544px]">
           <h1 className="banner-title slide-up-and-fade leading-[.95] text-6xl sm:text-[80px] font-anton">
-            <span className="text-primary">FRONTEND</span>
-            <br /> <span className="ml-4">PRODUCT ENGINEER</span>
+            <span className="text-primary">FRONTEND </span>
+            <br /> <span className="ml-4">DEVELOPER</span>
           </h1>
           <p className="banner-description slide-up-and-fade mt-6 text-lg text-muted-foreground">
             Hi, I&apos;m{' '}
             <span className="font-medium text-foreground">Guillaume Dumas</span>
             . I build Web3 and fintech product interfaces: prediction markets,
-            trading dashboards, wallet-aware flows and API-connected screens.
+            trading, prediction markets, wallet-aware flows and API-connected
+            screens.
           </p>
           <Button
             as="link"
@@ -63,10 +64,8 @@ const Banner = () => {
           </Button>
 
           <div className="flex items-center gap-2 mt-3">
-            <span className="size-3 rounded-full bg-white"></span>
             <span className="text-sm text-muted-foreground">
-              Available for frontend, product engineer and full-stack oriented
-              roles
+              Available for full-time opportunities
             </span>
           </div>
         </div>

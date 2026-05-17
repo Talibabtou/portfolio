@@ -13,21 +13,28 @@ const Experiences = () => {
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 60%',
-          end: 'bottom 50%',
-          toggleActions: 'restart none none reverse',
-          scrub: 1,
-        },
-      });
-
-      tl.from('.experience-item', {
-        y: 50,
-        opacity: 0,
-        stagger: 0.3,
-      });
+      gsap.utils
+        .toArray<HTMLElement>('.experience-item')
+        .forEach((experienceItem) => {
+          gsap.fromTo(
+            experienceItem,
+            {
+              autoAlpha: 0,
+              y: 50,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: experienceItem,
+                start: 'top 85%',
+                end: 'top 60%',
+                scrub: 0.5,
+              },
+            },
+          );
+        });
     },
     { scope: containerRef },
   );
@@ -37,14 +44,14 @@ const Experiences = () => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'bottom 50%',
-          end: 'bottom 20%',
+          start: 'bottom 60%',
+          end: 'bottom 45%',
           scrub: 1,
         },
       });
 
       tl.to(containerRef.current, {
-        y: -150,
+        y: -80,
         opacity: 0,
       });
     },

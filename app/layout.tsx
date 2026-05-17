@@ -27,9 +27,9 @@ const robotoFlex = Roboto_Flex({
 });
 
 export const metadata: Metadata = {
-  title: 'Guillaume Dumas - Frontend Product Engineer',
+  title: 'Portfolio - Talibabtou',
   description:
-    'Frontend developer focused on Web3, fintech, trading dashboards, wallet-aware UX and product interfaces.',
+    'Frontend developer focused on Web3, fintech, trading, prediction markets, wallet-aware UX and product interfaces.',
 };
 
 export default function RootLayout({
@@ -49,15 +49,6 @@ export default function RootLayout({
             duration: 1.4,
           }}
         >
-          {/* <a
-                        href="https://forms.gle/t73XYJgWD5cJNr6e8"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 block bg-black text-center z-[1] text-sm py-2 hover:text-primary transition-all"
-                    >
-                        Frontend dev? I&apos;ll help you polish your resume —
-                        completely free.
-                    </a> */}
           <Navbar />
           <main>{children}</main>
           <Footer />

@@ -1,4 +1,4 @@
-# Guillaume Dumas Portfolio
+# Talibabtou Portfolio
 
 Personal portfolio for Guillaume Dumas, a frontend developer focused on Web3,
 fintech and product interfaces.
