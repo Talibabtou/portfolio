@@ -55,31 +55,33 @@ const AboutMe = () => {
     <section className="pb-section" id="about-me">
       <div className="container" ref={container}>
         <h2 className="text-4xl md:text-6xl font-thin mb-20 slide-up-and-fade">
-          I believe in a user centered design approach, ensuring that every
-          project I work on is tailored to meet the specific needs of its users.
+          I turn complex product flows into clear, maintainable interfaces for
+          Web3, fintech and data-heavy teams.
         </h2>
 
         <p className="pb-3 border-b text-muted-foreground slide-up-and-fade">
-          This is me.
+          Profile
         </p>
 
         <div className="grid md:grid-cols-12 mt-9">
           <div className="md:col-span-5">
-            <p className="text-5xl slide-up-and-fade">Hi, I&apos;m Tajmirul.</p>
+            <p className="text-5xl slide-up-and-fade">
+              Hi, I&apos;m Guillaume.
+            </p>
           </div>
           <div className="md:col-span-7">
             <div className="text-lg text-muted-foreground max-w-[450px]">
               <p className="slide-up-and-fade">
-                I&apos;m a frontend web developer dedicated to turning ideas
-                into creative solutions. I specialize in creating seamless and
-                intuitive user experiences.
+                I&apos;m a frontend developer focused on product interfaces
+                where clarity matters: trading workflows, prediction markets,
+                dashboards, wallet-aware UX and API-connected screens.
               </p>
               <p className="mt-3 slide-up-and-fade">
-                My approach focuses on creating scalable, high-performing
-                solutions tailored to both user needs and business objectives.
-                By prioritizing performance, accessibility, and responsiveness,
-                I strive to deliver experiences that not only engage users but
-                also drive tangible results.
+                My background combines the rigor of the 42 Lyon Common Core with
+                high-end craftsmanship experience at Hermes. That mix shapes how
+                I work: precise implementation, strong quality standards,
+                product judgment and a bias toward interfaces that stay
+                maintainable as the product grows.
               </p>
             </div>
           </div>

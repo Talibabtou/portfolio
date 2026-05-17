@@ -42,6 +42,10 @@ const Navbar = () => {
           className={cn(
             'group size-12 absolute top-5 right-5 md:right-10 z-[2]',
           )}
+          aria-label={
+            isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
+          }
+          aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <span

@@ -1,39 +1,92 @@
-# 🚀 My Portfolio Website
+# Guillaume Dumas Portfolio
 
-![image](https://github.com/user-attachments/assets/ade45c4b-b2cb-46cb-b8a6-31cad3bd0c5a)
+Personal portfolio for Guillaume Dumas, a frontend developer focused on Web3,
+fintech and product interfaces.
 
-[Checkout the initial design here](https://www.figma.com/design/56hODoGFDzZfZduBPfQeBg/New-Portfolio?node-id=18-1550&t=73vRMGTW0gspTSND-1)
+The goal of this website is to present a sharper profile than a generic
+developer portfolio. It should quickly communicate the kind of work Guillaume
+is best positioned for:
 
-## 🚨 Forking this repo (please read!)
+- frontend and product engineering roles;
+- Web3, fintech, banking, SaaS and product-led startup contexts;
+- trading dashboards, prediction markets, wallet-aware flows and data-heavy
+  interfaces;
+- API-connected product screens built with clarity, maintainability and strong
+  implementation standards;
+- the mix of 42 Lyon engineering rigor and high-end craft quality standards
+  from previous Hermes leatherwork experience.
 
-Many people have contacted me asking me if they can use this code for their own website, and the answer to that question is usually **yes, with attribution**.
+## What Changed
 
-I value keeping my site open source, but as you all know, _**plagiarism is bad**_. It's always disheartening whenever I find that someone has copied my site without giving me credit. I spent a non-trivial amount of effort building and designing this iteration of my website, and I am proud of it! All I ask of you all is to not claim this effort as your own.
+This repo started from an existing open-source portfolio, but the content is
+being refactored into a portfolio that fits Guillaume's actual profile and
+target roles.
 
-Please also note that I did not build this site with the intention of it being a starter theme, so if you have questions about implementation, please refer to the [Next.js docs](https://nextjs.org/docs).
+The first content pass replaced the original author's identity with CV-derived
+information:
 
-If you like my work, give it a star⭐.
+- updated hero positioning to "Frontend Product Engineer";
+- replaced generic copy with Web3, fintech, trading dashboard and wallet-aware
+  UX positioning;
+- rebuilt the stack around TypeScript, React, Next.js, APIs, WebSockets, Solana,
+  Python, C/C++, Docker and engineering fundamentals;
+- replaced sample projects with CV-relevant work: Jupiter Prediction Market,
+  Adrena, Versus, ft_transcendence and 42 Common Core;
+- replaced experience entries with Jupiter, Adrena, Versus, Magicake / Doge
+  Capital, 42 Lyon and Hermes;
+- updated contact links, CV link, metadata and sitemap;
+- removed original analytics and the original repository stats call.
 
-### TL;DR
+## Why These Changes Matter
 
-Yes, you can fork this repo. Please give me proper credit by linking back to [tajmirul.site](https://tajmirul.site/). Thanks!
+The website should help recruiters, founders and product teams understand the
+profile in a few seconds. The strongest signal is not "creative frontend
+developer"; it is frontend/product engineering for complex product interfaces,
+especially in Web3 and fintech.
 
-## 🛠 Installation & Set Up
+The refactor therefore prioritizes:
 
-First, run the development server:
+- concrete domain positioning over generic portfolio language;
+- proof of product context through Jupiter, Adrena and Versus;
+- maintainable UI and API/data workflow strengths;
+- a credible differentiation: 42 technical autonomy plus Hermes-level precision
+  and finish quality.
+
+Future passes should keep improving the site in that direction: stronger real
+project visuals, clearer case studies, better accessibility, lighter motion,
+privacy-conscious analytics if needed, and a visual system that feels more like
+fintech/product tooling than a template portfolio.
+
+## Development
+
+Install dependencies and start the local development server:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run checks before publishing:
 
-## 🤝 Contributing
-If you'd like to contribute or suggest improvements, feel free to open an issue or submit a pull request. All contributions are welcome!
+```bash
+pnpm run check
+pnpm run build
+```
 
-## Credit
-_This readme is inspired from [Brittany Chiang's github](https://github.com/bchiang7/v4)_
+## Fork Attribution
 
-## 📄 License
-This project is open source and available under the [MIT License](https://github.com/Tajmirul/portfolio-2.0/blob/main/LICENSE).
+This portfolio is a fork and adaptation of Tajmirul Islam's open-source
+portfolio project. The original project and design work belong to Tajmirul
+Islam.
+
+Original author: Tajmirul Islam  
+Original website: https://tajmirul.site/  
+Original repository: https://github.com/Tajmirul/portfolio-2.0
+
+This version is being substantially revised with Guillaume Dumas's own content,
+positioning, projects and site direction.
+
+## License
+
+This project is open source and available under the
+[MIT License](https://github.com/Tajmirul/portfolio-2.0/blob/main/LICENSE).

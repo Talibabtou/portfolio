@@ -1,31 +1,37 @@
 import { IProject } from '@/types';
 
+type StackItem = {
+  name: string;
+  icon?: string;
+};
+
 export const GENERAL_INFO = {
-  email: 'tasmirolislam@gmail.com',
+  name: 'Guillaume Dumas',
+  email: 'talibabtou@gmail.com',
+  phone: '+33 6 28 40 15 84',
+  location: 'Grenoble, France',
+  cvUrl: '/cv/guillaume-dumas-cv.pdf',
 
-  emailSubject: "Let's collaborate on a project",
-  emailBody: 'Hi Tajmirul, I am reaching out to you because...',
-
-  oldPortfolio: 'https://www.legacy.me.toinfinite.dev',
-  upworkProfile: 'https://www.upwork.com/freelancers/tajmirul',
+  emailSubject: "Let's discuss a product engineering role",
+  emailBody:
+    'Hi Guillaume, I am reaching out because I would like to discuss...',
 };
 
 export const SOCIAL_LINKS = [
-  { name: 'github', url: 'https://github.com/Tajmirul' },
-  { name: 'linkedin', url: 'https://www.linkedin.com/in/tajmirul' },
-  { name: 'facebook', url: 'https://www.facebook.com/tajmirul.2000' },
-  { name: 'Old Version', url: GENERAL_INFO.oldPortfolio },
+  { name: 'github', url: 'https://github.com/Talibabtou' },
+  { name: 'linkedin', url: 'https://www.linkedin.com/in/talibabtou' },
+  { name: 'cv', url: GENERAL_INFO.cvUrl },
 ];
 
-export const MY_STACK = {
+export const MY_STACK: Record<string, StackItem[]> = {
   frontend: [
-    {
-      name: 'JavaScript',
-      icon: '/logo/js.png',
-    },
     {
       name: 'TypeScript',
       icon: '/logo/ts.png',
+    },
+    {
+      name: 'JavaScript',
+      icon: '/logo/js.png',
     },
     {
       name: 'React',
@@ -36,63 +42,48 @@ export const MY_STACK = {
       icon: '/logo/next.png',
     },
     {
-      name: 'Redux',
-      icon: '/logo/redux.png',
+      name: 'Component systems',
     },
     {
-      name: 'Tailwind CSS',
-      icon: '/logo/tailwind.png',
-    },
-    {
-      name: 'GSAP',
-      icon: '/logo/gsap.png',
-    },
-    {
-      name: 'Framer Motion',
-      icon: '/logo/framer-motion.png',
-    },
-    {
-      name: 'Sass',
-      icon: '/logo/sass.png',
-    },
-    {
-      name: 'Bootstrap',
-      icon: '/logo/bootstrap.svg',
+      name: 'Responsive UI',
     },
   ],
-  backend: [
+  'data & APIs': [
+    {
+      name: 'REST APIs',
+    },
+    {
+      name: 'WebSockets',
+    },
     {
       name: 'Node.js',
       icon: '/logo/node.png',
     },
     {
-      name: 'NestJS',
-      icon: '/logo/nest.svg',
+      name: 'Python',
     },
     {
-      name: 'Express.js',
-      icon: '/logo/express.png',
+      name: 'Dashboards',
     },
   ],
-  database: [
+  blockchain: [
     {
-      name: 'MySQL',
-      icon: '/logo/mysql.svg',
+      name: 'Solana',
     },
     {
-      name: 'PostgreSQL',
-      icon: '/logo/postgreSQL.png',
+      name: 'Wallet-aware UX',
     },
     {
-      name: 'MongoDB',
-      icon: '/logo/mongodb.svg',
+      name: 'Prediction markets',
     },
     {
-      name: 'Prisma',
-      icon: '/logo/prisma.png',
+      name: 'Smart-contract integration',
+    },
+    {
+      name: 'Rust learning',
     },
   ],
-  tools: [
+  engineering: [
     {
       name: 'Git',
       icon: '/logo/git.png',
@@ -102,147 +93,33 @@ export const MY_STACK = {
       icon: '/logo/docker.svg',
     },
     {
-      name: 'AWS',
-      icon: '/logo/aws.png',
+      name: 'C',
+    },
+    {
+      name: 'C++',
+    },
+    {
+      name: 'Algorithms',
+    },
+    {
+      name: 'Performance',
     },
   ],
 };
 
 export const PROJECTS: IProject[] = [
   {
-    title: 'Electro EV',
-    slug: 'electro-ev',
-    liveUrl: 'https://electroev.co.uk/',
-    year: 2025,
+    title: 'Jupiter Prediction Market',
+    slug: 'jupiter-prediction-market',
+    liveUrl: 'https://jup.ag/',
+    year: 2026,
     description: `
-      A complete agency portfolio platform built for Electro EV to showcase their services, blog content, and product offerings. <br/> <br/>
-      
-      Key Features:<br/>
-      <ul>
-        <li>🛠️ Service Display System: Interactive service showcase with synchronized sliders</li>
-        <li>✍️ Blog Management: SEO-friendly blog with categorization and search</li>
-        <li>🛒 Product Catalog: Organized product display with filtering capabilities</li>
-        <li>📱 Fully Responsive: Optimized for all device sizes</li>
-        <li>⚡ Fast Performance: Optimized Next.js frontend with ISR (Incremental Static Regeneration)</li>
-      </ul><br/>
-      
-      Technical Highlights:
-      <ul>
-        <li>Implemented complex slider synchronization logic using Swiper.js</li>
-        <li>Customized Payload CMS admin panel for intuitive content management</li>
-        <li>Developed reusable UI components with shadcn for design consistency</li>
-        <li>Configured efficient data fetching strategies in Next.js</li>
-      </ul>
-      `,
+      Consultant frontend work on Jupiter's prediction market interface in the Solana ecosystem. The work focused on product clarity, interaction consistency and production-ready frontend implementation for market and wallet-aware flows.
+    `,
     role: `
-      Full-Stack Developer <br/>
-      Owned the entire development lifecycle:
-      <ul>
-        <li>✅ Backend: Configured Payload CMS with custom collections for services, blogs, and products</li>
-        <li>🎨 Frontend: Built all UI components using Tailwind CSS and shadcn</li>
-        <li>🔄 State Management: Implemented client-side data fetching and caching</li>
-        <li>🖥️ CMS Customization: Created admin interfaces for content editors</li>
-        <li>🚀 Deployment: Set up CI/CD pipeline for Vercel hosting</li>
-        <li>🧩 Third-Party Integration: Added Swiper.js for interactive sliders</li>
-      </ul>
-      `,
-    techStack: [
-      'Next.js',
-      'Payload CMS',
-      'Tailwind CSS',
-      'shadcn',
-      'Swiper.js',
-      'React Hook Form',
-      'Vercel',
-    ],
-    thumbnail: '/projects/thumbnail/mti-electronics.webp',
-    longThumbnail: '/projects/long/mti-electronics.webp',
-    images: [
-      '/projects/images/mti-electronics-1.webp',
-      '/projects/images/mti-electronics-2.webp',
-    ],
-  },
-  {
-    title: 'Epikcart',
-    slug: 'epikcart',
-    techStack: [
-      'React',
-      'Redux',
-      'React i18n',
-      'Tailwind CSS',
-      'Framer Motion',
-      'debouncing',
-      'Api Integration',
-    ],
-    thumbnail: '/projects/thumbnail/epikcart.jpg',
-    longThumbnail: '/projects/long/epikcart.jpg',
-    images: [
-      '/projects/images/epikcart-1.png',
-      '/projects/images/epikcart-2.png',
-      '/projects/images/epikcart-3.png',
-      '/projects/images/epikcart-4.png',
-      '/projects/images/epikcart-5.png',
-    ],
-    liveUrl: 'https://demo.epikcart.siphertech.com/',
-    year: 2023,
-    description: `Epikcart is a feature-rich, scalable e-commerce platform tailored for large businesses. It features dynamic product filtering, multi-language support with RTL, advanced inventory management, order tracking, and refund systems, offering a comprehensive solution for multi-vendor operations.`,
-    role: `As the frontend developer in a team of five, I: <br/>
-        - Built the frontend from scratch using React, Redux, RTK Query, and Tailwind CSS.<br/>
-        - Developed dynamic filtering logic for the product search page with admin-configurable parameters.<br/>
-        - Integrated multi-language support with React i18n, including RTL handling.<br/>
-        - Delivered a responsive, user-friendly interface in collaboration with the UI/UX designer.`,
-  },
-  {
-    title: 'Resume Roaster',
-    slug: 'resume-roaster',
-    techStack: ['GPT-4', 'Next.js', 'Postgressql', 'Prisma', 'Tailwind CSS'],
-    thumbnail: '/projects/thumbnail/resume-roaster.jpg',
-    longThumbnail: '/projects/long/resume-roaster.jpg',
-    images: [
-      '/projects/images/resume-roaster-1.png',
-      '/projects/images/resume-roaster-2.png',
-      '/projects/images/resume-roaster-3.png',
-    ],
-    liveUrl: 'https://resume-roaster.vercel.app/',
-    year: 2023,
-    description:
-      'Resume Roaster is a web application designed to provide tailored resume feedback and professional writing services. Built with Next.js, PostgreSQL, Prisma, and Tailwind CSS, it integrates GPT-4 for AI-powered recommendations. The platform also includes peer-to-peer reviews with a points-based system, fostering a collaborative and engaging experience. Targeting freshers, experienced professionals, and programmers, it helps optimize resumes for job-specific success.',
-    role: `As the sole developer and business owner, I:<br/>
-        - Designed and developed the platform end-to-end using Next.js, PostgreSQL, Prisma, and Tailwind CSS.<br/>
-        - Integrated GPT-4 for AI-driven feedback and insights.<br/>
-        - Implemented complex SQL queries, including one to identify the top two resumes based on user points.`,
-  },
-  {
-    title: 'Real Estate',
-    slug: 'property-pro',
-    techStack: [
-      'React.js',
-      'Redux',
-      'Tailwind CSS',
-      'React i18n',
-      'Framer Motion',
-    ],
-    thumbnail: '/projects/thumbnail/property-pro.jpg',
-    longThumbnail: '/projects/long/property-pro.jpg',
-    images: [
-      '/projects/images/property-pro-1.png',
-      '/projects/images/property-pro-2.png',
-      '/projects/images/property-pro-3.png',
-    ],
-    liveUrl: 'https://demo.propertypro.siphertech.com/',
-    year: 2023,
-    description:
-      'PropertyPro is a real estate management platform offering users a seamless experience to explore, manage, and view property listings. The application emphasizes accessibility and responsive design, ensuring a smooth interface across devices.',
-    role: `As the frontend developer, I:<br/>
-        - Built the frontend using React, Redux, RTK Query, Framer Motion, and Tailwind CSS.<br/>
-        - Integrated dynamic state management for efficient handling of property data.<br/>
-        - Implemented multi-language support with React i18n to cater to diverse audiences.<br/>
-        - Enhanced user interaction with animations and transitions using Framer Motion.`,
-  },
-  {
-    title: 'Consulting Finance',
-    slug: 'crenotive',
-    techStack: ['HTML', 'CSS & SCSS', 'Javascript', 'Bootstrap'],
+      Contributed frontend features in a fast-moving product context involving market data, wallet interactions and release quality. Improved screen clarity and implementation maintainability across user-facing flows.
+    `,
+    techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
     thumbnail: '/projects/thumbnail/consulting-finance.jpg',
     longThumbnail: '/projects/long/consulting-finance.jpg',
     images: [
@@ -250,17 +127,64 @@ export const PROJECTS: IProject[] = [
       '/projects/images/consulting-finance-2.png',
       '/projects/images/consulting-finance-3.png',
     ],
-    sourceCode: 'https://github.com/Tajmirul/crenotive',
-    liveUrl: 'https://crenotive.netlify.app/',
-    year: 2023,
-    description:
-      'I developed Crenotive, a portfolio website using Html, SASS, and jQuery to showcase services and expertise. The design focuses on responsive user experience and effective presentation of professional achievements.',
-    role: ``,
   },
   {
-    title: 'devLinks',
-    slug: 'devLinks',
-    techStack: ['Next.js', 'Formik', 'Drag & Drop', 'Tailwind CSS'],
+    title: 'Adrena',
+    slug: 'adrena',
+    liveUrl: 'https://adrena.xyz/',
+    year: 2025,
+    description: `
+      Open-source internship contributions for a DeFi trading product. The work covered UI improvements, reusable components, product screens, dashboards and leaderboard experiences.
+    `,
+    role: `
+      Delivered frontend improvements connected to backend data through API-driven features, with emphasis on data-heavy interface elements and trading product usability.
+    `,
+    techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
+    thumbnail: '/projects/thumbnail/property-pro.jpg',
+    longThumbnail: '/projects/long/property-pro.jpg',
+    images: [
+      '/projects/images/property-pro-1.png',
+      '/projects/images/property-pro-2.png',
+      '/projects/images/property-pro-3.png',
+    ],
+  },
+  {
+    title: 'Versus',
+    slug: 'versus',
+    sourceCode: 'https://github.com/Versusrip/versus',
+    year: 2025,
+    description: `
+      Prediction and betting product concept with a Solana-oriented architecture. Versus combines frontend flows, product logic, smart-contract interactions and community-oriented product strategy.
+    `,
+    role: `
+      Founder and developer. Owned product thinking across UX, roadmap and go-to-market strategy while building the technical foundation with TypeScript, React, Python and Rust/Solana.
+    `,
+    techStack: ['TypeScript', 'React', 'Python', 'Rust', 'Solana'],
+    thumbnail: '/projects/thumbnail/resume-roaster.jpg',
+    longThumbnail: '/projects/long/resume-roaster.jpg',
+    images: [
+      '/projects/images/resume-roaster-1.png',
+      '/projects/images/resume-roaster-2.png',
+      '/projects/images/resume-roaster-3.png',
+    ],
+  },
+  {
+    title: 'ft_transcendence',
+    slug: 'ft-transcendence',
+    year: 2025,
+    description: `
+      42 Lyon capstone project: a full-stack real-time web game with single-player, multiplayer and tournament flows.
+    `,
+    role: `
+      Built a custom React-like frontend architecture, real-time UX and WebSocket-driven game flows as part of the 42 Common Core curriculum.
+    `,
+    techStack: [
+      'TypeScript',
+      'Node.js',
+      'WebSockets',
+      'Real-time UX',
+      'Frontend architecture',
+    ],
     thumbnail: '/projects/thumbnail/devLinks.jpg',
     longThumbnail: '/projects/long/devLinks.jpg',
     images: [
@@ -268,35 +192,56 @@ export const PROJECTS: IProject[] = [
       '/projects/images/devLinks-2.png',
       '/projects/images/devLinks-3.png',
     ],
-    sourceCode: 'https://github.com/Tajmirul/devsLink',
-    liveUrl: 'https://devlinks-demo.vercel.app/auth/signin',
-    year: 2023,
-    description: `One of the most challenging projects in Frontend Mentor.<br/><br/>
-
-            I developed a LinkSharing App as part of the Frontend Mentor challenge, utilizing React, Redux, and Tailwind CSS to create a responsive and feature-rich platform. The app allows users to share, save, and explore links, with a focus on intuitive design and smooth navigation. Advanced state management ensures efficient data handling for user interactions.`,
-    role: ``,
+  },
+  {
+    title: '42 Common Core',
+    slug: '42-common-core',
+    year: 2025,
+    description: `
+      Intensive peer-to-peer software engineering curriculum focused on autonomy, rigor and low-level foundations.
+    `,
+    role: `
+      Completed projects covering algorithms, data structures, C, C++, system programming, networking, graphics and Docker. This foundation supports precise frontend engineering and deeper full-stack growth.
+    `,
+    techStack: ['C', 'C++', 'Algorithms', 'Networking', 'Docker'],
+    thumbnail: '/projects/thumbnail/mti-electronics.webp',
+    longThumbnail: '/projects/long/mti-electronics.webp',
+    images: [
+      '/projects/images/mti-electronics-1.webp',
+      '/projects/images/mti-electronics-2.webp',
+    ],
   },
 ];
 
 export const MY_EXPERIENCE = [
   {
-    title: 'Software Engineer (Frontend)',
-    company: 'Strativ AB',
-    duration: 'Dec 2024 - Present',
+    title: 'Consultant, Frontend Developer',
+    company: 'Jupiter',
+    duration: 'Dec 2025 - Mar 2026',
   },
   {
-    title: 'Frontend Developer',
-    company: 'Epikcoders',
-    duration: 'Oct 2023 - Nov 2024',
+    title: 'Internship, Open-source Contributor',
+    company: 'Adrena',
+    duration: '2025',
   },
   {
-    title: 'Frontend Engineer',
-    company: 'Anchorblock Technology',
-    duration: 'Oct 2022 - Sep 2023',
+    title: 'Founder & Developer',
+    company: 'Versus',
+    duration: '2024 - 2025',
   },
   {
-    title: 'Frontend Developer (Part-time)',
-    company: 'Branex IT',
-    duration: 'Jan 2022 - Oct 2022',
+    title: 'Founder, Board Member',
+    company: 'Magicake / Doge Capital',
+    duration: '2021 - 2024',
+  },
+  {
+    title: 'Common Core Graduate',
+    company: '42 Lyon',
+    duration: 'Nov 2023 - Jul 2025',
+  },
+  {
+    title: 'Leatherwork Artisan',
+    company: 'Hermes',
+    duration: '2017 - 2021',
   },
 ];
