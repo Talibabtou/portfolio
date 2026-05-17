@@ -1,16 +1,16 @@
+import { ReactLenis } from 'lenis/react';
 import type { Metadata } from 'next';
 import { Anton, Roboto_Flex } from 'next/font/google';
-import { ReactLenis } from 'lenis/react';
 
-import 'lenis/dist/lenis.css';
-import './globals.css';
-import Footer from '@/components/Footer';
-import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
-import ParticleBackground from '@/components/ParticleBackground';
-import Navbar from '@/components/Navbar';
 import CustomCursor from '@/components/CustomCursor';
-import Preloader from '../components/Preloader';
-import StickyEmail from './_components/StickyEmail';
+import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
+import ParticleBackground from '@/components/ParticleBackground';
+import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
+import 'lenis/dist/lenis.css';
+import Preloader from '@/components/Preloader';
+import StickyEmail from '@/app/_components/StickyEmail';
+import './globals.css';
 
 const antonFont = Anton({
   weight: '400',

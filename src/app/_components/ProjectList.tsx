@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import Project from './Project';
+import Project from '@/app/_components/Project';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 

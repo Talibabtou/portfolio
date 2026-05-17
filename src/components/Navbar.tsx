@@ -1,9 +1,9 @@
 'use client';
+import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 import { MoveUpRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
+import { useState } from 'react';
 
 const COLORS = [
   'bg-yellow-500 text-black',

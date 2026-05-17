@@ -1,7 +1,7 @@
+import { cn } from '@/lib/utils';
+import { Variant } from '@/types';
 import Link from 'next/link';
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
-import { Variant } from '@/types';
-import { cn } from '@/lib/utils';
 
 interface LoadingIndicatorProps {
   icon?: boolean;

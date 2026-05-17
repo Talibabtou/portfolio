@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { SectionFlower } from './icons';
 import { cn } from '@/lib/utils';
+import { ReactNode } from 'react';
+import { SectionFlower } from '@/components/icons';
 
 interface Props {
   icon?: ReactNode;
