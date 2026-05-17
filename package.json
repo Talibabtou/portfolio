@@ -6,10 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "check": "biome check .",
+    "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
     "svgr:icons": "svgr --title-prop --no-dimensions --typescript -d components/icons -- components/icons/svgs"
   },
   "dependencies": {

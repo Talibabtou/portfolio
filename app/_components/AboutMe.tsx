@@ -2,12 +2,12 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import React from 'react';
+import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const AboutMe = () => {
-  const container = React.useRef<HTMLDivElement>(null);
+  const container = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {

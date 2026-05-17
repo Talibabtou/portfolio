@@ -5,12 +5,12 @@ import { GENERAL_INFO } from '@/lib/data';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import React from 'react';
+import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const Banner = () => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // move the content a little up on scroll
   useGSAP(
@@ -56,11 +56,11 @@ const Banner = () => {
             as="link"
             target="_blank"
             rel="noopener noreferrer"
-            href={GENERAL_INFO.cvUrl}
+            href={GENERAL_INFO.linkedinProfile}
             variant="primary"
             className="mt-9 banner-button slide-up-and-fade"
           >
-            View CV
+            View LinkedIn
           </Button>
 
           <div className="flex items-center gap-2 mt-3">

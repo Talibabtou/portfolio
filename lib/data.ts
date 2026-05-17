@@ -11,6 +11,8 @@ export const GENERAL_INFO = {
   phone: '+33 6 28 40 15 84',
   location: 'Grenoble, France',
   cvUrl: '/cv/guillaume-dumas-cv.pdf',
+  githubRepo: 'https://github.com/Talibabtou/portfolio',
+  linkedinProfile: 'https://www.linkedin.com/in/talibabtou',
 
   emailSubject: "Let's discuss a product engineering role",
   emailBody:
@@ -19,7 +21,7 @@ export const GENERAL_INFO = {
 
 export const SOCIAL_LINKS = [
   { name: 'github', url: 'https://github.com/Talibabtou' },
-  { name: 'linkedin', url: 'https://www.linkedin.com/in/talibabtou' },
+  { name: 'linkedin', url: GENERAL_INFO.linkedinProfile },
   { name: 'cv', url: GENERAL_INFO.cvUrl },
 ];
 

@@ -1,9 +1,13 @@
 import Link from 'next/link';
-import React, { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
 import { Variant } from '@/types';
 import { cn } from '@/lib/utils';
 
-const Child = ({ icon }: any) => (
+interface LoadingIndicatorProps {
+  icon?: boolean;
+}
+
+const LoadingIndicator = ({ icon }: LoadingIndicatorProps) => (
   <span className="flex items-center justify-center gap-3">
     <svg
       className="animate-spin h-5 w-5 text-white"
@@ -88,7 +92,7 @@ const Button = ({
             <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
           )}
           <span className="z-[1]">
-            {loading ? <Child icon={icon} /> : children}
+            {loading ? <LoadingIndicator icon={icon} /> : children}
           </span>
         </a>
       );
@@ -100,7 +104,7 @@ const Button = ({
           <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
         )}
         <span className="z-[1]">
-          {loading ? <Child icon={icon} /> : children}
+          {loading ? <LoadingIndicator icon={icon} /> : children}
         </span>
       </Link>
     );
@@ -113,7 +117,7 @@ const Button = ({
           <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
         )}
         <span className="z-[1]">
-          {loading ? <Child icon={icon} /> : children}
+          {loading ? <LoadingIndicator icon={icon} /> : children}
         </span>
       </button>
     );

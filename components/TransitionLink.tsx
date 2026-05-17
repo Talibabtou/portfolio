@@ -3,7 +3,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { ComponentProps } from 'react';
+import type { ComponentProps, MouseEvent } from 'react';
 
 interface Props extends ComponentProps<typeof Link> {
   back?: boolean;
@@ -23,7 +23,7 @@ const TransitionLink = ({
   const { contextSafe } = useGSAP(() => {});
 
   const handleLinkClick = contextSafe(
-    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    async (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
 
       gsap.set('.page-transition', { yPercent: 100 });

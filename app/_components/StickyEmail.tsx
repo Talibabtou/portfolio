@@ -1,5 +1,4 @@
 import { GENERAL_INFO } from '@/lib/data';
-import React from 'react';
 
 const StickyEmail = () => {
   return (

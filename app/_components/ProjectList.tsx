@@ -6,22 +6,19 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
-import React, { useRef, useState, MouseEvent } from 'react';
+import { useRef, useState } from 'react';
 import Project from './Project';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const ProjectList = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const projectListRef = useRef<HTMLDivElement>(null);
   const imageContainer = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(
     PROJECTS[0].slug,
   );
 
-  // update imageRef.current href based on the cursor hover position
-  // also update image position
+  // Keep the project preview image aligned with the cursor in the list area.
   useGSAP(
     (context, contextSafe) => {
       // show image on hover
@@ -61,7 +58,9 @@ const ProjectList = () => {
           duration: 1,
           opacity: 1,
         });
-      }) as any;
+      });
+
+      if (!handleMouseMove) return;
 
       window.addEventListener('mousemove', handleMouseMove);
 
@@ -124,14 +123,13 @@ const ProjectList = () => {
                       'opacity-0': project.slug !== selectedProject,
                     },
                   )}
-                  ref={imageRef}
                   key={project.slug}
                 />
               ))}
             </div>
           )}
 
-          <div className="flex flex-col max-md:gap-10" ref={projectListRef}>
+          <div className="flex flex-col max-md:gap-10">
             {PROJECTS.map((project, index) => (
               <Project
                 index={index}

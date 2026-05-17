@@ -41,16 +41,9 @@ This project is a downloaded personal portfolio for Tajmirul Islam. It can be us
 
 ## Bad Habits And Risks
 
-- Original identity remains everywhere: names, links, email, projects, GitHub URLs, metadata, sitemap, footer, analytics IDs, and Google verification file.
-- `app/layout.tsx` includes Google Analytics and Hotjar for the original site. These should be removed immediately unless replaced with your own privacy-conscious analytics.
-- The original README asks for attribution and says the project was not intended as a starter theme. We should either keep credit visibly or substantially redesign the site.
-- `components/Footer.tsx` fetches GitHub stats from the original author's repo at runtime. This adds an external dependency and displays irrelevant stars/forks.
+- `components/Footer.tsx` originally fetched GitHub stats from the original author's repo at runtime. This has been changed to `Talibabtou/portfolio`, with a fallback if GitHub is unreachable.
 - `html-react-parser` renders HTML strings from `lib/data.ts`. It is acceptable only for trusted local content, but it is still a weaker content pattern than structured project fields.
 - Too many client components. Most sections are marked `'use client'` because of GSAP. This increases JS shipped to the browser.
-- Heavy motion stack: GSAP, Lenis, preloader, particles, custom cursor, page transitions, and scroll triggers. Nice visually, but risky for performance and accessibility.
-- No reduced-motion support was found. Users who prefer less motion still get animations.
-- Global `!cursor-none` hides the native cursor everywhere on desktop. This can hurt usability, accessibility, and debugging.
-- Scrollbar is hidden globally. This removes a familiar navigation affordance.
 - The preloader is decorative and delays access to content.
 - `ParticleBackground` creates random particles with `Math.random()` on the client. It is visually non-deterministic and purely decorative.
 - Some code is duplicated: `Skills.tsx` has a second unreachable `return` block.
