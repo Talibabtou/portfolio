@@ -1,151 +1,245 @@
 # Portfolio Codebase Audit
 
-Date: 2026-05-17
+Date: 2026-05-18
 
-This project is a downloaded personal portfolio for Tajmirul Islam. It can be used as a base, but it still contains the original author's identity, analytics, links, projects, README attribution request, license copyright, and SEO metadata. Before publishing, it needs a real content and design pass so the final site represents talibabtou instead of looking like a lightly edited fork.
+This portfolio is now a personalized fork for Talibabtou / Guillaume Dumas. The
+first cleanup pass replaced the original owner's visible identity, removed the
+old analytics, moved source code under `src/`, added path aliases, tightened
+lint/type checks, and rebuilt the content around Web3, fintech, 42 Lyon,
+Jupiter, Adrena, Versus, Magicake / Doge Capital, and Hermes.
+
+The site is directionally correct, but it can still become much more impressive
+for a recruiter. The next work should focus less on generic template polish and
+more on proof: concrete outcomes, real screenshots, clear case studies, fast
+loading, accessible navigation, and a visual system that feels like a sharp
+product engineer's portfolio.
 
 ## Current Tech Stack
 
-- Framework: Next.js 15 App Router.
+- Framework: Next.js 15 App Router under `src/app`.
 - UI: React, TypeScript, Tailwind CSS.
 - Animation: GSAP, `@gsap/react`, ScrollTrigger, Lenis smooth scrolling.
 - Icons: `lucide-react`, custom SVG generated through SVGR.
 - Fonts: Google Fonts through `next/font`: Anton and Roboto Flex.
-- Content model: mostly hard-coded TypeScript data in `lib/data.ts`.
-- Images/assets: static files under `public/`.
-- Analytics/tracking: Google Analytics and Hotjar are currently embedded in `app/layout.tsx`.
+- Content model: hard-coded TypeScript data in `src/lib/data.ts`.
+- Images/assets: static files under root `public/`.
 - Package manager: pnpm, with `pnpm-lock.yaml`.
+- Code quality: Biome formatting, ESLint with zero warnings, TypeScript
+  checking.
 
 ## Site Structure
 
-- `app/page.tsx`: homepage composition: banner, about, skills, experience, projects.
-- `app/layout.tsx`: global shell, fonts, metadata, analytics, navbar, footer, cursor, preloader, background particles, sticky email.
-- `app/projects/[slug]/page.tsx`: static project detail route generated from `PROJECTS`.
-- `app/_components/*`: page sections.
-- `components/*`: shared UI, navigation, animation helpers, cursor, footer.
-- `lib/data.ts`: personal information, social links, stack, projects, experience.
-- `app/globals.css` and `tailwind.config.ts`: color tokens, typography, layout sizing.
+- `src/app/page.tsx`: homepage composition: banner, about, skills, experience,
+  projects.
+- `src/app/layout.tsx`: global shell, metadata, navbar, footer, cursor,
+  preloader, particles, scroll progress, sticky email.
+- `src/app/projects/[slug]/page.tsx`: static project detail route generated from
+  `PROJECTS`.
+- `src/app/_components/*`: homepage sections.
+- `src/components/*`: shared UI, navigation, animation helpers, cursor, footer.
+- `src/lib/data.ts`: personal information, social links, stack, projects,
+  experience.
+- `src/app/globals.css` and `tailwind.config.ts`: color tokens, typography,
+  layout sizing.
+
+## Done Since The First Audit
+
+- Replaced original owner data in `src/lib/data.ts`.
+- Updated metadata and sitemap to Talibabtou positioning/domain.
+- Removed Google Analytics and Hotjar from `src/app/layout.tsx`.
+- Reworked the footer to use `Talibabtou/portfolio` GitHub stats with fallback.
+- Replaced original projects and experience entries with CV-derived content.
+- Added CV and LinkedIn/GitHub links.
+- Added fork attribution to `README.md`.
+- Moved source code under `src/` and configured `@/*` aliases to `src/*`.
+- Moved `public/` back to the root so Next can serve images and CV assets.
+- Removed explicit `any` usage and unused refs/imports.
+- Enabled stricter ESLint rules and made `pnpm run check` run Biome, ESLint,
+  and TypeScript.
+- Removed the unreachable duplicate return block in `Skills.tsx`.
+- Added accessible menu button label and expanded state.
+- Added `rel="noreferrer noopener"` to external project image links.
+- Made `ParticleBackground` client-only after mount to avoid hydration mismatch
+  from randomized particles.
 
 ## Good Habits To Keep
 
-- Clear data-driven project model: projects and experience are centralized in `lib/data.ts`, making content replacement straightforward.
-- App Router is used correctly for static project pages with `generateStaticParams`.
-- TypeScript is enabled in strict mode.
-- Tailwind theme uses CSS variables, so changing the color palette can be clean.
-- `next/font` avoids layout shifts from external font loading.
-- Components are split by section, which makes redesigning one section at a time practical.
-- Project detail pages are already present, which is useful for a job-search portfolio.
-- `next/image` is used in several places for optimized images.
-- The site has a strong visual identity: bold typography, motion, custom cursor, project hover previews.
-- The existing design is memorable enough to serve as a creative base if heavily personalized.
+- The portfolio now has a clear content angle: Web3 / fintech frontend and
+  product engineering.
+- The project and experience content is centralized in `src/lib/data.ts`.
+- App Router is used correctly for static project pages with
+  `generateStaticParams`.
+- TypeScript strict mode is enabled.
+- Path aliases keep imports readable after the `src/` migration.
+- Tailwind theme uses CSS variables, so a visual redesign can be done cleanly.
+- `next/font` avoids runtime font layout shifts.
+- `next/image` is used for many images.
+- The site has memorable motion and a bold identity, which can work well if the
+  motion becomes more intentional and less decorative.
 
-## Bad Habits And Risks
+## Remaining Bad Habits And Risks
 
-- `components/Footer.tsx` originally fetched GitHub stats from the original author's repo at runtime. This has been changed to `Talibabtou/portfolio`, with a fallback if GitHub is unreachable.
-- `html-react-parser` renders HTML strings from `lib/data.ts`. It is acceptable only for trusted local content, but it is still a weaker content pattern than structured project fields.
-- Too many client components. Most sections are marked `'use client'` because of GSAP. This increases JS shipped to the browser.
-- The preloader is decorative and delays access to content.
-- `ParticleBackground` creates random particles with `Math.random()` on the client. It is visually non-deterministic and purely decorative.
-- Some code is duplicated: `Skills.tsx` has a second unreachable `return` block.
-- Several `any` casts are used around GSAP event handlers and refs.
-- `Button.tsx` references Tailwind classes like `bg-primary-hover`, `bg-secondary-hover`, and `bg-background-active` that are not defined in the Tailwind theme.
-- Project image `alt` text is generic (`alt="Project"`), which is weak for accessibility and SEO.
-- Menu button lacks an accessible label and expanded state.
-- External image links in project details should include `rel="noreferrer noopener"`.
-- `generateMetadata` can produce weak metadata if a project is missing, and project descriptions include HTML strings.
-- `app/sitemap.ts` points to `https://me.toinfinite.dev`, not the future talibabtou domain.
-- `public/googleb73ec97d9cf6ea95.html` belongs to the original owner's Google Search Console verification and should be deleted.
-- The project uses React 19 release candidate packages with `@types/react` 18, which is an avoidable compatibility smell for a personal portfolio.
-- `next lint` is configured as a script, but Next.js has moved away from `next lint` in newer versions. We should verify and modernize linting later.
-- No tests, accessibility checks, Lighthouse budget, or CI workflow are present.
-- No `robots.ts`, Open Graph image, or rich social metadata exists yet.
-- The current palette is a dark neon green/blue developer aesthetic. It may not fit talibabtou's Web3/fintech/product positioning unless refined.
+- The preloader is decorative and delays access to the portfolio. It can feel
+  impressive once, but it gets in the way during repeated recruiter visits.
+- `ParticleBackground` remains purely decorative and random. It no longer causes
+  hydration mismatch, but it still adds animation work without proving skill.
+- Most sections are client components because of GSAP. This ships more JS than a
+  portfolio needs.
+- `html-react-parser` renders HTML strings from project data. It is trusted
+  local content, but structured fields would be safer and easier to maintain.
+- Some project images still use generic alt text such as `alt="Project"`.
+- `Button.tsx` still references Tailwind classes like `bg-primary-hover`,
+  `bg-secondary-hover`, and `bg-background-active` that are not defined in the
+  Tailwind theme.
+- `generateMetadata` can produce weak metadata if a project is missing, and
+  project descriptions are still HTML-like strings.
+- No `robots.ts`, Open Graph image, Twitter card metadata, or rich social preview
+  exists yet.
+- No Lighthouse budget, accessibility check, Playwright smoke test, or CI
+  workflow exists yet.
+- The current dark neon green/blue palette still reads like the original
+  developer template more than Web3/fintech product tooling.
+- The project visuals are placeholders from the fork. This is the largest
+  recruiter-facing weakness: strong copy cannot compensate for irrelevant
+  screenshots.
+- The React packages are still React 19 release candidate builds with React 18
+  type packages. This is an avoidable compatibility smell for a professional
+  portfolio.
 
-## CV Content Direction For talibabtou
+## Recruiter Impact Priorities
 
-The CV positions talibabtou as:
+1. Replace placeholder project visuals.
+   - Use real screenshots, cropped product states, diagrams, or tasteful mockups
+     for Jupiter, Adrena, Versus, and ft_transcendence.
+   - Recruiters should immediately see dashboards, market flows, wallet-aware
+     UX, or real-time interfaces.
 
-- Frontend Developer focused on Web3, fintech, trading dashboards, and product interfaces.
-- 42 Lyon Common Core graduate.
-- Former Hermes leatherwork artisan with precision and quality standards.
-- Growing toward full-stack engineering, product ownership, and architecture.
-- Strong themes: clarity, APIs, dashboards, maintainable UI, wallet-aware UX, Solana, prediction markets, product sense.
+2. Convert project pages into short case studies.
+   - Add sections for context, constraints, contribution, technical decisions,
+     outcome, and stack.
+   - Keep each page skimmable: bullets, screenshots, and concrete verbs.
+   - Avoid vague claims like "improved UI"; say what changed and why it mattered.
 
-The portfolio should not be a generic "creative frontend developer" site. It should say, quickly and concretely:
+3. Add a high-signal "Current Focus" section.
+   - Example themes: Web3 product interfaces, trading dashboards, prediction
+     markets, wallet-aware UX, API-connected dashboards, full-stack growth.
+   - This helps recruiters map the profile to roles without reading everything.
 
-- Frontend / Product Engineer for Web3 and fintech interfaces.
-- Experience with Jupiter, Adrena, Versus, Magicake / Doge Capital, 42 projects.
-- Strength in data-heavy product screens, trading workflows, wallet-aware UX, and polished implementation.
-- Personal differentiator: technical rigor from 42 plus high-end craft standards from Hermes.
+4. Make the hero more precise.
+   - Current direction is good, but the headline should be immediately
+     role-shaped: "Frontend Developer for Web3 & Fintech Interfaces" or
+     "Frontend / Product Engineer for Trading Interfaces".
+   - Keep the CTA to LinkedIn, but add a secondary CV download CTA somewhere
+     visible.
 
-## Recommended Personalization Plan
+5. Make the Hermes differentiator explicit but concise.
+   - The point is not nostalgia; it is precision, repeatability, finish quality,
+     and quality standards.
+   - This can become a small credibility block or timeline detail.
 
-1. Remove or replace all original owner data:
-   - `lib/data.ts`
-   - `app/layout.tsx`
-   - `app/sitemap.ts`
-   - `components/Footer.tsx`
-   - `README.md`
-   - `LICENSE` attribution handling
-   - `public/googleb73ec97d9cf6ea95.html`
+6. Improve trust signals.
+   - Add GitHub, LinkedIn, CV, location, language fluency, target roles, and
+     availability in a recruiter-friendly area.
+   - Add links to live products or repositories where possible.
 
-2. Rebuild content around talibabtou:
-   - Hero: "Frontend / Product Engineer" plus Web3 and fintech positioning.
-   - About: combine 42 engineering rigor, product judgment, and Hermes craft background.
-   - Experience: Jupiter, Adrena, Versus, Magicake / Doge Capital, with earlier career secondary.
-   - Projects: Jupiter Prediction Market, Adrena contributions, Versus, ft_transcendence, selected 42 work.
-   - Stack: TypeScript, React, Next.js, Node.js, Python, WebSockets, Solana, Rust learning, Docker, Git, C/C++.
+## Visual Direction Recommendation
 
-3. Change the visual direction:
-   - Move away from the original neon green identity.
-   - Better direction: dark graphite base, precise off-white typography, one sharp accent color, and subtle market/data-inspired visuals.
-   - Keep the bold typography if desired, but reduce decorative motion and make the site feel more product/fintech than template portfolio.
+- Move away from the inherited neon template identity.
+- Better direction: graphite/black base, off-white typography, one precise accent
+  color, subtle market-grid/data-line details, and calmer motion.
+- Keep the bold typography only where it helps hierarchy.
+- Replace decorative particles with product-specific visual language: market
+  ticks, order-book rhythm, wallet states, dashboard panels, or code/data
+  fragments.
+- Make the site feel like someone who builds serious product interfaces, not
+  just someone who customized an animated portfolio.
 
-4. Improve accessibility and performance:
-   - Add reduced-motion handling.
-   - Restore native cursor or make custom cursor optional.
+## Accessibility And Performance Plan
+
+1. Add reduced-motion support.
+   - Disable or simplify GSAP, Lenis, particles, cursor effects, and preloader
+     when `prefers-reduced-motion` is enabled.
+
+2. Restore native affordances.
+   - Stop hiding the global cursor by default.
    - Stop hiding scrollbars globally.
-   - Remove or simplify preloader and particle background.
-   - Add accessible labels to icon/menu controls.
-   - Improve image alt text.
+   - Keep custom cursor only as progressive enhancement on devices where it adds
+     value.
 
-5. Improve SEO and hiring usefulness:
-   - Add talibabtou-specific title, description, Open Graph metadata, and sitemap domain.
-   - Add downloadable CV link.
-   - Add contact CTA using talibabtou's email and LinkedIn/GitHub.
-   - Make project pages concise and recruiter-readable.
-   - Add a simple "Target roles" or "Current focus" section.
+3. Reduce JS shipped to the browser.
+   - Convert static sections to Server Components where possible.
+   - Isolate GSAP into smaller client wrappers instead of marking whole sections
+     client-only.
 
-## Hosting Options
+4. Remove or shorten the preloader.
+   - If kept, show it only on first visit via session storage.
+   - Prefer immediate content access for recruiters.
 
-Best fit for this project: Vercel Hobby.
+5. Improve image accessibility.
+   - Replace generic image alt text with project-specific descriptions.
+   - Ensure hover-only image previews have equivalent visible information on
+     mobile and keyboard navigation.
 
-Reason: this is a Next.js app, and Vercel has the smoothest Next.js deployment path. The official Vercel Hobby docs say the Hobby plan is free for personal projects and small-scale apps, with included monthly usage limits.
+## SEO And Sharing Plan
 
-Also viable:
+- Add `robots.ts`.
+- Add an Open Graph image and metadata for the homepage.
+- Add project-specific metadata that strips HTML and handles missing projects
+  cleanly.
+- Add a stable canonical URL once the final domain is confirmed.
+- Delete the old Google verification file and add a new one only when connected
+  to Guillaume's own Search Console.
+- Consider JSON-LD `Person` structured data with name, role, sameAs links,
+  location, and portfolio URL.
 
-- Cloudflare Pages: strong free tier, global network, Git integration, no credit card language on the product page, and official limits showing 500 builds/month on the Free plan. It may require extra Next.js adaptation depending on features.
-- Netlify Free: good Git-based workflow and custom domains, but its current pricing is credit-based. Official FAQ says the free plan has hard monthly limits and cannot incur costs if auto-recharge stays off.
+## Engineering Plan
 
-Recommendation for discussion:
+1. Stabilize dependencies.
+   - Move from React 19 RC packages and React 18 type packages to stable matching
+     versions.
+   - Verify Next version compatibility after the change.
 
-- Use Vercel first for fastest deployment.
-- Consider Cloudflare Pages if you want a very generous static/frontend hosting model.
-- Avoid adding server features until the portfolio is stable and deployed.
+2. Improve the content model.
+   - Replace HTML strings with structured project fields.
+   - Keep descriptions, bullets, role, results, and links as typed arrays/fields.
 
-Official references checked on 2026-05-17:
+3. Add lightweight automated verification.
+   - `pnpm run check` already covers formatting, lint, and typecheck.
+   - Add a Playwright smoke test for homepage load, project page load, and main
+     links.
+   - Add a Lighthouse/accessibility checklist before publishing.
 
-- Vercel Hobby Plan: https://vercel.com/docs/plans/hobby
-- Netlify Pricing: https://www.netlify.com/pricing/
-- Cloudflare Pages product page: https://www.cloudflare.com/products/pages/
-- Cloudflare Pages limits: https://developers.cloudflare.com/pages/platform/limits/
+4. Add CI.
+   - GitHub Actions can run `pnpm install --frozen-lockfile`, `pnpm run check`,
+     and optionally `pnpm run build`.
 
-## Next Work Session Proposal
+5. Review runtime fetches.
+   - Footer GitHub stats are acceptable with fallback, but keep the page useful
+     if GitHub API rate-limits or fails.
 
-Before touching design, do a cleanup pass:
+## Suggested Next Work Sessions
 
-1. Remove tracking and original verification.
-2. Replace identity, metadata, sitemap, and footer.
-3. Replace `lib/data.ts` with talibabtou's real CV-derived content.
-4. Simplify the heaviest motion/accessibility problems.
-5. Then redesign colors, typography rhythm, and project presentation.
+1. Visual/content proof pass:
+   - Replace placeholder project images.
+   - Rewrite each project page as a recruiter-readable case study.
+
+2. Accessibility/performance pass:
+   - Reduced motion.
+   - Native cursor/scrollbar restoration.
+   - Preloader and particle simplification.
+
+3. SEO/social pass:
+   - Open Graph image.
+   - `robots.ts`.
+   - richer metadata.
+   - delete old Google verification file.
+
+4. Design direction pass:
+   - New color system.
+   - calmer fintech/product visual language.
+   - tighter mobile and desktop hierarchy.
+
+5. Engineering hardening pass:
+   - stable React packages.
+   - structured project data.
+   - CI and smoke tests.

@@ -49,15 +49,17 @@ export default function RootLayout({
             duration: 1.4,
           }}
         >
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <div className="custom-cursor-scope">
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <StickyEmail />
+          </div>
 
           <CustomCursor />
           <Preloader />
           <ScrollProgressIndicator />
           <ParticleBackground />
-          <StickyEmail />
         </ReactLenis>
       </body>
     </html>

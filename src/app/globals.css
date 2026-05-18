@@ -39,7 +39,7 @@
     display: none;
   }
   * {
-    @apply border-border !cursor-none;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-roboto-flex;
@@ -55,6 +55,18 @@
   html:hover .custom-cursor {
     opacity: 1;
     visibility: visible;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .preloader,
+    .preloader * {
+      cursor: none;
+    }
+
+    .custom-cursor-scope,
+    .custom-cursor-scope * {
+      cursor: none;
+    }
   }
 
   .grid {
