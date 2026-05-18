@@ -1,22 +1,17 @@
 {
-  "name": "new-portfolio",
+  "name": "portfolio-talibabtou",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:turbo": "next dev --turbopack",
-    "dev:clean": "pnpm run clean && pnpm run dev",
+    "dev": "next dev --turbopack -p 3000",
     "build": "next build",
-    "build:clean": "pnpm run clean && pnpm run build",
     "start": "next start",
     "clean": "rm -rf .next",
-    "clean:all": "rm -rf .next node_modules/.cache .pnpm-store",
     "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "lint": "eslint . --max-warnings=0",
-    "typecheck": "tsc --noEmit",
-    "svgr:icons": "svgr --title-prop --no-dimensions --typescript -d components/icons -- components/icons/svgs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
