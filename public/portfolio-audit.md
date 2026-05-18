@@ -79,8 +79,6 @@ product engineer's portfolio.
 
 ## Remaining Bad Habits And Risks
 
-- The preloader is decorative and delays access to the portfolio. It can feel
-  impressive once, but it gets in the way during repeated recruiter visits.
 - `ParticleBackground` remains purely decorative and random. It no longer causes
   hydration mismatch, but it still adds animation work without proving skill.
 - Most sections are client components because of GSAP. This ships more JS than a
