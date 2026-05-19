@@ -8,11 +8,8 @@
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .next",
-    "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "classes:check": "biome lint .",
-    "classes:fix": "biome check --write --unsafe .",
+    "fix": "biome check --write --unsafe .",
+    "check": "pnpm run fix && pnpm run lint && pnpm run typecheck && pnpm run build",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit"
   },
