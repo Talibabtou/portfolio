@@ -140,6 +140,43 @@ product engineer's portfolio.
      availability in a recruiter-friendly area.
    - Add links to live products or repositories where possible.
 
+## Minimalist UX Direction To Remember
+
+To avoid the generic AI-template feeling, the website should stand out through
+clarity, proof, and restraint rather than decorative effects.
+
+1. Add a "Current Focus" band after the hero.
+   - Four compact labels: Web3 Interfaces, Trading Dashboards, Wallet UX,
+     API-Connected Products.
+   - This gives immediate positioning without decoration.
+
+2. Turn project pages into evidence-led case studies.
+   - Use a consistent structure: Context, Problem, Contribution, Technical
+     Decisions, Result.
+   - Google UX flow maps well here: empathize, define, ideate, prototype, test,
+     but translated for engineering and product delivery.
+
+3. Replace decorative wow with product proof.
+   - Real screenshots, cropped product states, architecture snippets, market
+     flow diagrams, API/data flow visuals.
+   - Minimal, but high signal.
+
+4. Add one restrained craft detail.
+   - A small Hermes/42 block: precision, repeatability, finish quality,
+     autonomy.
+   - This is distinctive and human, not AI-generated.
+
+5. Improve hierarchy, not ornament.
+   - Recruiters skim.
+   - Make section intros short, spacing tighter, labels stronger, project
+     summaries sharper, and links visible.
+
+6. Keep the background quiet.
+   - Plain dark graphite plus subtle particles is better than generic
+     glassmorphism.
+   - The standout should come from content, interaction quality, and sharp case
+     studies.
+
 ## Visual Direction Recommendation
 
 - Move away from the inherited neon template identity.

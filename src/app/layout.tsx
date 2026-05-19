@@ -5,11 +5,11 @@ import { Anton, Roboto_Flex } from 'next/font/google';
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
-import ParticleBackground from '@/components/ParticleBackground';
 import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
 import 'lenis/dist/lenis.css';
 import Preloader from '@/components/Preloader';
 import StickyEmail from '@/app/_components/StickyEmail';
+import TopographicBackground from '@/components/TopographicBackground';
 import './globals.css';
 
 const antonFont = Anton({
@@ -59,7 +59,7 @@ export default function RootLayout({
           <CustomCursor />
           <Preloader />
           <ScrollProgressIndicator />
-          <ParticleBackground />
+          <TopographicBackground />
         </ReactLenis>
       </body>
     </html>
