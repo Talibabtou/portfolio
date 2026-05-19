@@ -48,7 +48,7 @@ const TOPOGRAPHIC_STYLE = {
   },
   // Breathing animation. Keep scale close to 1 for subtle movement.
   motion: {
-    scale: 1.01,
+    scale: 1.1,
     durationRange: [4.8, 7.2],
     delayPerLine: 0.05,
   },
@@ -69,6 +69,7 @@ const GRID_PADDING = Math.round(
 );
 const FIELD_COLUMNS = GRID_COLUMNS + GRID_PADDING * 2;
 const FIELD_ROWS = GRID_ROWS + GRID_PADDING * 2;
+const FIELD_CELL_COUNT = FIELD_COLUMNS * FIELD_ROWS;
 const CONTOUR_LINE_COUNT = TOPOGRAPHIC_STYLE.lines.count;
 const CANVAS_WIDTH_VW_RANGE = TOPOGRAPHIC_STYLE.canvas.widthVwRange;
 const CANVAS_HEIGHT_VH_RANGE = TOPOGRAPHIC_STYLE.canvas.heightVhRange;
@@ -146,6 +147,22 @@ type Peak = {
   stretchY: number;
 };
 
+const createFieldCoordinates = () => {
+  const xCoordinates = new Float32Array(FIELD_CELL_COUNT);
+  const yCoordinates = new Float32Array(FIELD_CELL_COUNT);
+
+  for (let index = 0; index < FIELD_CELL_COUNT; index += 1) {
+    xCoordinates[index] =
+      ((index % FIELD_COLUMNS) - GRID_PADDING) / (GRID_COLUMNS - 1);
+    yCoordinates[index] =
+      (Math.floor(index / FIELD_COLUMNS) - GRID_PADDING) / (GRID_ROWS - 1);
+  }
+
+  return { xCoordinates, yCoordinates };
+};
+
+const FIELD_COORDINATES = createFieldCoordinates();
+
 const randomBetween = (min: number, max: number) =>
   Math.random() * (max - min) + min;
 
@@ -177,12 +194,19 @@ const getSmoothClosedPath = (points: Point[]) => {
 };
 
 const getContourPath = (coordinates: number[][][][]) => {
-  return coordinates
-    .flatMap((polygon) => polygon)
-    .map((ring) => ring.map(([x, y]): Point => [x, y]))
-    .map(getSmoothClosedPath)
-    .filter((path) => path.length > 0)
-    .join(' ');
+  const paths: string[] = [];
+
+  for (const polygon of coordinates) {
+    for (const ring of polygon) {
+      const path = getSmoothClosedPath(ring.map(([x, y]): Point => [x, y]));
+
+      if (path.length > 0) {
+        paths.push(path);
+      }
+    }
+  }
+
+  return paths.join(' ');
 };
 
 const generateThresholds = () => {
@@ -210,6 +234,7 @@ const generateThresholds = () => {
 
 const generateElevationField = () => {
   const noise2D = createNoise2D();
+  const { xCoordinates, yCoordinates } = FIELD_COORDINATES;
   const centerX = randomBetween(...CENTER_X_RANGE);
   const centerY = randomBetween(...CENTER_Y_RANGE);
   const stretchX = randomBetween(...STRETCH_X_RANGE);
@@ -233,21 +258,26 @@ const generateElevationField = () => {
     },
   );
 
-  return Array.from({ length: FIELD_COLUMNS * FIELD_ROWS }, (_, index) => {
-    const x = ((index % FIELD_COLUMNS) - GRID_PADDING) / (GRID_COLUMNS - 1);
-    const y =
-      (Math.floor(index / FIELD_COLUMNS) - GRID_PADDING) / (GRID_ROWS - 1);
+  const elevationField = new Array<number>(FIELD_CELL_COUNT);
+
+  for (let index = 0; index < FIELD_CELL_COUNT; index += 1) {
+    const x = xCoordinates[index];
+    const y = yCoordinates[index];
     const dx = (x - centerX) * stretchX;
     const dy = (y - centerY) * stretchY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     const mountain = Math.exp(-(distance * distance) * MOUNTAIN_FALLOFF);
-    const secondaryMountains = secondaryPeaks.reduce((sum, peak) => {
+    let secondaryMountains = 0;
+
+    for (const peak of secondaryPeaks) {
       const peakDx = (x - peak.centerX) * peak.stretchX;
       const peakDy = (y - peak.centerY) * peak.stretchY;
       const peakDistance = peakDx * peakDx + peakDy * peakDy;
 
-      return sum + Math.exp(-peakDistance * peak.falloff) * peak.strength;
-    }, 0);
+      secondaryMountains +=
+        Math.exp(-peakDistance * peak.falloff) * peak.strength;
+    }
+
     const widePull =
       Math.exp(-(distance * distance) * WIDE_PULL_FALLOFF) * WIDE_PULL_STRENGTH;
     const largeNoise =
@@ -270,7 +300,7 @@ const generateElevationField = () => {
           Math.PI,
       ) * SECONDARY_RIDGE_STRENGTH;
 
-    return Math.max(
+    elevationField[index] = Math.max(
       0,
       Math.min(
         1,
@@ -283,7 +313,9 @@ const generateElevationField = () => {
           secondaryRidge,
       ),
     );
-  });
+  }
+
+  return elevationField;
 };
 
 const getSafeOrigin = (canvasSize: number, viewportSize: number) => {
