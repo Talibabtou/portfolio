@@ -1,4 +1,4 @@
-import { IProject } from '@/types';
+import type { IProject } from '@/types';
 
 type StackItem = {
   name: string;

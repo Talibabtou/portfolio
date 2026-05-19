@@ -48,7 +48,7 @@ const TOPOGRAPHIC_STYLE = {
   },
   // Breathing animation. Keep scale close to 1 for subtle movement.
   motion: {
-    scale: 1.1,
+    scale: 1.05,
     durationRange: [4.8, 7.2],
     delayPerLine: 0.05,
   },
@@ -366,7 +366,11 @@ const TopographicBackground = () => {
   const [topography, setTopography] = useState<Topography | null>(null);
 
   useEffect(() => {
-    setTopography(generateTopography());
+    const animationFrame = requestAnimationFrame(() => {
+      setTopography(generateTopography());
+    });
+
+    return () => cancelAnimationFrame(animationFrame);
   }, []);
 
   useGSAP(
@@ -394,7 +398,7 @@ const TopographicBackground = () => {
   if (!topography) return null;
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <svg
         aria-hidden="true"
         className="absolute overflow-visible text-white"
@@ -410,7 +414,7 @@ const TopographicBackground = () => {
           <path
             d={line.d}
             fill="none"
-            key={index}
+            key={line.d}
             opacity={line.opacity}
             ref={(el) => {
               if (el) {

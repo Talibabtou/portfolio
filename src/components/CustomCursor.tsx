@@ -24,10 +24,11 @@ const CustomCursor = () => {
 
   return (
     <svg
+      aria-hidden="true"
       width="27"
       height="30"
       viewBox="0 0 27 30"
-      className="custom-cursor hidden md:block fixed top-0 left-0 z-[50] pointer-events-none" // -translate-x-1/2 -translate-y-1/2
+      className="custom-cursor pointer-events-none fixed top-0 left-0 z-[50] hidden md:block" // -translate-x-1/2 -translate-y-1/2
       fill="none"
       id="cursor"
       strokeWidth="2"

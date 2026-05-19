@@ -1,5 +1,5 @@
 import { PROJECTS } from '@/lib/data';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ProjectDetails from '@/app/projects/[slug]/_components/ProjectDetails';
 

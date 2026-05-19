@@ -8,6 +8,10 @@ gsap.registerPlugin(useGSAP);
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const preloaderText = 'TALIBABTOU';
+  const preloaderLetters = Array.from(preloaderText, (letter, index) => ({
+    id: `${letter}-${preloaderText.slice(0, index + 1)}`,
+    letter,
+  }));
 
   useGSAP(
     () => {
@@ -42,7 +46,7 @@ const Preloader = () => {
   );
 
   return (
-    <div className="preloader fixed inset-0 z-[6] flex" ref={preloaderRef}>
+    <div className="preloader fixed inset-0 z-6 flex" ref={preloaderRef}>
       <div className="preloader-item h-full w-[10%] bg-black"></div>
       <div className="preloader-item h-full w-[10%] bg-black"></div>
       <div className="preloader-item h-full w-[10%] bg-black"></div>
@@ -54,12 +58,9 @@ const Preloader = () => {
       <div className="preloader-item h-full w-[10%] bg-black"></div>
       <div className="preloader-item h-full w-[10%] bg-black"></div>
 
-      <p className="name-text flex text-[20vw] lg:text-[200px] font-anton text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none overflow-hidden">
-        {preloaderText.split('').map((letter, index) => (
-          <span
-            className="inline-block translate-y-full"
-            key={`${letter}-${index}`}
-          >
+      <p className="name-text absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 overflow-hidden text-center font-anton text-[20vw] leading-none lg:text-[200px]">
+        {preloaderLetters.map(({ id, letter }) => (
+          <span className="inline-block translate-y-full" key={id}>
             {letter}
           </span>
         ))}

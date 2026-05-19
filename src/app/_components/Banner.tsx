@@ -37,18 +37,18 @@ const Banner = () => {
     <section className="relative overflow-hidden" id="banner">
       <ArrowAnimation />
       <div
-        className="container h-[100svh] min-h-[530px] max-md:pb-10 flex justify-between items-center max-md:flex-col"
+        className="flex h-svh min-h-[530px] items-center justify-between px-4 max-md:flex-col max-md:pb-10"
         ref={containerRef}
       >
-        <div className="max-md:grow max-md:flex flex-col justify-center items-start max-w-[544px]">
-          <h1 className="banner-title slide-up-and-fade leading-[.95] text-6xl sm:text-[80px] font-anton">
+        <div className="max-w-[544px] flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">
+          <h1 className="banner-title slide-up-and-fade font-anton text-6xl leading-[.95] sm:text-[80px]">
             <span className="text-primary">FRONTEND </span>
             <br /> <span className="ml-4">DEVELOPER</span>
           </h1>
           <p className="banner-description slide-up-and-fade mt-6 text-lg text-muted-foreground">
             Hi, I&apos;m{' '}
-            <span className="font-medium text-foreground">Guillaume Dumas</span>
-            . I build Web3 and fintech product interfaces: prediction markets,
+            <span className="font-medium text-foreground">Talibabtou</span>. I
+            build Web3 and fintech product interfaces: prediction markets,
             trading, prediction markets, wallet-aware flows and API-connected
             screens.
           </p>
@@ -58,33 +58,33 @@ const Banner = () => {
             rel="noopener noreferrer"
             href={GENERAL_INFO.linkedinProfile}
             variant="primary"
-            className="mt-9 banner-button slide-up-and-fade"
+            className="banner-button slide-up-and-fade mt-9"
           >
             View LinkedIn
           </Button>
 
-          <div className="flex items-center gap-2 mt-3">
-            <span className="text-sm text-muted-foreground">
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">
               Available for full-time opportunities
             </span>
           </div>
         </div>
 
-        <div className="md:absolute bottom-[10%] right-[4%] flex md:flex-col gap-4 md:gap-8 text-center md:text-right">
+        <div className="right-[7%] bottom-[10%] flex gap-4 text-center md:absolute md:flex-col md:gap-8 md:text-right">
           <div className="slide-up-and-fade">
-            <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+            <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
               42
             </h5>
             <p className="text-muted-foreground">Lyon Common Core</p>
           </div>
           <div className="slide-up-and-fade">
-            <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+            <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
               Web3
             </h5>
             <p className="text-muted-foreground">Solana & DeFi Interfaces</p>
           </div>
           <div className="slide-up-and-fade">
-            <h5 className="text-3xl sm:text-4xl font-anton text-primary mb-1.5">
+            <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
               Craft
             </h5>
             <p className="text-muted-foreground">Hermes Quality Standards</p>

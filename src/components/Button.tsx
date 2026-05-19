@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Variant } from '@/types';
+import type { Variant } from '@/types';
 import Link from 'next/link';
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
 
@@ -10,7 +10,8 @@ interface LoadingIndicatorProps {
 const LoadingIndicator = ({ icon }: LoadingIndicatorProps) => (
   <span className="flex items-center justify-center gap-3">
     <svg
-      className="animate-spin h-5 w-5 text-white"
+      aria-hidden="true"
+      className="h-5 w-5 animate-spin text-white"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -67,7 +68,7 @@ const Button = ({
   }[variant || 'primary'];
 
   const iconClasses = cn(
-    'min-w-9 aspect-square text-xl p-0 inline-flex items-center justify-center rounded-md',
+    'inline-flex aspect-square min-w-9 items-center justify-center rounded-md p-0 text-xl',
     variantClasses,
   );
 
@@ -89,7 +90,7 @@ const Button = ({
           href={props.href.toString() || '#'}
         >
           {variant !== 'link' && (
-            <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
+            <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white transition-all duration-500 group-hover:top-0"></span>
           )}
           <span className="z-[1]">
             {loading ? <LoadingIndicator icon={icon} /> : children}
@@ -101,7 +102,7 @@ const Button = ({
     return (
       <Link className={buttonClasses} {...props} href={props.href || '#'}>
         {variant !== 'link' && (
-          <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
+          <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white transition-all duration-500 group-hover:top-0"></span>
         )}
         <span className="z-[1]">
           {loading ? <LoadingIndicator icon={icon} /> : children}
@@ -112,9 +113,9 @@ const Button = ({
     const props = rest as ButtonProps;
 
     return (
-      <button className={buttonClasses} {...props}>
+      <button className={buttonClasses} type="button" {...props}>
         {variant !== 'link' && (
-          <span className="absolute top-[200%] left-0 right-0 h-full bg-white rounded-[50%] group-hover:top-0 transition-all duration-500 scale-150"></span>
+          <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white transition-all duration-500 group-hover:top-0"></span>
         )}
         <span className="z-[1]">
           {loading ? <LoadingIndicator icon={icon} /> : children}

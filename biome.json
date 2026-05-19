@@ -37,11 +37,27 @@
     }
   },
   "linter": {
-    "enabled": false
+    "enabled": true,
+    "rules": {
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "functions": ["cn", "clsx", "cva"]
+          }
+        }
+      }
+    }
   },
   "assist": {
     "actions": {
       "source": {
+        "noDuplicateClasses": {
+          "level": "on",
+          "options": {
+            "functions": ["cn", "clsx", "cva"]
+          }
+        },
         "organizeImports": "off"
       }
     }

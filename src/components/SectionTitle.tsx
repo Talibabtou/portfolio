@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { SectionFlower } from '@/components/icons';
 
 interface Props {
@@ -17,7 +17,7 @@ const SectionTitle = ({ icon, title, className, classNames }: Props) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-4 mb-10',
+        'mb-10 flex items-center gap-4',
         className,
         classNames?.container,
       )}

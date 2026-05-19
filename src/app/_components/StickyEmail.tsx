@@ -2,10 +2,10 @@ import { GENERAL_INFO } from '@/lib/data';
 
 const StickyEmail = () => {
   return (
-    <div className="max-xl:hidden fixed bottom-32 left-0 block">
+    <div className="fixed bottom-32 left-3 block max-xl:hidden">
       <a
         href={`mailto:${GENERAL_INFO.email}`}
-        className="px-3 text-muted-foreground tracking-[1px] transition-all !bg-bottom hover:text-foreground hover:!bg-center"
+        className="!bg-bottom hover:!bg-center px-3 text-muted-foreground tracking-[1px] transition-all hover:text-foreground"
         style={{
           // background:
           //     'linear-gradient(to bottom, hsl(var(--muted-foreground)) 0% 33.33%, hsl(var(--primary)) 33.33% 66.66%, hsl(var(--muted-foreground)) 66.66% 100%)',

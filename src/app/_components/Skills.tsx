@@ -65,15 +65,15 @@ const Skills = () => {
           {Object.entries(MY_STACK).map(([key, value]) => (
             <div className="grid sm:grid-cols-12" key={key}>
               <div className="sm:col-span-5">
-                <p className="slide-up text-5xl font-anton leading-none text-muted-foreground uppercase">
+                <p className="slide-up font-anton text-5xl text-muted-foreground uppercase leading-none">
                   {key}
                 </p>
               </div>
 
-              <div className="sm:col-span-7 flex gap-x-11 gap-y-9 flex-wrap">
+              <div className="flex flex-wrap gap-x-11 gap-y-9 sm:col-span-7">
                 {value.map((item) => (
                   <div
-                    className="slide-up flex gap-3.5 items-center leading-none"
+                    className="slide-up flex items-center gap-3.5 leading-none"
                     key={item.name}
                   >
                     {item.icon ? (
@@ -87,7 +87,7 @@ const Skills = () => {
                     ) : (
                       <span
                         aria-hidden="true"
-                        className="size-10 shrink-0 inline-flex items-center justify-center rounded-sm bg-background-light text-sm font-anton text-primary"
+                        className="inline-flex size-10 shrink-0 items-center justify-center rounded-sm bg-background-light font-anton text-primary text-sm"
                       >
                         {item.name.slice(0, 2)}
                       </span>

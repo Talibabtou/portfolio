@@ -1,47 +1,62 @@
+'use client';
+
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import { GitFork, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface RepoStats {
   stargazers_count: number;
   forks_count: number;
 }
 
-const getRepoStats = async (): Promise<RepoStats> => {
-  try {
-    const repoStats = await fetch(
-      'https://api.github.com/repos/Talibabtou/portfolio',
-      {
-        next: {
-          revalidate: 60 * 60,
-        },
-      },
-    );
-
-    if (!repoStats.ok) {
-      throw new Error('Unable to fetch repository stats');
-    }
-
-    return (await repoStats.json()) as RepoStats;
-  } catch {
-    return {
-      stargazers_count: 0,
-      forks_count: 0,
-    };
-  }
+const EMPTY_REPO_STATS: RepoStats = {
+  stargazers_count: 0,
+  forks_count: 0,
 };
 
-const Footer = async () => {
-  const { stargazers_count, forks_count } = await getRepoStats();
+const Footer = () => {
+  const [repoStats, setRepoStats] = useState<RepoStats>(EMPTY_REPO_STATS);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    const loadRepoStats = async () => {
+      try {
+        const statsResponse = await fetch(
+          'https://api.github.com/repos/Talibabtou/portfolio',
+          {
+            signal: abortController.signal,
+          },
+        );
+
+        if (!statsResponse.ok) {
+          return;
+        }
+
+        setRepoStats((await statsResponse.json()) as RepoStats);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+      }
+    };
+
+    void loadRepoStats();
+
+    return () => abortController.abort();
+  }, []);
+
+  const { stargazers_count, forks_count } = repoStats;
 
   return (
-    <footer className="text-center pb-5" id="contact">
+    <footer className="pb-5 text-center" id="contact">
       <div className="container">
         <p className="text-lg">Building a Web3 or fintech product?</p>
         <a
           href={`mailto:${GENERAL_INFO.email}?subject=${encodeURIComponent(
             GENERAL_INFO.emailSubject,
           )}&body=${encodeURIComponent(GENERAL_INFO.emailBody)}`}
-          className="text-3xl sm:text-4xl font-anton inline-block mt-5 mb-8 hover:underline"
+          className="mt-5 mb-8 inline-block font-anton text-3xl hover:underline sm:text-4xl"
         >
           {GENERAL_INFO.email}
         </a>
@@ -53,7 +68,7 @@ const Footer = async () => {
               href={link.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="capitalize hover:underline hover:text-white"
+              className="capitalize hover:text-white hover:underline"
             >
               {link.name}
             </a>
@@ -64,7 +79,7 @@ const Footer = async () => {
           href={GENERAL_INFO.githubRepo}
           target="_blank"
           rel="noreferrer noopener"
-          className="mx-auto mt-6 inline-flex items-center justify-center gap-5 text-sm text-muted-foreground hover:text-white"
+          className="mx-auto mt-6 inline-flex items-center justify-center gap-5 text-muted-foreground text-sm hover:text-white"
         >
           <span>Talibabtou/portfolio</span>
           <span className="flex items-center gap-2">
@@ -75,7 +90,7 @@ const Footer = async () => {
           </span>
         </a>
 
-        <p className="mt-6 text-sm text-muted-foreground">
+        <p className="mt-6 text-muted-foreground text-sm">
           Design adapted and content revised by Guillaume Dumas.
         </p>
       </div>

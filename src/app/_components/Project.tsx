@@ -1,6 +1,6 @@
 import TransitionLink from '@/components/TransitionLink';
 import { cn } from '@/lib/utils';
-import { IProject } from '@/types';
+import type { IProject } from '@/types';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Image from 'next/image';
@@ -38,72 +38,76 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
     revertOnUpdate: true,
   });
 
-  const handleMouseEnter = contextSafe?.(() => {
-    onMouseEnter(project.slug);
+  const handleMouseEnter = () => {
+    contextSafe?.(() => {
+      onMouseEnter(project.slug);
 
-    const arrowLine = externalLinkSVGRef.current?.querySelector(
-      '#arrow-line',
-    ) as SVGPathElement;
-    const arrowCurb = externalLinkSVGRef.current?.querySelector(
-      '#arrow-curb',
-    ) as SVGPathElement;
-    const box = externalLinkSVGRef.current?.querySelector(
-      '#box',
-    ) as SVGPathElement;
+      const arrowLine = externalLinkSVGRef.current?.querySelector(
+        '#arrow-line',
+      ) as SVGPathElement;
+      const arrowCurb = externalLinkSVGRef.current?.querySelector(
+        '#arrow-curb',
+      ) as SVGPathElement;
+      const box = externalLinkSVGRef.current?.querySelector(
+        '#box',
+      ) as SVGPathElement;
 
-    gsap.set(box, {
-      opacity: 0,
-      strokeDasharray: box?.getTotalLength(),
-      strokeDashoffset: box?.getTotalLength(),
-    });
-    gsap.set(arrowLine, {
-      opacity: 0,
-      strokeDasharray: arrowLine?.getTotalLength(),
-      strokeDashoffset: arrowLine?.getTotalLength(),
-    });
-    gsap.set(arrowCurb, {
-      opacity: 0,
-      strokeDasharray: arrowCurb?.getTotalLength(),
-      strokeDashoffset: arrowCurb?.getTotalLength(),
-    });
+      gsap.set(box, {
+        opacity: 0,
+        strokeDasharray: box?.getTotalLength(),
+        strokeDashoffset: box?.getTotalLength(),
+      });
+      gsap.set(arrowLine, {
+        opacity: 0,
+        strokeDasharray: arrowLine?.getTotalLength(),
+        strokeDashoffset: arrowLine?.getTotalLength(),
+      });
+      gsap.set(arrowCurb, {
+        opacity: 0,
+        strokeDasharray: arrowCurb?.getTotalLength(),
+        strokeDashoffset: arrowCurb?.getTotalLength(),
+      });
 
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
-    tl.to(externalLinkSVGRef.current, {
-      autoAlpha: 1,
-    })
-      .to(box, {
-        opacity: 1,
-        strokeDashoffset: 0,
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+      tl.to(externalLinkSVGRef.current, {
+        autoAlpha: 1,
       })
-      .to(
-        arrowLine,
-        {
+        .to(box, {
           opacity: 1,
           strokeDashoffset: 0,
-        },
-        '<0.2',
-      )
-      .to(arrowCurb, {
-        opacity: 1,
-        strokeDashoffset: 0,
-      })
-      .to(
-        externalLinkSVGRef.current,
-        {
-          autoAlpha: 0,
-        },
-        '+=1',
-      );
-  });
+        })
+        .to(
+          arrowLine,
+          {
+            opacity: 1,
+            strokeDashoffset: 0,
+          },
+          '<0.2',
+        )
+        .to(arrowCurb, {
+          opacity: 1,
+          strokeDashoffset: 0,
+        })
+        .to(
+          externalLinkSVGRef.current,
+          {
+            autoAlpha: 0,
+          },
+          '+=1',
+        );
+    })();
+  };
 
-  const handleMouseLeave = contextSafe?.(() => {
-    context.kill();
-  });
+  const handleMouseLeave = () => {
+    contextSafe?.(() => {
+      context.kill();
+    })();
+  };
 
   return (
     <TransitionLink
       href={`/projects/${project.slug}`}
-      className="project-item group leading-none py-5 md:border-b first:!pt-0 last:pb-0 last:border-none md:group-hover/projects:opacity-30 md:hover:!opacity-100 transition-all"
+      className="project-item group first:!pt-0 md:hover:!opacity-100 py-5 leading-none transition-all last:border-none last:pb-0 md:border-b md:group-hover/projects:opacity-30"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -113,7 +117,7 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           alt="Project"
           width="300"
           height="200"
-          className={cn('w-full object-cover mb-6 aspect-[3/2] object-top')}
+          className={cn('mb-6 aspect-[3/2] w-full object-cover object-top')}
           key={project.slug}
           loading="lazy"
         />
@@ -123,10 +127,11 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           _{(index + 1).toString().padStart(2, '0')}.
         </div>
         <div className="">
-          <h4 className="text-4xl xs:text-6xl flex gap-4 font-anton transition-all duration-700 bg-gradient-to-r from-primary to-foreground from-[50%] to-[50%] bg-[length:200%] bg-right bg-clip-text text-transparent group-hover:bg-left">
+          <h4 className="flex gap-4 bg-[length:200%] bg-gradient-to-r bg-right from-[50%] from-primary to-[50%] to-foreground bg-clip-text font-anton text-4xl text-transparent xs:text-6xl transition-all duration-700 group-hover:bg-left">
             {project.title}
-            <span className="text-foreground opacity-0 group-hover:opacity-100 transition-all">
+            <span className="text-foreground opacity-0 transition-all group-hover:opacity-100">
               <svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
                 height="36"
@@ -149,7 +154,7 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           </h4>
           <div className="mt-2 flex flex-wrap gap-3 text-muted-foreground text-xs">
             {project.techStack.slice(0, 3).map((tech, idx, stackArr) => (
-              <div className="gap-3 flex items-center" key={tech}>
+              <div className="flex items-center gap-3" key={tech}>
                 <span className="">{tech}</span>
                 {idx !== stackArr.length - 1 && (
                   <span className="inline-block size-2 rounded-full bg-background-light"></span>

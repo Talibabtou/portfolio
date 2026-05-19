@@ -20,7 +20,7 @@ const ProjectList = () => {
 
   // Keep the project preview image aligned with the cursor in the list area.
   useGSAP(
-    (context, contextSafe) => {
+    (_context, contextSafe) => {
       // show image on hover
       if (window.innerWidth < 768) {
         setSelectedProject(null);
@@ -68,7 +68,7 @@ const ProjectList = () => {
         window.removeEventListener('mousemove', handleMouseMove);
       };
     },
-    { scope: containerRef, dependencies: [containerRef.current] },
+    { scope: containerRef },
   );
 
   useGSAP(
@@ -108,7 +108,7 @@ const ProjectList = () => {
         <div className="group/projects relative" ref={containerRef}>
           {selectedProject !== null && (
             <div
-              className="max-md:hidden absolute right-0 top-0 z-[1] pointer-events-none w-[200px] xl:w-[350px] aspect-[3/4] overflow-hidden opacity-0"
+              className="pointer-events-none absolute top-0 right-0 z-[1] aspect-[3/4] w-[200px] overflow-hidden opacity-0 max-md:hidden xl:w-[350px]"
               ref={imageContainer}
             >
               {PROJECTS.map((project) => (
@@ -118,7 +118,7 @@ const ProjectList = () => {
                   width="400"
                   height="500"
                   className={cn(
-                    'absolute inset-0 transition-all duration-500 w-full h-full object-cover',
+                    'absolute inset-0 h-full w-full object-cover transition-all duration-500',
                     {
                       'opacity-0': project.slug !== selectedProject,
                     },

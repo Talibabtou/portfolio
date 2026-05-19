@@ -1,67 +1,5 @@
 # Portfolio Codebase Audit
 
-Date: 2026-05-18
-
-This portfolio is now a personalized fork for Talibabtou / Guillaume Dumas. The
-first cleanup pass replaced the original owner's visible identity, removed the
-old analytics, moved source code under `src/`, added path aliases, tightened
-lint/type checks, and rebuilt the content around Web3, fintech, 42 Lyon,
-Jupiter, Adrena, Versus, Magicake / Doge Capital, and Hermes.
-
-The site is directionally correct, but it can still become much more impressive
-for a recruiter. The next work should focus less on generic template polish and
-more on proof: concrete outcomes, real screenshots, clear case studies, fast
-loading, accessible navigation, and a visual system that feels like a sharp
-product engineer's portfolio.
-
-## Current Tech Stack
-
-- Framework: Next.js 15 App Router under `src/app`.
-- UI: React, TypeScript, Tailwind CSS.
-- Animation: GSAP, `@gsap/react`, ScrollTrigger, Lenis smooth scrolling.
-- Icons: `lucide-react`, custom SVG generated through SVGR.
-- Fonts: Google Fonts through `next/font`: Anton and Roboto Flex.
-- Content model: hard-coded TypeScript data in `src/lib/data.ts`.
-- Images/assets: static files under root `public/`.
-- Package manager: pnpm, with `pnpm-lock.yaml`.
-- Code quality: Biome formatting, ESLint with zero warnings, TypeScript
-  checking.
-
-## Site Structure
-
-- `src/app/page.tsx`: homepage composition: banner, about, skills, experience,
-  projects.
-- `src/app/layout.tsx`: global shell, metadata, navbar, footer, cursor,
-  preloader, particles, scroll progress, sticky email.
-- `src/app/projects/[slug]/page.tsx`: static project detail route generated from
-  `PROJECTS`.
-- `src/app/_components/*`: homepage sections.
-- `src/components/*`: shared UI, navigation, animation helpers, cursor, footer.
-- `src/lib/data.ts`: personal information, social links, stack, projects,
-  experience.
-- `src/app/globals.css` and `tailwind.config.ts`: color tokens, typography,
-  layout sizing.
-
-## Done Since The First Audit
-
-- Replaced original owner data in `src/lib/data.ts`.
-- Updated metadata and sitemap to Talibabtou positioning/domain.
-- Removed Google Analytics and Hotjar from `src/app/layout.tsx`.
-- Reworked the footer to use `Talibabtou/portfolio` GitHub stats with fallback.
-- Replaced original projects and experience entries with CV-derived content.
-- Added CV and LinkedIn/GitHub links.
-- Added fork attribution to `README.md`.
-- Moved source code under `src/` and configured `@/*` aliases to `src/*`.
-- Moved `public/` back to the root so Next can serve images and CV assets.
-- Removed explicit `any` usage and unused refs/imports.
-- Enabled stricter ESLint rules and made `pnpm run check` run Biome, ESLint,
-  and TypeScript.
-- Removed the unreachable duplicate return block in `Skills.tsx`.
-- Added accessible menu button label and expanded state.
-- Added `rel="noreferrer noopener"` to external project image links.
-- Made `ParticleBackground` client-only after mount to avoid hydration mismatch
-  from randomized particles.
-
 ## Good Habits To Keep
 
 - The portfolio now has a clear content angle: Web3 / fintech frontend and
@@ -79,8 +17,6 @@ product engineer's portfolio.
 
 ## Remaining Bad Habits And Risks
 
-- `ParticleBackground` remains purely decorative and random. It no longer causes
-  hydration mismatch, but it still adds animation work without proving skill.
 - Most sections are client components because of GSAP. This ships more JS than a
   portfolio needs.
 - `html-react-parser` renders HTML strings from project data. It is trusted
