@@ -1,10 +1,7 @@
 'use client';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
 import { useRef, useSyncExternalStore } from 'react';
-
-gsap.registerPlugin(useGSAP);
 
 const PRELOADER_SESSION_KEY = 'portfolio:preloader-seen';
 const PRELOADER_SESSION_EVENT = 'portfolio:preloader-seen-change';
@@ -46,7 +43,6 @@ const subscribeToPreloaderSession = (onStoreChange: () => void) => {
 
 const markPreloaderAsSeen = () => {
   window.sessionStorage.setItem(PRELOADER_SESSION_KEY, 'true');
-  document.documentElement.classList.add('has-seen-preloader');
   window.dispatchEvent(new Event(PRELOADER_SESSION_EVENT));
 };
 

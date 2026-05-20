@@ -117,10 +117,6 @@
     color: hsl(var(--foreground));
     font-family: var(--font-roboto-flex);
   }
-
-  html.has-seen-preloader {
-    --page-transition-background: var(--primary);
-  }
 }
 
 @utility container {

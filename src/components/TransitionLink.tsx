@@ -1,6 +1,9 @@
 'use client';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
+import { gsap, useGSAP } from '@/lib/gsap';
+import {
+  PAGE_TRANSITION_INNER_SELECTOR,
+  PAGE_TRANSITION_SELECTOR,
+} from '@/lib/page-transition';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps, MouseEvent } from 'react';
@@ -8,8 +11,6 @@ import type { ComponentProps, MouseEvent } from 'react';
 interface Props extends ComponentProps<typeof Link> {
   back?: boolean;
 }
-
-gsap.registerPlugin(useGSAP);
 
 const TransitionLink = ({
   href,
@@ -26,12 +27,12 @@ const TransitionLink = ({
     async (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
 
-      gsap.set('.page-transition', { yPercent: 100 });
-      gsap.set('.page-transition--inner', { yPercent: 100 });
+      gsap.set(PAGE_TRANSITION_SELECTOR, { yPercent: 100 });
+      gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
 
       const tl = gsap.timeline();
 
-      tl.to('.page-transition', {
+      tl.to(PAGE_TRANSITION_SELECTOR, {
         yPercent: 0,
         duration: 0.3,
       });

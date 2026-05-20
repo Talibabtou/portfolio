@@ -1,10 +1,6 @@
 'use client';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useGSAP } from '@/lib/gsap';
 import type { RefObject } from 'react';
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 type ScopedSectionAnimation = {
   scope: RefObject<HTMLElement | null>;

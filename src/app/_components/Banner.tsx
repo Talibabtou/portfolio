@@ -2,12 +2,8 @@
 import ArrowAnimation from '@/components/ArrowAnimation';
 import Button from '@/components/Button';
 import { GENERAL_INFO } from '@/lib/data';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { useRef } from 'react';
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const Banner = () => {
   const containerRef = useRef<HTMLDivElement>(null);

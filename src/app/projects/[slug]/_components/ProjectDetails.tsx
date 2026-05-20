@@ -1,18 +1,14 @@
 'use client';
 import ArrowAnimation from '@/components/ArrowAnimation';
 import TransitionLink from '@/components/TransitionLink';
+import { gsap, useGSAP } from '@/lib/gsap';
 import type { IProject } from '@/types';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
 import { ArrowLeft, ExternalLink, GitBranch } from 'lucide-react';
 import { useRef } from 'react';
 
 interface Props {
   project: IProject;
 }
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const ProjectDetails = ({ project }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);

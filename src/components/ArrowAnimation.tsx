@@ -1,9 +1,5 @@
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { useRef } from 'react';
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const ArrowAnimation = () => {
   const svgRef = useRef<SVGSVGElement>(null);

@@ -1,15 +1,11 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { PROJECTS } from '@/lib/data';
+import { gsap, useGSAP } from '@/lib/gsap';
 import { cn } from '@/lib/utils';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import Project from '@/app/_components/Project';
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const ProjectList = () => {
   const sectionRef = useRef<HTMLElement>(null);
