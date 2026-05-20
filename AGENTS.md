@@ -20,6 +20,8 @@ careful animation, responsive layout, and clean accessibility defaults.
 - Treat SVGs used only as decoration as `aria-hidden="true"`.
 - Give every `<button>` an explicit `type`.
 - Avoid array indexes as React keys when a stable value is available.
+- Keep design tokens in `src/app/globals.css`; change `--primary` to update
+  the site accent color globally.
 
 ## Common Commands
 

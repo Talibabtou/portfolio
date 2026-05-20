@@ -82,7 +82,7 @@ const Skills = () => {
                         alt={item.name}
                         width="40"
                         height="40"
-                        className="max-h-10"
+                        className="max-h-10 w-auto"
                       />
                     ) : (
                       <span
