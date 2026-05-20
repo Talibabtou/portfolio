@@ -1,10 +1,8 @@
 'use client';
+import { BROWSER_EVENTS, STORAGE_KEYS } from '@/lib/constants';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useRef, useSyncExternalStore } from 'react';
-
-const PRELOADER_SESSION_KEY = 'portfolio:preloader-seen';
-const PRELOADER_SESSION_EVENT = 'portfolio:preloader-seen-change';
 
 const PRELOADER_PANELS = [
   'panel-01',
@@ -22,28 +20,31 @@ const PRELOADER_PANELS = [
 const readHasSeenPreloader = () => {
   if (typeof window === 'undefined') return false;
 
-  return window.sessionStorage.getItem(PRELOADER_SESSION_KEY) === 'true';
+  return window.sessionStorage.getItem(STORAGE_KEYS.preloaderSeen) === 'true';
 };
 
 const subscribeToPreloaderSession = (onStoreChange: () => void) => {
   const handleStorageChange = (event: StorageEvent) => {
-    if (event.key === PRELOADER_SESSION_KEY) {
+    if (event.key === STORAGE_KEYS.preloaderSeen) {
       onStoreChange();
     }
   };
 
   window.addEventListener('storage', handleStorageChange);
-  window.addEventListener(PRELOADER_SESSION_EVENT, onStoreChange);
+  window.addEventListener(BROWSER_EVENTS.preloaderSeenChange, onStoreChange);
 
   return () => {
     window.removeEventListener('storage', handleStorageChange);
-    window.removeEventListener(PRELOADER_SESSION_EVENT, onStoreChange);
+    window.removeEventListener(
+      BROWSER_EVENTS.preloaderSeenChange,
+      onStoreChange,
+    );
   };
 };
 
 const markPreloaderAsSeen = () => {
-  window.sessionStorage.setItem(PRELOADER_SESSION_KEY, 'true');
-  window.dispatchEvent(new Event(PRELOADER_SESSION_EVENT));
+  window.sessionStorage.setItem(STORAGE_KEYS.preloaderSeen, 'true');
+  window.dispatchEvent(new Event(BROWSER_EVENTS.preloaderSeenChange));
 };
 
 const Preloader = () => {

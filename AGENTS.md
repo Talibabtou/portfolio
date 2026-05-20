@@ -22,6 +22,9 @@ careful animation, responsive layout, and clean accessibility defaults.
 - Avoid array indexes as React keys when a stable value is available.
 - Keep design tokens in `src/app/globals.css`; change `--primary` to update
   the site accent color globally.
+- Keep component-only types and constants local. If the same type or constant
+  contract is needed in more than two files, move types to `src/types/index.ts`
+  and app-level constants to `src/lib/constants.ts`.
 
 ## Common Commands
 

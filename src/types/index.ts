@@ -15,6 +15,12 @@ export type Variant =
   | 'link'
   | 'no-color';
 
+export type ThemePreference = 'dark' | 'light';
+
+export type UserPreferences = {
+  theme: ThemePreference;
+};
+
 export interface IProject {
   title: string;
   year: number;

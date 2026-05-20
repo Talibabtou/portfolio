@@ -1,4 +1,5 @@
 'use client';
+import { THEME_CLASS, THEME_VALUES } from '@/lib/constants';
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import {
   useUserPreferences,
@@ -38,15 +39,17 @@ const MENU_LINKS = [
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useUserPreferences();
-  const isDarkMode = theme === 'dark';
+  const isDarkMode = theme === THEME_VALUES.dark;
   const router = useRouter();
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
+    document.documentElement.classList.toggle(THEME_CLASS, isDarkMode);
   }, [isDarkMode]);
 
   const toggleTheme = () => {
-    writeUserPreferences({ theme: isDarkMode ? 'light' : 'dark' });
+    writeUserPreferences({
+      theme: isDarkMode ? THEME_VALUES.light : THEME_VALUES.dark,
+    });
   };
 
   return (

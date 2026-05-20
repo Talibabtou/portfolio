@@ -1,16 +1,9 @@
+import { BROWSER_EVENTS, STORAGE_KEYS, THEME_VALUES } from '@/lib/constants';
+import type { UserPreferences } from '@/types';
 import { useSyncExternalStore } from 'react';
 
-const USER_PREFERENCES_STORAGE_KEY = 'portfolio:user-preferences';
-const USER_PREFERENCES_CHANGE_EVENT = 'portfolio:user-preferences-change';
-
-export type ThemePreference = 'dark' | 'light';
-
-export type UserPreferences = {
-  theme: ThemePreference;
-};
-
 const DEFAULT_USER_PREFERENCES: UserPreferences = {
-  theme: 'dark',
+  theme: THEME_VALUES.dark,
 };
 
 let cachedPreferencesKey: string | null = null;
@@ -19,14 +12,17 @@ let cachedPreferences = DEFAULT_USER_PREFERENCES;
 const isUserPreference = (
   preferences: Partial<UserPreferences>,
 ): preferences is UserPreferences => {
-  return preferences.theme === 'dark' || preferences.theme === 'light';
+  return (
+    preferences.theme === THEME_VALUES.dark ||
+    preferences.theme === THEME_VALUES.light
+  );
 };
 
 export const readUserPreferences = (): UserPreferences => {
   if (typeof window === 'undefined') return DEFAULT_USER_PREFERENCES;
 
   const storedPreferences = window.localStorage.getItem(
-    USER_PREFERENCES_STORAGE_KEY,
+    STORAGE_KEYS.userPreferences,
   );
 
   if (storedPreferences === cachedPreferencesKey) {
@@ -73,31 +69,34 @@ export const writeUserPreferences = (preferences: Partial<UserPreferences>) => {
   };
 
   window.localStorage.setItem(
-    USER_PREFERENCES_STORAGE_KEY,
+    STORAGE_KEYS.userPreferences,
     JSON.stringify(nextPreferences),
   );
 
   cachedPreferencesKey = window.localStorage.getItem(
-    USER_PREFERENCES_STORAGE_KEY,
+    STORAGE_KEYS.userPreferences,
   );
   cachedPreferences = nextPreferences;
 
-  window.dispatchEvent(new Event(USER_PREFERENCES_CHANGE_EVENT));
+  window.dispatchEvent(new Event(BROWSER_EVENTS.userPreferencesChange));
 };
 
 const subscribeToUserPreferences = (onStoreChange: () => void) => {
   const handleStorageChange = (event: StorageEvent) => {
-    if (event.key === USER_PREFERENCES_STORAGE_KEY) {
+    if (event.key === STORAGE_KEYS.userPreferences) {
       onStoreChange();
     }
   };
 
   window.addEventListener('storage', handleStorageChange);
-  window.addEventListener(USER_PREFERENCES_CHANGE_EVENT, onStoreChange);
+  window.addEventListener(BROWSER_EVENTS.userPreferencesChange, onStoreChange);
 
   return () => {
     window.removeEventListener('storage', handleStorageChange);
-    window.removeEventListener(USER_PREFERENCES_CHANGE_EVENT, onStoreChange);
+    window.removeEventListener(
+      BROWSER_EVENTS.userPreferencesChange,
+      onStoreChange,
+    );
   };
 };
 

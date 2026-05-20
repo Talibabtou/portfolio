@@ -1,7 +1,6 @@
 'use client';
+import { REDUCED_MOTION_QUERY } from '@/lib/constants';
 import { useSyncExternalStore } from 'react';
-
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 const getReducedMotionPreference = () => {
   if (typeof window === 'undefined') return false;
