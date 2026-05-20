@@ -27,13 +27,7 @@ Last updated: 2026-05-20
   constraints, contribution, decisions and result.
 - Several sections are client components because animation is embedded directly
   in the section.
-- `html-react-parser` renders HTML-like strings from project data. It is local
-  content, but structured fields would be cleaner.
 - Some images still use generic alt text such as `alt="Project"`.
-- The preloader, custom cursor and scroll animations are memorable, but need a
-  reduced-motion path before publishing.
-- Theme preference is persisted in one JSON localStorage entry, ready for more
-  user preferences later.
 - SEO/social sharing.
 
 ## Highest Recruiter Impact
@@ -97,7 +91,7 @@ Last updated: 2026-05-20
    - Add captions or short labels under screenshots.
 
 2. Case study pass.
-   - Extend `IProject` with structured fields instead of HTML strings:
+   - Extend `IProject` with richer fields:
      `summary`, `context`, `problem`, `contributions`, `decisions`, `results`.
    - Render these fields consistently on project pages.
 
@@ -107,8 +101,8 @@ Last updated: 2026-05-20
    - Make CV and contact options obvious without making the page feel busy.
 
 4. Accessibility and motion pass.
-   - Add `prefers-reduced-motion` handling.
-   - Shorten or session-gate the preloader.
+   - Audit remaining GSAP section animations under reduced motion.
+   - Consider session-gating the preloader for non-reduced-motion users.
    - Keep custom cursor as progressive enhancement only.
    - Restore or reconsider hidden scrollbars before launch.
 
@@ -127,8 +121,8 @@ Last updated: 2026-05-20
 
 - Hero copy currently says "prediction markets" twice.
 - Project list preview images use `alt="Project"`; use project titles instead.
-- Project descriptions are HTML-like strings; structured typed content would be
-  better.
+- Project descriptions are now typed arrays; next step is richer case-study
+  fields instead of only prose paragraphs.
 - Project metadata uses raw description strings and optional project fields;
   strip markup and handle missing projects explicitly.
 - The light/dark toggle now persists the theme; visually test the first-load

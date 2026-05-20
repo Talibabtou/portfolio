@@ -17,7 +17,7 @@ export const generateMetadata = async ({
 
   return {
     title: `${project?.title} - ${project?.techStack.slice(0, 3).join(', ')}`,
-    description: project?.description,
+    description: project?.description.join(' '),
   } as Metadata;
 };
 

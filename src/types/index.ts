@@ -18,8 +18,8 @@ export type Variant =
 export interface IProject {
   title: string;
   year: number;
-  description: string;
-  role: string;
+  description: string[];
+  role: string[];
   techStack: string[];
   thumbnail: string;
   longThumbnail: string;

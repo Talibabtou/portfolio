@@ -1,10 +1,10 @@
-import { ReactLenis } from 'lenis/react';
 import type { Metadata } from 'next';
 import { Anton, Roboto_Flex } from 'next/font/google';
 import Script from 'next/script';
 
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
+import LenisProvider from '@/components/LenisProvider';
 import Navbar from '@/components/Navbar';
 import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
 import 'lenis/dist/lenis.css';
@@ -61,13 +61,7 @@ export default function RootLayout({
       <body
         className={`${antonFont.variable} ${robotoFlex.variable} antialiased`}
       >
-        <ReactLenis
-          root
-          options={{
-            lerp: 0.1,
-            duration: 1.4,
-          }}
-        >
+        <LenisProvider>
           <div className="custom-cursor-scope">
             <Navbar />
             <main>{children}</main>
@@ -79,7 +73,7 @@ export default function RootLayout({
           <Preloader />
           <ScrollProgressIndicator />
           <TopographicBackground />
-        </ReactLenis>
+        </LenisProvider>
       </body>
     </html>
   );

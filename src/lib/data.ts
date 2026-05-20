@@ -115,12 +115,12 @@ export const PROJECTS: IProject[] = [
     slug: 'jupiter-prediction-market',
     liveUrl: 'https://jup.ag/',
     year: 2026,
-    description: `
-      Consultant frontend work on Jupiter's prediction market interface in the Solana ecosystem. The work focused on product clarity, interaction consistency and production-ready frontend implementation for market and wallet-aware flows.
-    `,
-    role: `
-      Contributed frontend features in a fast-moving product context involving market data, wallet interactions and release quality. Improved screen clarity and implementation maintainability across user-facing flows.
-    `,
+    description: [
+      "Consultant frontend work on Jupiter's prediction market interface in the Solana ecosystem. The work focused on product clarity, interaction consistency and production-ready frontend implementation for market and wallet-aware flows.",
+    ],
+    role: [
+      'Contributed frontend features in a fast-moving product context involving market data, wallet interactions and release quality. Improved screen clarity and implementation maintainability across user-facing flows.',
+    ],
     techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
     thumbnail: '/projects/thumbnail/consulting-finance.jpg',
     longThumbnail: '/projects/long/consulting-finance.jpg',
@@ -135,12 +135,12 @@ export const PROJECTS: IProject[] = [
     slug: 'adrena',
     liveUrl: 'https://adrena.xyz/',
     year: 2025,
-    description: `
-      Open-source internship contributions for a DeFi trading product. The work covered UI improvements, reusable components, product screens, dashboards and leaderboard experiences.
-    `,
-    role: `
-      Delivered frontend improvements connected to backend data through API-driven features, with emphasis on data-heavy interface elements and trading product usability.
-    `,
+    description: [
+      'Open-source internship contributions for a DeFi trading product. The work covered UI improvements, reusable components, product screens, dashboards and leaderboard experiences.',
+    ],
+    role: [
+      'Delivered frontend improvements connected to backend data through API-driven features, with emphasis on data-heavy interface elements and trading product usability.',
+    ],
     techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
     thumbnail: '/projects/thumbnail/property-pro.jpg',
     longThumbnail: '/projects/long/property-pro.jpg',
@@ -155,12 +155,12 @@ export const PROJECTS: IProject[] = [
     slug: 'versus',
     sourceCode: 'https://github.com/Versusrip/versus',
     year: 2025,
-    description: `
-      Prediction and betting product concept with a Solana-oriented architecture. Versus combines frontend flows, product logic, smart-contract interactions and community-oriented product strategy.
-    `,
-    role: `
-      Founder and developer. Owned product thinking across UX, roadmap and go-to-market strategy while building the technical foundation with TypeScript, React, Python and Rust/Solana.
-    `,
+    description: [
+      'Prediction and betting product concept with a Solana-oriented architecture. Versus combines frontend flows, product logic, smart-contract interactions and community-oriented product strategy.',
+    ],
+    role: [
+      'Founder and developer. Owned product thinking across UX, roadmap and go-to-market strategy while building the technical foundation with TypeScript, React, Python and Rust/Solana.',
+    ],
     techStack: ['TypeScript', 'React', 'Python', 'Rust', 'Solana'],
     thumbnail: '/projects/thumbnail/resume-roaster.jpg',
     longThumbnail: '/projects/long/resume-roaster.jpg',
@@ -174,12 +174,12 @@ export const PROJECTS: IProject[] = [
     title: 'ft_transcendence',
     slug: 'ft-transcendence',
     year: 2025,
-    description: `
-      42 Lyon capstone project: a full-stack real-time web game with single-player, multiplayer and tournament flows.
-    `,
-    role: `
-      Built a custom React-like frontend architecture, real-time UX and WebSocket-driven game flows as part of the 42 Common Core curriculum.
-    `,
+    description: [
+      '42 Lyon capstone project: a full-stack real-time web game with single-player, multiplayer and tournament flows.',
+    ],
+    role: [
+      'Built a custom React-like frontend architecture, real-time UX and WebSocket-driven game flows as part of the 42 Common Core curriculum.',
+    ],
     techStack: [
       'TypeScript',
       'Node.js',
@@ -199,12 +199,12 @@ export const PROJECTS: IProject[] = [
     title: '42 Common Core',
     slug: '42-common-core',
     year: 2025,
-    description: `
-      Intensive peer-to-peer software engineering curriculum focused on autonomy, rigor and low-level foundations.
-    `,
-    role: `
-      Completed projects covering algorithms, data structures, C, C++, system programming, networking, graphics and Docker. This foundation supports precise frontend engineering and deeper full-stack growth.
-    `,
+    description: [
+      'Intensive peer-to-peer software engineering curriculum focused on autonomy, rigor and low-level foundations.',
+    ],
+    role: [
+      'Completed projects covering algorithms, data structures, C, C++, system programming, networking, graphics and Docker. This foundation supports precise frontend engineering and deeper full-stack growth.',
+    ],
     techStack: ['C', 'C++', 'Algorithms', 'Networking', 'Docker'],
     thumbnail: '/projects/thumbnail/mti-electronics.webp',
     longThumbnail: '/projects/long/mti-electronics.webp',

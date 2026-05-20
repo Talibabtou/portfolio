@@ -1,10 +1,13 @@
 'use client';
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect, useRef } from 'react';
 
 const CustomCursor = () => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     if (window.innerWidth < 768) return;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -20,7 +23,9 @@ const CustomCursor = () => {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [prefersReducedMotion]);
+
+  if (prefersReducedMotion) return null;
 
   return (
     <svg

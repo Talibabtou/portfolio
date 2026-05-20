@@ -5,7 +5,6 @@ import type { IProject } from '@/types';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import parse from 'html-react-parser';
 import { ArrowLeft, ExternalLink, GitBranch } from 'lucide-react';
 import { useRef } from 'react';
 
@@ -146,16 +145,26 @@ const ProjectDetails = ({ project }: Props) => {
                 </p>
 
                 <div className="prose-xl markdown-text text-lg">
-                  {parse(project.description)}
+                  {project.description.map((paragraph) => (
+                    <p className="mb-3 last:mb-0" key={paragraph}>
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               </div>
-              {project.role && (
+              {project.role.length > 0 && (
                 <div className="fade-in-later">
                   <p className="mb-3 font-anton text-muted-foreground">
                     My Role
                   </p>
 
-                  <div className="text-lg">{parse(project.role)}</div>
+                  <div className="text-lg">
+                    {project.role.map((paragraph) => (
+                      <p className="mb-3 last:mb-0" key={paragraph}>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
