@@ -44,28 +44,28 @@
 
 @layer base {
   :root {
-    /* Site accent. Change this token to update highlights globally. */
-    --primary: 196 100% 78%;
-    --primary-foreground: 0 0% 13%;
-    --secondary: 193 100% 47%;
-    --secondary-foreground: 0 0% 13%;
-
-    --background: 0 0% 96%;
-    --background-light: 0 0% 89%;
-    --foreground: 0 0% 9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 71%;
-    --accent: 0 0% 89%;
-    --accent-foreground: 0 0% 9%;
+    /* Light theme. Dark mode remains the default via <html class="dark">. */
+    --background: 42 78% 96%;
+    --background-light: 38 68% 90%;
+    --foreground: 24 38% 8%;
+    --card: 42 78% 98%;
+    --card-foreground: 24 38% 8%;
+    --popover: 42 78% 98%;
+    --popover-foreground: 24 38% 8%;
+    --primary: 24 100% 56%;
+    --primary-foreground: 24 38% 8%;
+    --secondary: 24 38% 8%;
+    --secondary-foreground: 42 78% 96%;
+    --muted: 38 42% 86%;
+    --muted-foreground: 24 18% 32%;
+    --accent: 24 100% 56%;
+    --accent-foreground: 24 38% 8%;
+    --topographic-opacity-scale: 1;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 78%;
-    --input: 0 0% 89%;
-    --ring: 0 0% 18%;
+    --border: 32 34% 78%;
+    --input: 38 42% 86%;
+    --ring: 24 38% 8%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -75,6 +75,10 @@
   }
 
   .dark {
+    --primary: 196 100% 78%;
+    --primary-foreground: 0 0% 13%;
+    --secondary: 193 100% 47%;
+    --secondary-foreground: 0 0% 13%;
     --background: 0 0% 9%;
     --background-light: 0 0% 16%;
     --foreground: 0 0% 87%;
@@ -86,6 +90,7 @@
     --muted-foreground: 0 0% 71%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
+    --topographic-opacity-scale: 0.65;
     --border: 0 0% 24%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;

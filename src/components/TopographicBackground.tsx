@@ -16,7 +16,7 @@ const TOPOGRAPHIC_STYLE = {
   // Human-facing line controls.
   lines: {
     count: 40,
-    opacityRange: [0.01, 0.2],
+    opacityRange: [0.04, 0.32],
     minStrokeWidth: 0.03,
     baseStrokeWidth: 0.0035,
     strokeVariation: 0.15,
@@ -401,7 +401,7 @@ const TopographicBackground = () => {
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <svg
         aria-hidden="true"
-        className="absolute overflow-visible text-white"
+        className="absolute overflow-visible text-foreground"
         height={topography.height}
         style={{
           left: topography.originX,
@@ -415,7 +415,6 @@ const TopographicBackground = () => {
             d={line.d}
             fill="none"
             key={line.d}
-            opacity={line.opacity}
             ref={(el) => {
               if (el) {
                 pathsRef.current[index] = el;
@@ -425,6 +424,9 @@ const TopographicBackground = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={line.strokeWidth}
+            style={{
+              opacity: `calc(${line.opacity} * var(--topographic-opacity-scale))`,
+            }}
           />
         ))}
       </svg>

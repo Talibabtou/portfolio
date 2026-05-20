@@ -1,7 +1,7 @@
 'use client';
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { MoveUpRight } from 'lucide-react';
+import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -33,13 +33,39 @@ const MENU_LINKS = [
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const router = useRouter();
+
+  const toggleTheme = () => {
+    const nextIsDarkMode = !isDarkMode;
+
+    document.documentElement.classList.toggle('dark', nextIsDarkMode);
+    setIsDarkMode(nextIsDarkMode);
+  };
 
   return (
     <>
       <div className="sticky top-0 z-4">
         <button
-          className={cn('group absolute top-5 right-5 z-2 size-12 md:right-10')}
+          aria-label={
+            isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
+          }
+          className={cn(
+            'fixed top-5 z-4 flex size-12 items-center justify-center text-foreground transition-[right,color] duration-700 md:hover:text-primary',
+            {
+              'right-20 md:right-24': !isMenuOpen,
+              'right-[calc(min(clamp(20rem,20vw,26rem),calc(100vw-3rem))-4.25rem)]':
+                isMenuOpen,
+            },
+          )}
+          onClick={toggleTheme}
+          type="button"
+        >
+          {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+        </button>
+
+        <button
+          className={cn('group fixed top-5 right-5 z-4 size-12 md:right-10')}
           type="button"
           aria-label={
             isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
@@ -82,7 +108,7 @@ const Navbar = () => {
 
       <div
         className={cn(
-          'fixed top-0 right-0 z-3 h-dvh w-[500px] max-w-[calc(100vw-3rem)] translate-x-full transform gap-y-14 overflow-hidden transition-transform duration-700',
+          'fixed top-0 right-0 z-3 h-dvh w-[clamp(20rem,20vw,26rem)] max-w-[calc(100vw-3rem)] translate-x-full transform gap-y-14 overflow-hidden transition-transform duration-700',
           'flex flex-col py-10 lg:justify-center',
           { 'translate-x-0': isMenuOpen },
         )}
