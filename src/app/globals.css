@@ -33,7 +33,7 @@
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
 
-  --spacing-section: 250px;
+  --spacing-section: clamp(4.5rem, 9vw, 8rem);
   --breakpoint-xs: 420px;
   --duration-7000: 7s;
 
@@ -116,6 +116,10 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-roboto-flex);
+  }
+
+  html.has-seen-preloader {
+    --page-transition-background: var(--primary);
   }
 }
 

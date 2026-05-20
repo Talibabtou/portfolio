@@ -49,7 +49,7 @@ const Footer = () => {
   const { stargazers_count, forks_count } = repoStats;
 
   return (
-    <footer className="pb-5 text-center" id="contact">
+    <footer className="pt-section pb-5 text-center" id="contact">
       <div className="container">
         <p className="text-lg">Building a Web3 or fintech product?</p>
         <a

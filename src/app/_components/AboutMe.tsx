@@ -1,58 +1,53 @@
 'use client';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+const REVEAL_SELECTOR = '.slide-up-and-fade';
 
 const AboutMe = () => {
   const container = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          id: 'about-me-in',
-          trigger: container.current,
-          start: 'top 70%',
-          end: 'bottom bottom',
-          scrub: 0.5,
-        },
-      });
+  useSectionGsap({
+    scope: container,
+    setup: ({ root, select }) => {
+      const revealElements = select(REVEAL_SELECTOR);
 
-      tl.from('.slide-up-and-fade', {
-        y: 150,
-        opacity: 0,
-        stagger: 0.05,
-      });
+      gsap
+        .timeline({
+          scrollTrigger: {
+            id: 'about-me-in',
+            end: 'bottom bottom',
+            scrub: 0.5,
+            start: 'top 70%',
+            trigger: root,
+          },
+        })
+        .from(revealElements, {
+          opacity: 0,
+          stagger: 0.05,
+          y: 150,
+        });
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            id: 'about-me-out',
+            end: 'bottom 10%',
+            scrub: 0.45,
+            start: 'bottom 45%',
+            trigger: root,
+          },
+        })
+        .to(revealElements, {
+          opacity: 0,
+          stagger: 0.02,
+          y: -150,
+        });
     },
-    { scope: container },
-  );
-
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          id: 'about-me-out',
-          trigger: container.current,
-          start: 'bottom 50%',
-          end: 'bottom 10%',
-          scrub: 0.5,
-        },
-      });
-
-      tl.to('.slide-up-and-fade', {
-        y: -150,
-        opacity: 0,
-        stagger: 0.02,
-      });
-    },
-    { scope: container },
-  );
+  });
 
   return (
-    <section className="pb-section" id="about-me">
+    <section className="py-section" id="about-me">
       <div className="container" ref={container}>
         <h2 className="slide-up-and-fade mb-20 font-thin text-4xl md:text-6xl">
           I turn complex product flows into clear, maintainable interfaces for

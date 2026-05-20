@@ -12,6 +12,7 @@ import Project from '@/app/_components/Project';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const ProjectList = () => {
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const imageContainer = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(
@@ -73,9 +74,11 @@ const ProjectList = () => {
 
   useGSAP(
     () => {
+      if (!sectionRef.current) return;
+
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: sectionRef.current,
           start: 'top bottom',
           end: 'top 80%',
           toggleActions: 'restart none none reverse',
@@ -83,12 +86,26 @@ const ProjectList = () => {
         },
       });
 
-      tl.from(containerRef.current, {
+      tl.from(sectionRef.current, {
         y: 150,
         opacity: 0,
       });
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            end: 'bottom 10%',
+            scrub: 0.55,
+            start: 'bottom 45%',
+            trigger: sectionRef.current,
+          },
+        })
+        .to(sectionRef.current, {
+          opacity: 0,
+          y: -120,
+        });
     },
-    { scope: containerRef },
+    { scope: sectionRef },
   );
 
   const handleMouseEnter = (slug: string) => {
@@ -101,7 +118,7 @@ const ProjectList = () => {
   };
 
   return (
-    <section className="pb-section" id="selected-projects">
+    <section className="py-section" id="selected-projects" ref={sectionRef}>
       <div className="container">
         <SectionTitle title="SELECTED PROJECTS" />
 

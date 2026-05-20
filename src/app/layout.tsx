@@ -53,14 +53,12 @@ export default function RootLayout({
 }>) {
   return (
     <html className="dark" lang="en" suppressHydrationWarning>
-      <head>
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
-      </head>
       <body
         className={`${antonFont.variable} ${robotoFlex.variable} antialiased`}
       >
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
         <LenisProvider>
           <div className="custom-cursor-scope">
             <Navbar />

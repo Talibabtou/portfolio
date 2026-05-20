@@ -2,9 +2,12 @@
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { useRef } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 
 gsap.registerPlugin(useGSAP);
+
+const PRELOADER_SESSION_KEY = 'portfolio:preloader-seen';
+const PRELOADER_SESSION_EVENT = 'portfolio:preloader-seen-change';
 
 const PRELOADER_PANELS = [
   'panel-01',
@@ -19,9 +22,42 @@ const PRELOADER_PANELS = [
   'panel-10',
 ];
 
+const readHasSeenPreloader = () => {
+  if (typeof window === 'undefined') return false;
+
+  return window.sessionStorage.getItem(PRELOADER_SESSION_KEY) === 'true';
+};
+
+const subscribeToPreloaderSession = (onStoreChange: () => void) => {
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === PRELOADER_SESSION_KEY) {
+      onStoreChange();
+    }
+  };
+
+  window.addEventListener('storage', handleStorageChange);
+  window.addEventListener(PRELOADER_SESSION_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener('storage', handleStorageChange);
+    window.removeEventListener(PRELOADER_SESSION_EVENT, onStoreChange);
+  };
+};
+
+const markPreloaderAsSeen = () => {
+  window.sessionStorage.setItem(PRELOADER_SESSION_KEY, 'true');
+  document.documentElement.classList.add('has-seen-preloader');
+  window.dispatchEvent(new Event(PRELOADER_SESSION_EVENT));
+};
+
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const hasSeenPreloader = useSyncExternalStore(
+    subscribeToPreloaderSession,
+    readHasSeenPreloader,
+    () => false,
+  );
   const preloaderText = 'TALIBABTOU';
   const preloaderLetters = Array.from(preloaderText, (letter, index) => ({
     id: `${letter}-${preloaderText.slice(0, index + 1)}`,
@@ -30,6 +66,7 @@ const Preloader = () => {
 
   useGSAP(
     () => {
+      if (hasSeenPreloader) return;
       if (prefersReducedMotion) return;
 
       const tl = gsap.timeline({
@@ -55,13 +92,20 @@ const Preloader = () => {
           preloaderRef.current,
           {
             autoAlpha: 0,
+            onComplete: () => {
+              markPreloaderAsSeen();
+            },
           },
           '<1',
         );
     },
-    { dependencies: [prefersReducedMotion], scope: preloaderRef },
+    {
+      dependencies: [hasSeenPreloader, prefersReducedMotion],
+      scope: preloaderRef,
+    },
   );
 
+  if (hasSeenPreloader) return null;
   if (prefersReducedMotion) return null;
 
   return (

@@ -1,63 +1,56 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { MY_STACK } from '@/lib/data';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
 import Image from 'next/image';
 import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+const SLIDE_UP_SELECTOR = '.slide-up';
 
 const Skills = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const slideUpEl = containerRef.current?.querySelectorAll('.slide-up');
+  useSectionGsap({
+    scope: containerRef,
+    setup: ({ root, select }) => {
+      const slideUpElements = select(SLIDE_UP_SELECTOR);
 
-      if (!slideUpEl?.length) return;
+      if (!slideUpElements.length) return;
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 80%',
-          end: 'bottom 80%',
-          scrub: 0.5,
-        },
-      });
+      gsap
+        .timeline({
+          scrollTrigger: {
+            end: 'bottom 80%',
+            scrub: 0.5,
+            start: 'top 80%',
+            trigger: root,
+          },
+        })
+        .from(slideUpElements, {
+          ease: 'none',
+          opacity: 0,
+          stagger: 0.4,
+          y: 40,
+        });
 
-      tl.from('.slide-up', {
-        opacity: 0,
-        y: 40,
-        ease: 'none',
-        stagger: 0.4,
-      });
+      gsap
+        .timeline({
+          scrollTrigger: {
+            end: 'bottom 10%',
+            scrub: 0.65,
+            start: 'bottom 45%',
+            trigger: root,
+          },
+        })
+        .to(root, {
+          opacity: 0,
+          y: -150,
+        });
     },
-    { scope: containerRef },
-  );
-
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'bottom 50%',
-          end: 'bottom 10%',
-          scrub: 1,
-        },
-      });
-
-      tl.to(containerRef.current, {
-        y: -150,
-        opacity: 0,
-      });
-    },
-    { scope: containerRef },
-  );
+  });
 
   return (
-    <section id="my-stack" ref={containerRef}>
+    <section className="py-section" id="my-stack" ref={containerRef}>
       <div className="container">
         <SectionTitle title="My Stack" />
 

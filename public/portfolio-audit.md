@@ -25,8 +25,6 @@ Last updated: 2026-05-20
   recruiter-facing weakness.
 - Project pages are descriptions, not full case studies yet. They need context,
   constraints, contribution, decisions and result.
-- Several sections are client components because animation is embedded directly
-  in the section.
 - Some images still use generic alt text such as `alt="Project"`.
 - SEO/social sharing.
 
@@ -53,11 +51,10 @@ Last updated: 2026-05-20
      API-Connected Products.
    - This helps a recruiter understand the profile in five seconds.
 
-4. Add a "What I can demo" section.
-   - A recruiter likes clickable evidence: live product, repository, case study,
-     architecture note, UI flow, before/after, performance or accessibility
-     improvement.
-   - This section can be compact and very high signal.
+4. Build out the new "What I can demo" section.
+   - The section now exists as a full-viewport product lab before the footer.
+   - Next step: replace the static mock surface with interactive chart, map,
+     wallet-state or realtime-feedback demos.
 
 5. Make the Hermes and 42 story sharper.
    - 42 means autonomy, fundamentals, algorithms, systems, peer review.

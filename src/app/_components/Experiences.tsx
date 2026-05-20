@@ -1,62 +1,55 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { MY_EXPERIENCE } from '@/lib/data';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/all';
+import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
 import { useRef } from 'react';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+const EXPERIENCE_ITEM_SELECTOR = '.experience-item';
 
 const Experiences = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      gsap.utils
-        .toArray<HTMLElement>('.experience-item')
-        .forEach((experienceItem) => {
-          gsap.fromTo(
-            experienceItem,
-            {
-              autoAlpha: 0,
-              y: 50,
+  useSectionGsap({
+    scope: containerRef,
+    setup: ({ root, select }) => {
+      const experienceItems = select(EXPERIENCE_ITEM_SELECTOR);
+
+      experienceItems.forEach((experienceItem) => {
+        gsap.fromTo(
+          experienceItem,
+          {
+            autoAlpha: 0,
+            y: 50,
+          },
+          {
+            autoAlpha: 1,
+            ease: 'none',
+            scrollTrigger: {
+              end: 'top 60%',
+              scrub: 0.5,
+              start: 'top 85%',
+              trigger: experienceItem,
             },
-            {
-              autoAlpha: 1,
-              y: 0,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: experienceItem,
-                start: 'top 85%',
-                end: 'top 60%',
-                scrub: 0.5,
-              },
-            },
-          );
+            y: 0,
+          },
+        );
+      });
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            end: 'bottom 10%',
+            scrub: 0.65,
+            start: 'bottom 45%',
+            trigger: root,
+          },
+        })
+        .to(root, {
+          opacity: 0,
+          y: -80,
         });
     },
-    { scope: containerRef },
-  );
-
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'bottom 60%',
-          end: 'bottom 45%',
-          scrub: 1,
-        },
-      });
-
-      tl.to(containerRef.current, {
-        y: -80,
-        opacity: 0,
-      });
-    },
-    { scope: containerRef },
-  );
+  });
 
   return (
     <section className="py-section" id="my-experience">
