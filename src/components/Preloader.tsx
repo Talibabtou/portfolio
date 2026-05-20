@@ -72,6 +72,10 @@ const Preloader = () => {
         },
       });
 
+      tl.set('.name-text', {
+        autoAlpha: 1,
+      });
+
       tl.to('.name-text span', {
         y: 0,
         stagger: 0.05,
@@ -114,7 +118,7 @@ const Preloader = () => {
         ></div>
       ))}
 
-      <p className="name-text absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 overflow-hidden text-center font-anton text-[20vw] text-[hsl(var(--preloader-foreground))] leading-none lg:text-[200px]">
+      <p className="name-text invisible absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 overflow-hidden text-center font-anton text-[20vw] text-[hsl(var(--preloader-foreground))] leading-none lg:text-[200px]">
         {preloaderLetters.map(({ id, letter }) => (
           <span className="inline-block translate-y-full" key={id}>
             {letter}

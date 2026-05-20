@@ -24,8 +24,14 @@ export type UserPreferences = {
 export interface IProject {
   title: string;
   year: number;
+  summary?: string;
   description: string[];
   role: string[];
+  context?: string[];
+  problem?: string[];
+  contributions?: string[];
+  decisions?: string[];
+  results?: string[];
   techStack: string[];
   thumbnail: string;
   longThumbnail: string;

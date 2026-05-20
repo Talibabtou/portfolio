@@ -1,33 +1,5 @@
 # Portfolio Audit
 
-Last updated: 2026-05-20
-
-## Good Habits To Keep
-
-- `pnpm run check` is now the single command for confidence: Biome fixes, ESLint,
-  TypeScript and production build.
-- Theme tokens live in `src/app/globals.css`, so accent and light/dark changes
-  are clean.
-- Dark mode is the default, light mode is prepared, and the navbar has a direct
-  theme toggle ready for final icons.
-- The topographic background now follows theme tokens instead of hardcoded
-  white.
-- Project and profile content is centralized in `src/lib/data.ts`.
-- App Router static project pages use `generateStaticParams`.
-- `next/font`, `next/image`, TypeScript, path aliases, Biome and ESLint are all
-  good professional signals.
-- The site has a memorable motion identity without becoming a standard SaaS
-  landing page.
-
-## Bad Habits And Risks
-
-- The project visuals still look like placeholders. This is the largest
-  recruiter-facing weakness.
-- Project pages are descriptions, not full case studies yet. They need context,
-  constraints, contribution, decisions and result.
-- Some images still use generic alt text such as `alt="Project"`.
-- SEO/social sharing.
-
 ## Highest Recruiter Impact
 
 1. Replace all placeholder project visuals.
@@ -53,8 +25,15 @@ Last updated: 2026-05-20
 
 4. Build out the new "What I can demo" section.
    - The section now exists as a full-viewport product lab before the footer.
-   - Next step: replace the static mock surface with interactive chart, map,
-     wallet-state or realtime-feedback demos.
+   - Next step: make one rail real first. Best first options:
+     - GitHub Radar: fetch public GitHub API data, rank repositories, show
+       loading/error/rate-limit states.
+     - Market Chart: embed or recreate a TradingView-style chart with
+       position/risk context.
+     - World Map: plot public API locations or mocked network nodes with clear
+       hover/focus states.
+   - Do not build five weak demos. One polished demo is stronger than five
+     placeholders.
 
 5. Make the Hermes and 42 story sharper.
    - 42 means autonomy, fundamentals, algorithms, systems, peer review.
@@ -87,45 +66,72 @@ Last updated: 2026-05-20
    - Add project-specific alt text.
    - Add captions or short labels under screenshots.
 
-2. Case study pass.
-   - Extend `IProject` with richer fields:
-     `summary`, `context`, `problem`, `contributions`, `decisions`, `results`.
-   - Render these fields consistently on project pages.
+2. Demo lab proof pass.
+   - Turn one carousel rail into a real interactive module.
+   - Recommended first choice: GitHub Radar, because it demonstrates public API
+     integration, data modeling, loading states, sorting/filtering and product
+     UI in one compact surface.
 
 3. Recruiter scan pass.
    - Fix hero copy.
-   - Add Current Focus / What I Can Demo.
+   - Consider a compact Current Focus / proof band if the page still needs a
+     faster five-second read after visuals improve.
    - Make CV and contact options obvious without making the page feel busy.
 
-4. Accessibility and motion pass.
-   - Audit remaining GSAP section animations under reduced motion.
-   - Consider session-gating the preloader for non-reduced-motion users.
-   - Keep custom cursor as progressive enhancement only.
-   - Restore or reconsider hidden scrollbars before launch.
-
-5. SEO and sharing pass.
+4. SEO and sharing pass.
    - Add homepage Open Graph metadata and image.
    - Add project-specific metadata with plain text descriptions.
    - Add `robots.ts`, canonical URL and JSON-LD Person data.
 
-6. Engineering proof pass.
+5. Engineering proof pass.
    - Add GitHub Actions running `pnpm install --frozen-lockfile` and
      `pnpm run check`.
-   - Add one Playwright smoke test for homepage, project page and nav links.
    - Keep `AGENTS.md` updated with project rules.
+
+## Must Do Before Launch
+
+### Security Check
+
+- Add or verify production security headers at the hosting layer or in
+  `next.config.ts`: `X-Content-Type-Options`, `Referrer-Policy`,
+  `X-Frame-Options` or CSP `frame-ancestors`, and a minimal
+  `Permissions-Policy`.
+- Consider a CSP after the page-transition/theme inline script strategy is
+  stable. Avoid rushing this with `unsafe-inline` unless it is documented and
+  intentionally temporary.
+- Run dependency/security review before launch after the final dependency lock:
+  `pnpm audit` or the hosting provider's security advisory check.
+- Re-check any future public API demo rail for rate-limit handling, error
+  states and untrusted data rendering.
+
+### SEO Check
+
+- Add `robots.ts` with the production host and sitemap reference.
+- Expand `sitemap.ts` to include every static project page, not only the
+  homepage.
+- Add canonical URLs through metadata for the homepage and project pages.
+- Add Open Graph and Twitter metadata, including a real sharing image.
+- Add project-specific metadata using `summary` where available and handle
+  missing projects explicitly in `generateMetadata`.
+- Add JSON-LD Person/ProfilePage data once final name, role, links and CV URL
+  are stable.
+- Improve image alt text before launch, especially project thumbnails and
+  screenshots.
+
+### Responsive Check
+
+- A full tablet and mobile visual pass is planned later, after the main desktop
+  structure and content are stronger.
+- Re-test navbar width, theme toggle position, demo carousel behavior, project
+  image layout and footer spacing across mobile and tablet sizes.
+- Replace all px values with rem values and don;t forget to add the sm, md, lg conditions
 
 ## Specific Fixes Spotted In Current Code
 
 - Hero copy currently says "prediction markets" twice.
 - Project list preview images use `alt="Project"`; use project titles instead.
-- Project descriptions are now typed arrays; next step is richer case-study
-  fields instead of only prose paragraphs.
-- Project metadata uses raw description strings and optional project fields;
-  strip markup and handle missing projects explicitly.
-- The light/dark toggle now persists the theme; visually test the first-load
-  transition before launch.
-- Navbar panel width is now responsive, but should be visually checked on mobile
-  once the logo/theme control is final.
+- Project metadata now prefers `summary`; next step is handling missing projects
+  explicitly in `generateMetadata`.
 
 ## The ideal recruiter impression
 

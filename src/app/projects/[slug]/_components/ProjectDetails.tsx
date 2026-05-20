@@ -10,8 +10,41 @@ interface Props {
   project: IProject;
 }
 
+type ProjectCaseStudySection = {
+  title: string;
+  items: string[];
+};
+
+const getProjectCaseStudySections = (project: IProject) =>
+  [
+    {
+      title: 'Context',
+      items: project.context,
+    },
+    {
+      title: 'Problem',
+      items: project.problem,
+    },
+    {
+      title: 'Contributions',
+      items: project.contributions,
+    },
+    {
+      title: 'Technical Decisions',
+      items: project.decisions,
+    },
+    {
+      title: 'Result',
+      items: project.results,
+    },
+  ].filter((section): section is ProjectCaseStudySection =>
+    Boolean(section.items && section.items.length > 0),
+  );
+
 const ProjectDetails = ({ project }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const caseStudySections = getProjectCaseStudySections(project);
+  const hasCaseStudy = project.summary || caseStudySections.length > 0;
 
   useGSAP(
     () => {
@@ -176,7 +209,7 @@ const ProjectDetails = ({ project }: Props) => {
           {project.images.map((image) => (
             <div
               key={image}
-              className="group relative aspect-[750/400] w-full bg-background-light"
+              className="group relative aspect-750/400 w-full bg-background-light"
               style={{
                 backgroundImage: `url(${image})`,
                 backgroundSize: 'cover',
@@ -195,6 +228,43 @@ const ProjectDetails = ({ project }: Props) => {
             </div>
           ))}
         </div>
+
+        {hasCaseStudy && (
+          <div className="fade-in-later mx-auto mt-section max-w-[800px]">
+            <p className="mb-10 font-anton text-muted-foreground uppercase">
+              Case Study
+            </p>
+
+            <div className="space-y-14">
+              {project.summary && (
+                <section>
+                  <h2 className="mb-4 font-anton text-4xl leading-none">
+                    Summary
+                  </h2>
+                  <p className="text-lg text-muted-foreground">
+                    {project.summary}
+                  </p>
+                </section>
+              )}
+
+              {caseStudySections.map((section) => (
+                <section
+                  className="grid gap-5 border-foreground/15 border-t pt-8 md:grid-cols-12"
+                  key={section.title}
+                >
+                  <h2 className="font-anton text-3xl leading-none md:col-span-4">
+                    {section.title}
+                  </h2>
+                  <div className="space-y-3 text-lg text-muted-foreground md:col-span-8">
+                    {section.items.map((item) => (
+                      <p key={item}>{item}</p>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

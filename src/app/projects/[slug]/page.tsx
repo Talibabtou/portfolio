@@ -14,10 +14,11 @@ export const generateMetadata = async ({
 }) => {
   const { slug } = await params;
   const project = PROJECTS.find((project) => project.slug === slug);
+  const description = project?.summary ?? project?.description.join(' ');
 
   return {
     title: `${project?.title} - ${project?.techStack.slice(0, 3).join(', ')}`,
-    description: project?.description.join(' '),
+    description,
   } as Metadata;
 };
 
