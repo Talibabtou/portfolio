@@ -1,216 +1,143 @@
-# Portfolio Codebase Audit
+# Portfolio Audit
+
+Last updated: 2026-05-20
 
 ## Good Habits To Keep
 
-- The portfolio now has a clear content angle: Web3 / fintech frontend and
-  product engineering.
-- The project and experience content is centralized in `src/lib/data.ts`.
-- App Router is used correctly for static project pages with
-  `generateStaticParams`.
-- TypeScript strict mode is enabled.
-- Path aliases keep imports readable after the `src/` migration.
-- Tailwind theme uses CSS variables, so a visual redesign can be done cleanly.
-- `next/font` avoids runtime font layout shifts.
-- `next/image` is used for many images.
-- The site has memorable motion and a bold identity, which can work well if the
-  motion becomes more intentional and less decorative.
+- `pnpm run check` is now the single command for confidence: Biome fixes, ESLint,
+  TypeScript and production build.
+- Theme tokens live in `src/app/globals.css`, so accent and light/dark changes
+  are clean.
+- Dark mode is the default, light mode is prepared, and the navbar has a direct
+  theme toggle ready for final icons.
+- The topographic background now follows theme tokens instead of hardcoded
+  white.
+- Project and profile content is centralized in `src/lib/data.ts`.
+- App Router static project pages use `generateStaticParams`.
+- `next/font`, `next/image`, TypeScript, path aliases, Biome and ESLint are all
+  good professional signals.
+- The site has a memorable motion identity without becoming a standard SaaS
+  landing page.
 
-## Remaining Bad Habits And Risks
+## Bad Habits And Risks
 
-- Most sections are client components because of GSAP. This ships more JS than a
-  portfolio needs.
-- `html-react-parser` renders HTML strings from project data. It is trusted
-  local content, but structured fields would be safer and easier to maintain.
-- Some project images still use generic alt text such as `alt="Project"`.
-- `Button.tsx` still references Tailwind classes like `bg-primary-hover`,
-  `bg-secondary-hover`, and `bg-background-active` that are not defined in the
-  Tailwind theme.
-- `generateMetadata` can produce weak metadata if a project is missing, and
-  project descriptions are still HTML-like strings.
-- No `robots.ts`, Open Graph image, Twitter card metadata, or rich social preview
-  exists yet.
-- No Lighthouse budget, accessibility check, Playwright smoke test, or CI
-  workflow exists yet.
-- The current dark neon green/blue palette still reads like the original
-  developer template more than Web3/fintech product tooling.
-- The project visuals are placeholders from the fork. This is the largest
-  recruiter-facing weakness: strong copy cannot compensate for irrelevant
-  screenshots.
-- The React packages are still React 19 release candidate builds with React 18
-  type packages. This is an avoidable compatibility smell for a professional
-  portfolio.
+- The project visuals still look like placeholders. This is the largest
+  recruiter-facing weakness.
+- Project pages are descriptions, not full case studies yet. They need context,
+  constraints, contribution, decisions and result.
+- Several sections are client components because animation is embedded directly
+  in the section.
+- `html-react-parser` renders HTML-like strings from project data. It is local
+  content, but structured fields would be cleaner.
+- Some images still use generic alt text such as `alt="Project"`.
+- The preloader, custom cursor and scroll animations are memorable, but need a
+  reduced-motion path before publishing.
+- Theme preference is persisted in one JSON localStorage entry, ready for more
+  user preferences later.
+- SEO/social sharing.
 
-## Recruiter Impact Priorities
+## Highest Recruiter Impact
 
-1. Replace placeholder project visuals.
-   - Use real screenshots, cropped product states, diagrams, or tasteful mockups
-     for Jupiter, Adrena, Versus, and ft_transcendence.
-   - Recruiters should immediately see dashboards, market flows, wallet-aware
-     UX, or real-time interfaces.
+1. Replace all placeholder project visuals.
+   - Jupiter: show prediction market UI, market states, wallet-aware flows or a
+     precise recreated mock if private work cannot be shown.
+   - Adrena: show dashboard, leaderboard, trading/product screens or component
+     work.
+   - Versus: show product concept, betting/prediction flow, architecture or
+     roadmap screens.
+   - ft_transcendence: show game flow, tournament UI, WebSocket/game state or
+     architecture.
 
-2. Convert project pages into short case studies.
-   - Add sections for context, constraints, contribution, technical decisions,
-     outcome, and stack.
-   - Keep each page skimmable: bullets, screenshots, and concrete verbs.
-   - Avoid vague claims like "improved UI"; say what changed and why it mattered.
+2. Turn project pages into case studies.
+   - Use the same structure for every project: Context, Problem, Contribution,
+     Technical Decisions, Result, Links.
+   - Keep them skimmable. Recruiters scan first and read second.
+   - Add 3 to 5 bullets per project that prove ownership and judgment.
 
-3. Add a high-signal "Current Focus" section.
-   - Example themes: Web3 product interfaces, trading dashboards, prediction
-     markets, wallet-aware UX, API-connected dashboards, full-stack growth.
-   - This helps recruiters map the profile to roles without reading everything.
-
-4. Make the hero more precise.
-   - Current direction is good, but the headline should be immediately
-     role-shaped: "Frontend Developer for Web3 & Fintech Interfaces" or
-     "Frontend / Product Engineer for Trading Interfaces".
-   - Keep the CTA to LinkedIn, but add a secondary CV download CTA somewhere
-     visible.
-
-5. Make the Hermes differentiator explicit but concise.
-   - The point is not nostalgia; it is precision, repeatability, finish quality,
-     and quality standards.
-   - This can become a small credibility block or timeline detail.
-
-6. Improve trust signals.
-   - Add GitHub, LinkedIn, CV, location, language fluency, target roles, and
-     availability in a recruiter-friendly area.
-   - Add links to live products or repositories where possible.
-
-## Minimalist UX Direction To Remember
-
-To avoid the generic AI-template feeling, the website should stand out through
-clarity, proof, and restraint rather than decorative effects.
-
-1. Add a "Current Focus" band after the hero.
-   - Four compact labels: Web3 Interfaces, Trading Dashboards, Wallet UX,
+3. Add an immediate proof band after the hero.
+   - Example labels: Web3 Interfaces, Trading Dashboards, Wallet UX,
      API-Connected Products.
-   - This gives immediate positioning without decoration.
+   - This helps a recruiter understand the profile in five seconds.
 
-2. Turn project pages into evidence-led case studies.
-   - Use a consistent structure: Context, Problem, Contribution, Technical
-     Decisions, Result.
-   - Google UX flow maps well here: empathize, define, ideate, prototype, test,
-     but translated for engineering and product delivery.
+4. Add a "What I can demo" section.
+   - A recruiter likes clickable evidence: live product, repository, case study,
+     architecture note, UI flow, before/after, performance or accessibility
+     improvement.
+   - This section can be compact and very high signal.
 
-3. Replace decorative wow with product proof.
-   - Real screenshots, cropped product states, architecture snippets, market
-     flow diagrams, API/data flow visuals.
-   - Minimal, but high signal.
+5. Make the Hermes and 42 story sharper.
+   - 42 means autonomy, fundamentals, algorithms, systems, peer review.
+   - Hermes means precision, repeatability, finish quality, patience and craft.
+   - Together they make a stronger human differentiator than generic "passion
+     for frontend".
 
-4. Add one restrained craft detail.
-   - A small Hermes/42 block: precision, repeatability, finish quality,
-     autonomy.
-   - This is distinctive and human, not AI-generated.
+## Features Recruiters Like As Talent Demos
 
-5. Improve hierarchy, not ornament.
-   - Recruiters skim.
-   - Make section intros short, spacing tighter, labels stronger, project
-     summaries sharper, and links visible.
+- Real project screenshots with captions explaining what the user is doing.
+- Short case studies with tradeoffs, constraints and decisions.
+- Before/after improvements, even small ones.
+- A clear link to GitHub, LinkedIn and CV.
+- Live links when possible, with fallback screenshots when work is private.
+- A visible stack, but tied to outcomes rather than just logos.
+- Accessibility care: keyboard, focus, reduced motion, useful alt text.
+- Performance care: image optimization, no unnecessary blocking animation,
+  strong Lighthouse story.
+- Product thinking: why a screen exists, what was confusing, what changed.
+- Engineering judgment: typed data model, reusable components, test/check
+  command, CI, clean README.
+- A small interactive demo if it is directly related to the target role:
+  wallet-state mock, market-card interaction, order/position widget, dashboard
+  filter, realtime status panel or WebSocket mini demo.
 
-6. Keep the background quiet.
-   - Plain dark graphite plus subtle particles is better than generic
-     glassmorphism.
-   - The standout should come from content, interaction quality, and sharp case
-     studies.
+## Recommended Next Build Order
 
-## Visual Direction Recommendation
+1. Project proof pass.
+   - Replace placeholder images.
+   - Add project-specific alt text.
+   - Add captions or short labels under screenshots.
 
-- Move away from the inherited neon template identity.
-- Better direction: graphite/black base, off-white typography, one precise accent
-  color, subtle market-grid/data-line details, and calmer motion.
-- Keep the bold typography only where it helps hierarchy.
-- Replace decorative particles with product-specific visual language: market
-  ticks, order-book rhythm, wallet states, dashboard panels, or code/data
-  fragments.
-- Make the site feel like someone who builds serious product interfaces, not
-  just someone who customized an animated portfolio.
+2. Case study pass.
+   - Extend `IProject` with structured fields instead of HTML strings:
+     `summary`, `context`, `problem`, `contributions`, `decisions`, `results`.
+   - Render these fields consistently on project pages.
 
-## Accessibility And Performance Plan
+3. Recruiter scan pass.
+   - Fix hero copy.
+   - Add Current Focus / What I Can Demo.
+   - Make CV and contact options obvious without making the page feel busy.
 
-1. Add reduced-motion support.
-   - Disable or simplify GSAP, Lenis, particles, cursor effects, and preloader
-     when `prefers-reduced-motion` is enabled.
+4. Accessibility and motion pass.
+   - Add `prefers-reduced-motion` handling.
+   - Shorten or session-gate the preloader.
+   - Keep custom cursor as progressive enhancement only.
+   - Restore or reconsider hidden scrollbars before launch.
 
-2. Restore native affordances.
-   - Stop hiding the global cursor by default.
-   - Stop hiding scrollbars globally.
-   - Keep custom cursor only as progressive enhancement on devices where it adds
-     value.
+5. SEO and sharing pass.
+   - Add homepage Open Graph metadata and image.
+   - Add project-specific metadata with plain text descriptions.
+   - Add `robots.ts`, canonical URL and JSON-LD Person data.
 
-3. Reduce JS shipped to the browser.
-   - Convert static sections to Server Components where possible.
-   - Isolate GSAP into smaller client wrappers instead of marking whole sections
-     client-only.
+6. Engineering proof pass.
+   - Add GitHub Actions running `pnpm install --frozen-lockfile` and
+     `pnpm run check`.
+   - Add one Playwright smoke test for homepage, project page and nav links.
+   - Keep `AGENTS.md` updated with project rules.
 
-4. Remove or shorten the preloader.
-   - If kept, show it only on first visit via session storage.
-   - Prefer immediate content access for recruiters.
+## Specific Fixes Spotted In Current Code
 
-5. Improve image accessibility.
-   - Replace generic image alt text with project-specific descriptions.
-   - Ensure hover-only image previews have equivalent visible information on
-     mobile and keyboard navigation.
+- Hero copy currently says "prediction markets" twice.
+- Project list preview images use `alt="Project"`; use project titles instead.
+- Project descriptions are HTML-like strings; structured typed content would be
+  better.
+- Project metadata uses raw description strings and optional project fields;
+  strip markup and handle missing projects explicitly.
+- The light/dark toggle now persists the theme; visually test the first-load
+  transition before launch.
+- Navbar panel width is now responsive, but should be visually checked on mobile
+  once the logo/theme control is final.
 
-## SEO And Sharing Plan
+## The ideal recruiter impression
 
-- Add `robots.ts`.
-- Add an Open Graph image and metadata for the homepage.
-- Add project-specific metadata that strips HTML and handles missing projects
-  cleanly.
-- Add a stable canonical URL once the final domain is confirmed.
-- Delete the old Google verification file and add a new one only when connected
-  to Guillaume's own Search Console.
-- Consider JSON-LD `Person` structured data with name, role, sameAs links,
-  location, and portfolio URL.
-
-## Engineering Plan
-
-1. Stabilize dependencies.
-   - Move from React 19 RC packages and React 18 type packages to stable matching
-     versions.
-   - Verify Next version compatibility after the change.
-
-2. Improve the content model.
-   - Replace HTML strings with structured project fields.
-   - Keep descriptions, bullets, role, results, and links as typed arrays/fields.
-
-3. Add lightweight automated verification.
-   - `pnpm run check` already covers formatting, lint, and typecheck.
-   - Add a Playwright smoke test for homepage load, project page load, and main
-     links.
-   - Add a Lighthouse/accessibility checklist before publishing.
-
-4. Add CI.
-   - GitHub Actions can run `pnpm install --frozen-lockfile`, `pnpm run check`,
-     and optionally `pnpm run build`.
-
-5. Review runtime fetches.
-   - Footer GitHub stats are acceptable with fallback, but keep the page useful
-     if GitHub API rate-limits or fails.
-
-## Suggested Next Work Sessions
-
-1. Visual/content proof pass:
-   - Replace placeholder project images.
-   - Rewrite each project page as a recruiter-readable case study.
-
-2. Accessibility/performance pass:
-   - Reduced motion.
-   - Native cursor/scrollbar restoration.
-   - Preloader and particle simplification.
-
-3. SEO/social pass:
-   - Open Graph image.
-   - `robots.ts`.
-   - richer metadata.
-   - delete old Google verification file.
-
-4. Design direction pass:
-   - New color system.
-   - calmer fintech/product visual language.
-   - tighter mobile and desktop hierarchy.
-
-5. Engineering hardening pass:
-   - stable React packages.
-   - structured project data.
-   - CI and smoke tests.
+"This person can build polished frontend product interfaces, understands
+technical constraints, communicates clearly, and has enough product judgment to
+work on complex Web3 or fintech screens."

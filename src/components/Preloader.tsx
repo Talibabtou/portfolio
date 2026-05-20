@@ -5,6 +5,19 @@ import { useRef } from 'react';
 
 gsap.registerPlugin(useGSAP);
 
+const PRELOADER_PANELS = [
+  'panel-01',
+  'panel-02',
+  'panel-03',
+  'panel-04',
+  'panel-05',
+  'panel-06',
+  'panel-07',
+  'panel-08',
+  'panel-09',
+  'panel-10',
+];
+
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const preloaderText = 'TALIBABTOU';
@@ -47,18 +60,14 @@ const Preloader = () => {
 
   return (
     <div className="preloader fixed inset-0 z-6 flex" ref={preloaderRef}>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
-      <div className="preloader-item h-full w-[10%] bg-black"></div>
+      {PRELOADER_PANELS.map((panel) => (
+        <div
+          className="preloader-item h-full flex-1 bg-[hsl(var(--preloader-background))]"
+          key={panel}
+        ></div>
+      ))}
 
-      <p className="name-text absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 overflow-hidden text-center font-anton text-[20vw] leading-none lg:text-[200px]">
+      <p className="name-text absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 overflow-hidden text-center font-anton text-[20vw] text-[hsl(var(--preloader-foreground))] leading-none lg:text-[200px]">
         {preloaderLetters.map(({ id, letter }) => (
           <span className="inline-block translate-y-full" key={id}>
             {letter}

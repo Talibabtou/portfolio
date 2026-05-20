@@ -32,7 +32,7 @@ const ArrowAnimation = () => {
     tl.to('#banner-arrow-svg', {
       duration: 0.5,
       delay: 0.5,
-      fill: '#ffffff14',
+      fill: 'var(--scroll-arrow-fill)',
     });
     tl.to('#banner-arrow-svg', {
       duration: 1,
@@ -59,13 +59,13 @@ const ArrowAnimation = () => {
       <path
         className="svg-arrow svg-arrow-1"
         d="M1 1V39.9286L188 110V70.6822L1 1Z"
-        stroke="#ffffff30"
+        stroke="var(--scroll-arrow-stroke)"
         ref={arrow1Ref}
       />
       <path
         className="svg-arrow svg-arrow-2"
         d="M375 1V39.9286L188 110V70.6822L375 1Z"
-        stroke="#ffffff30"
+        stroke="var(--scroll-arrow-stroke)"
         ref={arrow2Ref}
       />
     </svg>

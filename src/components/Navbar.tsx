@@ -1,9 +1,13 @@
 'use client';
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
+import {
+  useUserPreferences,
+  writeUserPreferences,
+} from '@/lib/user-preferences';
 import { cn } from '@/lib/utils';
 import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const COLORS = [
   'bg-yellow-500 text-black',
@@ -33,14 +37,16 @@ const MENU_LINKS = [
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { theme } = useUserPreferences();
+  const isDarkMode = theme === 'dark';
   const router = useRouter();
 
-  const toggleTheme = () => {
-    const nextIsDarkMode = !isDarkMode;
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
 
-    document.documentElement.classList.toggle('dark', nextIsDarkMode);
-    setIsDarkMode(nextIsDarkMode);
+  const toggleTheme = () => {
+    writeUserPreferences({ theme: isDarkMode ? 'light' : 'dark' });
   };
 
   return (

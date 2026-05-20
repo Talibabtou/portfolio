@@ -60,6 +60,10 @@
     --muted-foreground: 24 18% 32%;
     --accent: 24 100% 56%;
     --accent-foreground: 24 38% 8%;
+    --preloader-background: 42 78% 98%;
+    --preloader-foreground: var(--primary);
+    --scroll-arrow-fill: hsl(var(--foreground) / 0.08);
+    --scroll-arrow-stroke: hsl(var(--foreground) / 0.28);
     --topographic-opacity-scale: 1;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -90,6 +94,10 @@
     --muted-foreground: 0 0% 71%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
+    --preloader-background: 0 0% 0%;
+    --preloader-foreground: var(--primary);
+    --scroll-arrow-fill: hsl(0 0% 100% / 0.08);
+    --scroll-arrow-stroke: hsl(0 0% 100% / 0.19);
     --topographic-opacity-scale: 0.65;
     --border: 0 0% 24%;
     --input: 0 0% 14.9%;

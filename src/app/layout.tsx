@@ -1,6 +1,7 @@
 import { ReactLenis } from 'lenis/react';
 import type { Metadata } from 'next';
 import { Anton, Roboto_Flex } from 'next/font/google';
+import Script from 'next/script';
 
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
@@ -32,13 +33,31 @@ export const metadata: Metadata = {
     'Frontend developer focused on Web3, fintech, trading, prediction markets, wallet-aware UX and product interfaces.',
 };
 
+const themeInitScript = `
+(() => {
+  try {
+    const storedPreferences = window.localStorage.getItem('portfolio:user-preferences');
+    const theme = storedPreferences ? JSON.parse(storedPreferences).theme : 'dark';
+
+    document.documentElement.classList.toggle('dark', theme !== 'light');
+  } catch {
+    document.documentElement.classList.add('dark');
+  }
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html className="dark" lang="en">
+    <html className="dark" lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
+      </head>
       <body
         className={`${antonFont.variable} ${robotoFlex.variable} antialiased`}
       >
