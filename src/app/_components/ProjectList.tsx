@@ -82,10 +82,17 @@ const ProjectList = () => {
         },
       });
 
-      tl.from(sectionRef.current, {
-        y: 150,
-        opacity: 0,
-      });
+      tl.fromTo(
+        sectionRef.current,
+        {
+          autoAlpha: 0,
+          y: 150,
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+        },
+      );
 
       gsap
         .timeline({
@@ -96,10 +103,18 @@ const ProjectList = () => {
             trigger: sectionRef.current,
           },
         })
-        .to(sectionRef.current, {
-          opacity: 0,
-          y: -120,
-        });
+        .fromTo(
+          sectionRef.current,
+          {
+            autoAlpha: 1,
+            y: 0,
+          },
+          {
+            autoAlpha: 0,
+            immediateRender: false,
+            y: -120,
+          },
+        );
     },
     { scope: sectionRef },
   );

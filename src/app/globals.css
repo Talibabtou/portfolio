@@ -143,15 +143,15 @@
   }
 
   .portrait-hover:hover .portrait-border-wave {
-    animation: portrait-border-wave 1100ms ease-out both;
+    animation: portrait-border-wave 1400ms ease-out both;
   }
 
   .portrait-hover:hover .portrait-border-wave-delay {
-    animation-delay: 140ms;
+    animation-delay: 250ms;
   }
 
   .portrait-hover:hover .portrait-border-wave-delay-long {
-    animation-delay: 280ms;
+    animation-delay: 500ms;
   }
 
   .custom-cursor {
@@ -205,7 +205,7 @@
   }
 
   18% {
-    opacity: 0.7;
+    opacity: 1;
   }
 
   100% {

@@ -1,7 +1,11 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { MY_EXPERIENCE } from '@/lib/data';
-import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
+import {
+  gsap,
+  useRevealSectionGsap,
+  useSectionGsap,
+} from '@/lib/use-section-gsap';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useRef } from 'react';
@@ -21,7 +25,7 @@ const Experiences = () => {
 
   useSectionGsap({
     scope: containerRef,
-    setup: ({ root, select }) => {
+    setup: ({ select }) => {
       const experienceItems = select(EXPERIENCE_ITEM_SELECTOR);
 
       experienceItems.forEach((experienceItem) => {
@@ -44,20 +48,16 @@ const Experiences = () => {
           },
         );
       });
+    },
+  });
 
-      gsap
-        .timeline({
-          scrollTrigger: {
-            end: 'bottom 10%',
-            scrub: 0.65,
-            start: 'bottom 45%',
-            trigger: root,
-          },
-        })
-        .to(root, {
-          opacity: 0,
-          y: -80,
-        });
+  useRevealSectionGsap({
+    scope: containerRef,
+    exit: {
+      end: 'bottom 10%',
+      scrub: 0.65,
+      start: 'bottom 45%',
+      y: -80,
     },
   });
 

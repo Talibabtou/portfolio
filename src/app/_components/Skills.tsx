@@ -1,7 +1,7 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { MY_STACK } from '@/lib/data';
-import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
+import { useRevealSectionGsap } from '@/lib/use-section-gsap';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -50,42 +50,22 @@ const StackItemList = ({ items }: StackItemListProps) => (
 const Skills = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useSectionGsap({
+  useRevealSectionGsap({
     scope: containerRef,
-    setup: ({ root, select }) => {
-      const slideUpElements = select(SLIDE_UP_SELECTOR);
-
-      if (!slideUpElements.length) return;
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            end: 'bottom 80%',
-            scrub: 0.5,
-            start: 'top 80%',
-            trigger: root,
-          },
-        })
-        .from(slideUpElements, {
-          ease: 'none',
-          opacity: 0,
-          stagger: 0.4,
-          y: 40,
-        });
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            end: 'bottom 10%',
-            scrub: 0.65,
-            start: 'bottom 45%',
-            trigger: root,
-          },
-        })
-        .to(root, {
-          opacity: 0,
-          y: -150,
-        });
+    reveal: {
+      ease: 'none',
+      end: 'bottom 80%',
+      scrub: 0.5,
+      selector: SLIDE_UP_SELECTOR,
+      stagger: 0.4,
+      start: 'top 80%',
+      y: 40,
+    },
+    exit: {
+      end: 'bottom 10%',
+      scrub: 0.65,
+      start: 'bottom 45%',
+      y: -150,
     },
   });
 

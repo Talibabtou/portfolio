@@ -1,55 +1,34 @@
 'use client';
-import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
+import { useRevealSectionGsap } from '@/lib/use-section-gsap';
 import Image from 'next/image';
 import { useRef } from 'react';
 
 const REVEAL_SELECTOR = '.slide-up-and-fade';
 
 const AboutMe = () => {
-  const container = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  useSectionGsap({
-    scope: container,
-    setup: ({ root, select }) => {
-      const revealElements = select(REVEAL_SELECTOR);
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            id: 'about-me-in',
-            end: 'bottom bottom',
-            scrub: 0.5,
-            start: 'top 70%',
-            trigger: root,
-          },
-        })
-        .from(revealElements, {
-          opacity: 0,
-          stagger: 0.05,
-          y: 150,
-        });
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            id: 'about-me-out',
-            end: 'bottom 10%',
-            scrub: 0.45,
-            start: 'bottom 45%',
-            trigger: root,
-          },
-        })
-        .to(revealElements, {
-          opacity: 0,
-          stagger: 0.02,
-          y: -150,
-        });
+  useRevealSectionGsap({
+    scope: sectionRef,
+    reveal: {
+      end: 'bottom 80%',
+      scrub: 0.5,
+      selector: REVEAL_SELECTOR,
+      stagger: 0.05,
+      start: 'top 70%',
+      y: 150,
+    },
+    exit: {
+      end: 'bottom 10%',
+      scrub: 0.45,
+      start: 'bottom 45%',
+      y: -150,
     },
   });
 
   return (
-    <section className="py-section" id="about-me">
-      <div className="container" ref={container}>
+    <section className="py-section" id="about-me" ref={sectionRef}>
+      <div className="container">
         <h2 className="slide-up-and-fade mb-20 font-thin text-4xl md:text-6xl">
           I care about interfaces that feel clear, fast and reliable when the
           product gets complex.

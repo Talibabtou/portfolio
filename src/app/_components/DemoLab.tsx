@@ -1,6 +1,6 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
-import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
+import { useRevealSectionGsap } from '@/lib/use-section-gsap';
 import { cn } from '@/lib/utils';
 import {
   BarChart3,
@@ -71,39 +71,21 @@ const DemoLab = () => {
     DEMO_TRACKS.find((track) => track.id === activeTrackId) ?? DEMO_TRACKS[0];
   const ActiveIcon = activeTrack.icon;
 
-  useSectionGsap({
+  useRevealSectionGsap({
     scope: sectionRef,
-    setup: ({ root, select }) => {
-      const revealElements = select('.demo-reveal');
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            end: 'top 35%',
-            scrub: 0.6,
-            start: 'top 85%',
-            trigger: root,
-          },
-        })
-        .from(revealElements, {
-          autoAlpha: 0,
-          stagger: 0.08,
-          y: 80,
-        });
-
-      gsap
-        .timeline({
-          scrollTrigger: {
-            end: 'bottom 10%',
-            scrub: 0.55,
-            start: 'bottom 45%',
-            trigger: root,
-          },
-        })
-        .to(root, {
-          autoAlpha: 0,
-          y: -120,
-        });
+    reveal: {
+      end: 'top 35%',
+      scrub: 0.6,
+      selector: '.demo-reveal',
+      stagger: 0.08,
+      start: 'top 85%',
+      y: 80,
+    },
+    exit: {
+      end: 'bottom 10%',
+      scrub: 0.55,
+      start: 'bottom 45%',
+      y: -120,
     },
   });
 
