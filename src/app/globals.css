@@ -34,12 +34,12 @@
   --color-chart-5: hsl(var(--chart-5));
 
   --spacing-section: clamp(4.5rem, 9vw, 8rem);
-  --breakpoint-xs: 420px;
+  --breakpoint-xs: 26.25rem;
   --duration-7000: 7s;
 
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 0.125rem);
+  --radius-sm: calc(var(--radius) - 0.25rem);
 }
 
 @layer base {
@@ -121,7 +121,7 @@
 
 @utility container {
   width: 100%;
-  max-width: 1148px;
+  max-width: 71.75rem;
   margin-inline: auto;
   padding-inline: 1rem;
 }
@@ -129,7 +129,7 @@
 @layer components {
   .container {
     width: 100%;
-    max-width: 1148px;
+    max-width: 71.75rem;
     margin-inline: auto;
     padding-inline: 1rem;
   }
@@ -189,10 +189,6 @@
     .custom-cursor-scope * {
       cursor: none;
     }
-  }
-
-  .grid {
-    gap: 25px;
   }
 
   .markdown-text ul {

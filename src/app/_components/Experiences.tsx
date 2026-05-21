@@ -66,10 +66,10 @@ const Experiences = () => {
       <div className="container" ref={containerRef}>
         <SectionTitle title="My Experience" />
 
-        <div className="relative mx-auto max-w-[920px]">
+        <div className="relative mx-auto max-w-[57.5rem]">
           <div
             aria-hidden="true"
-            className="experience-timeline-line absolute top-0 bottom-0 left-1/2 hidden w-px -translate-x-1/2 bg-foreground/15 md:block"
+            className="absolute top-0 bottom-0 left-1/2 hidden w-px -translate-x-1/2 bg-foreground/15 md:block"
           />
 
           <div className="grid gap-14 md:gap-0">

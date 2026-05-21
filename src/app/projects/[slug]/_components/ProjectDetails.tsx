@@ -73,7 +73,7 @@ const ProjectDetails = ({ project }: Props) => {
       if (window.innerWidth < 992) return;
 
       gsap.to('#info', {
-        filter: 'blur(3px)',
+        filter: 'blur(0.1875rem)',
         autoAlpha: 0,
         scale: 0.9,
         // position: 'sticky',
@@ -124,10 +124,10 @@ const ProjectDetails = ({ project }: Props) => {
           Back
         </TransitionLink>
 
-        <div className="top-0 flex min-h-[calc(100svh-100px)]" id="info">
+        <div className="top-0 flex min-h-[calc(100svh-6.25rem)]" id="info">
           <div className="relative w-full">
-            <div className="mx-auto mb-10 flex max-w-[635px] items-start gap-6">
-              <h1 className="fade-in-later overflow-hidden font-anton text-4xl leading-none opacity-0 md:text-[60px]">
+            <div className="mx-auto mb-10 flex max-w-[39.6875rem] items-start gap-6">
+              <h1 className="fade-in-later overflow-hidden font-anton text-4xl leading-none opacity-0 md:text-[3.75rem]">
                 <span className="inline-block">{project.title}</span>
               </h1>
 
@@ -155,7 +155,7 @@ const ProjectDetails = ({ project }: Props) => {
               </div>
             </div>
 
-            <div className="mx-auto max-w-[635px] space-y-7 pb-20">
+            <div className="mx-auto max-w-[39.6875rem] space-y-7 pb-20">
               <div className="fade-in-later">
                 <p className="mb-3 font-anton text-muted-foreground">Year</p>
 
@@ -203,7 +203,7 @@ const ProjectDetails = ({ project }: Props) => {
         </div>
 
         <div
-          className="fade-in-later relative mx-auto flex max-w-[800px] flex-col gap-2"
+          className="fade-in-later relative mx-auto flex max-w-[50rem] flex-col gap-2"
           id="images"
         >
           {project.images.map((image) => (
@@ -230,7 +230,7 @@ const ProjectDetails = ({ project }: Props) => {
         </div>
 
         {hasCaseStudy && (
-          <div className="fade-in-later mx-auto mt-section max-w-[800px]">
+          <div className="fade-in-later mx-auto mt-section max-w-[50rem]">
             <p className="mb-10 font-anton text-muted-foreground uppercase">
               Case Study
             </p>

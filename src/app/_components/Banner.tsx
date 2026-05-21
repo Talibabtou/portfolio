@@ -33,15 +33,15 @@ const Banner = () => {
     <section className="relative overflow-hidden" id="banner">
       <ArrowAnimation />
       <div
-        className="flex h-svh min-h-[530px] items-center justify-between px-4 max-md:flex-col max-md:pb-10"
+        className="flex h-svh min-h-[33.125rem] items-center justify-between px-4 max-md:flex-col max-md:pb-10"
         ref={containerRef}
       >
-        <div className="max-w-[544px] flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">
-          <h1 className="banner-title slide-up-and-fade font-anton text-6xl leading-[.95] sm:text-[80px]">
+        <div className="max-w-[34rem] flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">
+          <h1 className="slide-up-and-fade font-anton text-6xl leading-[.95] sm:text-[5rem]">
             <span className="text-primary">FRONTEND </span>
             <br /> <span className="ml-4">DEVELOPER</span>
           </h1>
-          <p className="banner-description slide-up-and-fade mt-6 text-lg text-muted-foreground">
+          <p className="slide-up-and-fade mt-6 text-lg text-muted-foreground">
             Hi, I&apos;m{' '}
             <span className="font-medium text-foreground">Talibabtou</span>. I
             build sharp frontend interfaces for Web3, fintech and data-heavy
@@ -53,7 +53,7 @@ const Banner = () => {
             rel="noopener noreferrer"
             href={GENERAL_INFO.linkedinProfile}
             variant="primary"
-            className="banner-button slide-up-and-fade mt-9"
+            className="slide-up-and-fade mt-9"
           >
             View LinkedIn
           </Button>

@@ -121,7 +121,7 @@ const ProjectList = () => {
         <div className="group/projects relative" ref={containerRef}>
           {selectedProject !== null && (
             <div
-              className="pointer-events-none absolute top-0 right-0 z-1 aspect-[3/4] w-[200px] overflow-hidden opacity-0 max-md:hidden xl:w-[350px]"
+              className="pointer-events-none absolute top-0 right-0 z-1 aspect-3/4 w-50 overflow-hidden opacity-0 max-md:hidden xl:w-87.5"
               ref={imageContainer}
             >
               {PROJECTS.map((project) => (
