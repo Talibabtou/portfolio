@@ -127,7 +127,7 @@ const ProjectDetails = ({ project }: Props) => {
         <div className="top-0 flex min-h-[calc(100svh-6.25rem)]" id="info">
           <div className="relative w-full">
             <div className="mx-auto mb-10 flex max-w-[39.6875rem] items-start gap-6">
-              <h1 className="fade-in-later overflow-hidden font-anton text-4xl leading-none opacity-0 md:text-[3.75rem]">
+              <h1 className="fade-in-later overflow-hidden font-anton text-4xl leading-none opacity-0 md:text-6xl">
                 <span className="inline-block">{project.title}</span>
               </h1>
 
@@ -203,7 +203,7 @@ const ProjectDetails = ({ project }: Props) => {
         </div>
 
         <div
-          className="fade-in-later relative mx-auto flex max-w-[50rem] flex-col gap-2"
+          className="fade-in-later relative mx-auto flex max-w-200 flex-col gap-2"
           id="images"
         >
           {project.images.map((image) => (
@@ -230,7 +230,7 @@ const ProjectDetails = ({ project }: Props) => {
         </div>
 
         {hasCaseStudy && (
-          <div className="fade-in-later mx-auto mt-section max-w-[50rem]">
+          <div className="fade-in-later mx-auto mt-section max-w-200">
             <p className="mb-10 font-anton text-muted-foreground uppercase">
               Case Study
             </p>

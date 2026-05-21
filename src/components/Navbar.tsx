@@ -84,7 +84,7 @@ const Navbar = () => {
         >
           <span
             className={cn(
-              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 translate-y-[-0.3125rem] rounded-full bg-foreground duration-300',
+              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 -translate-y-1.25 rounded-full bg-foreground duration-300',
               {
                 '-translate-y-1/2 rotate-45': isMenuOpen,
                 'md:group-hover:rotate-12': !isMenuOpen,
@@ -93,7 +93,7 @@ const Navbar = () => {
           ></span>
           <span
             className={cn(
-              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 translate-y-[0.3125rem] rounded-full bg-foreground duration-300',
+              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 translate-y-1.25 rounded-full bg-foreground duration-300',
               {
                 '-translate-y-1/2 -rotate-45': isMenuOpen,
                 'md:group-hover:-rotate-12': !isMenuOpen,
@@ -131,7 +131,7 @@ const Navbar = () => {
           )}
         ></div>
 
-        <div className="mx-8 flex w-full max-w-[18.75rem] grow sm:mx-auto md:items-center">
+        <div className="mx-8 flex w-full max-w-75 grow sm:mx-auto md:items-center">
           <div className="flex w-full gap-10 max-lg:flex-col lg:justify-between">
             <div className="max-lg:order-2">
               <p className="mb-5 text-muted-foreground md:mb-8">SOCIAL</p>
@@ -183,7 +183,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="mx-8 w-full max-w-[18.75rem] sm:mx-auto">
+        <div className="mx-8 w-full max-w-75 sm:mx-auto">
           <p className="mb-4 text-muted-foreground">GET IN TOUCH</p>
           <a href={`mailto:${GENERAL_INFO.email}`}>{GENERAL_INFO.email}</a>
         </div>

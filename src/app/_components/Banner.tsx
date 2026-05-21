@@ -36,7 +36,7 @@ const Banner = () => {
         className="flex h-svh min-h-[33.125rem] items-center justify-between px-4 max-md:flex-col max-md:pb-10"
         ref={containerRef}
       >
-        <div className="max-w-[34rem] flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">
+        <div className="max-w-136 flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">
           <h1 className="slide-up-and-fade font-anton text-6xl leading-[.95] sm:text-[5rem]">
             <span className="text-primary">FRONTEND </span>
             <br /> <span className="ml-4">DEVELOPER</span>

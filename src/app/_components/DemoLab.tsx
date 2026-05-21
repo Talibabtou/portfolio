@@ -120,7 +120,7 @@ const DemoLab = () => {
           classNames={{ title: 'font-anton text-2xl' }}
         />
 
-        <div className="demo-reveal flex h-[min(47.5rem,78svh)] min-h-[37.5rem] gap-3 max-lg:h-auto max-lg:min-h-0 max-lg:flex-col">
+        <div className="demo-reveal flex h-[min(--spacing(190),78svh)] min-h-150 gap-3 max-lg:h-auto max-lg:min-h-0 max-lg:flex-col">
           {DEMO_TRACKS.map((track) => {
             const isActive = track.id === activeTrack.id;
             const Icon = track.icon;
@@ -130,7 +130,7 @@ const DemoLab = () => {
                 aria-pressed={isActive}
                 className={cn(
                   'group relative overflow-hidden border border-foreground/10 bg-background-light text-left transition-[flex,background-color,color] duration-500 ease-out',
-                  'max-lg:min-h-[6.5rem] max-lg:w-full',
+                  'max-lg:min-h-26 max-lg:w-full',
                   {
                     'flex-[6] bg-background': isActive,
                     'flex-[0.8] hover:bg-background': !isActive,
@@ -172,10 +172,10 @@ const DemoLab = () => {
                         </span>
                       ))}
                     </div>
-                    <h3 className="max-w-[38.75rem] font-anton text-5xl leading-none md:text-7xl">
+                    <h3 className="max-w-155 font-anton text-5xl leading-none md:text-7xl">
                       {track.title}
                     </h3>
-                    <p className="mt-5 max-w-[33.75rem] text-lg text-muted-foreground">
+                    <p className="mt-5 max-w-135 text-lg text-muted-foreground">
                       {track.detail}
                     </p>
                   </div>

@@ -59,10 +59,10 @@ const AboutMe = () => {
           About me
         </p>
 
-        <div className="mx-auto mt-9 grid max-w-[58.75rem] items-center gap-10 md:grid-cols-12">
+        <div className="mx-auto mt-9 grid max-w-235 items-center gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
             <p className="slide-up-and-fade text-5xl">I&apos;m Guillaume.</p>
-            <div className="mt-8 max-w-[24.375rem] text-lg text-muted-foreground">
+            <div className="mt-8 max-w-97.5 text-lg text-muted-foreground">
               <p className="slide-up-and-fade">
                 I&apos;m a frontend developer from France, focused on Web3 and
                 fintech products: trading market screens, dashboards, wallet
@@ -78,7 +78,7 @@ const AboutMe = () => {
           </div>
 
           <div className="md:col-span-6 md:flex md:justify-end">
-            <div className="portrait-hover slide-up-and-fade group relative w-full max-w-[20rem]">
+            <div className="portrait-hover slide-up-and-fade group relative w-full max-w-80">
               <span
                 aria-hidden="true"
                 className="portrait-border-wave absolute inset-0 border border-primary/60 opacity-0"

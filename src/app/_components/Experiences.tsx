@@ -66,7 +66,7 @@ const Experiences = () => {
       <div className="container" ref={containerRef}>
         <SectionTitle title="My Experience" />
 
-        <div className="relative mx-auto max-w-[57.5rem]">
+        <div className="relative mx-auto max-w-230">
           <div
             aria-hidden="true"
             className="absolute top-0 bottom-0 left-1/2 hidden w-px -translate-x-1/2 bg-foreground/15 md:block"
