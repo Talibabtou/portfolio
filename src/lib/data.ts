@@ -5,6 +5,11 @@ type StackItem = {
   icon?: string;
 };
 
+type StackCategory = {
+  stack: StackItem[];
+  competencies: StackItem[];
+};
+
 export const GENERAL_INFO = {
   name: 'Guillaume Dumas',
   email: 'talibabtou@gmail.com',
@@ -25,88 +30,159 @@ export const SOCIAL_LINKS = [
   { name: 'cv', url: GENERAL_INFO.cvUrl },
 ];
 
-export const MY_STACK: Record<string, StackItem[]> = {
-  frontend: [
-    {
-      name: 'TypeScript',
-      icon: '/logo/ts.png',
-    },
-    {
-      name: 'JavaScript',
-      icon: '/logo/js.png',
-    },
-    {
-      name: 'React',
-      icon: '/logo/react.png',
-    },
-    {
-      name: 'Next.js',
-      icon: '/logo/next.png',
-    },
-    {
-      name: 'Component systems',
-    },
-    {
-      name: 'Responsive UI',
-    },
-  ],
-  'data & APIs': [
-    {
-      name: 'REST APIs',
-    },
-    {
-      name: 'WebSockets',
-    },
-    {
-      name: 'Node.js',
-      icon: '/logo/node.png',
-    },
-    {
-      name: 'Python',
-    },
-    {
-      name: 'Dashboards',
-    },
-  ],
-  blockchain: [
-    {
-      name: 'Solana',
-    },
-    {
-      name: 'Wallet-aware UX',
-    },
-    {
-      name: 'Prediction markets',
-    },
-    {
-      name: 'Smart-contract integration',
-    },
-    {
-      name: 'Rust learning',
-    },
-  ],
-  engineering: [
-    {
-      name: 'Git',
-      icon: '/logo/git.png',
-    },
-    {
-      name: 'Docker',
-      icon: '/logo/docker.svg',
-    },
-    {
-      name: 'C',
-    },
-    {
-      name: 'C++',
-    },
-    {
-      name: 'Algorithms',
-    },
-    {
-      name: 'Performance',
-    },
-  ],
+export const MY_STACK: Record<string, StackCategory> = {
+  frontend: {
+    stack: [
+      {
+        name: 'TypeScript',
+        icon: '/logo/ts.png',
+      },
+      {
+        name: 'JavaScript',
+        icon: '/logo/js.png',
+      },
+      {
+        name: 'React',
+        icon: '/logo/react.png',
+      },
+      {
+        name: 'Next.js',
+        icon: '/logo/next.png',
+      },
+      {
+        name: 'Redux',
+        icon: '/logo/redux.png',
+      },
+      {
+        name: 'Tailwind CSS',
+        icon: '/logo/tailwind.png',
+      },
+    ],
+    competencies: [
+      {
+        name: 'Component architecture',
+      },
+      {
+        name: 'State management',
+      },
+      {
+        name: 'Responsive UI',
+      },
+    ],
+  },
+  'data & APIs': {
+    stack: [
+      {
+        name: 'Node.js',
+        icon: '/logo/node.png',
+      },
+      {
+        name: 'Python',
+        icon: '/logo/python.svg',
+      },
+      {
+        name: 'MySQL',
+        icon: '/logo/mysql.svg',
+      },
+      {
+        name: 'PostgreSQL',
+        icon: '/logo/postgreSQL.png',
+      },
+    ],
+    competencies: [
+      {
+        name: 'API integration',
+      },
+      {
+        name: 'Data modeling',
+      },
+    ],
+  },
+  blockchain: {
+    stack: [
+      {
+        name: 'Solana',
+        icon: '/logo/solana.svg',
+      },
+      {
+        name: 'Web3.js',
+        icon: '/logo/web3js.svg',
+      },
+      {
+        name: 'Rust',
+        icon: '/logo/rust.svg',
+      },
+    ],
+    competencies: [
+      {
+        name: 'On-chain data',
+      },
+      {
+        name: 'Smart contract interactions',
+      },
+      {
+        name: 'Wallet interactions',
+      },
+    ],
+  },
+  engineering: {
+    stack: [
+      {
+        name: 'Git',
+        icon: '/logo/git.png',
+      },
+      {
+        name: 'Docker',
+        icon: '/logo/docker.svg',
+      },
+      {
+        name: 'C',
+        icon: '/logo/c.svg',
+      },
+      {
+        name: 'C++',
+        icon: '/logo/c++.svg',
+      },
+    ],
+    competencies: [
+      {
+        name: 'Performance',
+      },
+      {
+        name: 'Maintainability',
+      },
+    ],
+  },
+  AI: {
+    stack: [
+      {
+        name: 'Cursor',
+        icon: '/logo/cursor.png',
+      },
+      {
+        name: 'Claude',
+        icon: '/logo/claude.webp',
+      },
+      {
+        name: 'Codex',
+        icon: '/logo/codex.svg',
+      },
+    ],
+    competencies: [
+      {
+        name: 'Agentic workflows',
+      },
+      {
+        name: 'Product specifications',
+      },
+      {
+        name: 'Feedback loops',
+      },
+      {
+        name: 'Verification',
+      },
+    ],
+  },
 };
 
 export const PROJECTS: IProject[] = [
@@ -217,33 +293,45 @@ export const PROJECTS: IProject[] = [
 
 export const MY_EXPERIENCE = [
   {
-    title: 'Consultant, Frontend Developer',
+    title: 'Consultant',
     company: 'Jupiter',
-    duration: 'Dec 2025 - Mar 2026',
+    duration: 'Early 2026',
+    logo: '/experience/jupiter.svg',
   },
   {
-    title: 'Internship, Open-source Contributor',
+    title: 'Internship',
     company: 'Adrena',
-    duration: '2025',
+    duration: 'Late 2025',
+    logo: '/experience/adrena.svg',
   },
   {
     title: 'Founder & Developer',
     company: 'Versus',
     duration: '2024 - 2025',
-  },
-  {
-    title: 'Founder, Board Member',
-    company: 'Magicake / Doge Capital',
-    duration: '2021 - 2024',
+    logo: '/experience/versus.png',
   },
   {
     title: 'Common Core Graduate',
     company: '42 Lyon',
-    duration: 'Nov 2023 - Jul 2025',
+    duration: 'Late 2023 - Mid 2025',
+    logo: '/experience/42.png',
+  },
+  {
+    title: 'Founder',
+    company: 'Magicake',
+    duration: '2023 - 2025',
+    logo: '/experience/magicake.png',
+  },
+  {
+    title: 'Board Member',
+    company: 'Doge Capital',
+    duration: '2021 - 2024',
+    logo: '/experience/doge-capital.png',
   },
   {
     title: 'Leatherwork Artisan',
     company: 'Hermes',
     duration: '2017 - 2021',
+    logo: '/experience/hermes.svg',
   },
 ];
