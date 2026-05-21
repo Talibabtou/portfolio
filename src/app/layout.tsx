@@ -2,16 +2,16 @@ import type { Metadata } from 'next';
 import { Anton, Roboto_Flex } from 'next/font/google';
 import Script from 'next/script';
 
+import StickyEmail from '@/app/_components/StickyEmail';
 import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import LenisProvider from '@/components/LenisProvider';
 import Navbar from '@/components/Navbar';
-import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
-import 'lenis/dist/lenis.css';
 import Preloader from '@/components/Preloader';
-import StickyEmail from '@/app/_components/StickyEmail';
+import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
 import TopographicBackground from '@/components/TopographicBackground';
 import { STORAGE_KEYS, THEME_CLASS, THEME_VALUES } from '@/lib/constants';
+import 'lenis/dist/lenis.css';
 import './globals.css';
 
 const antonFont = Anton({
@@ -61,7 +61,7 @@ export default function RootLayout({
           {themeInitScript}
         </Script>
         <LenisProvider>
-          <div className="custom-cursor-scope">
+          <div className="custom-cursor-scope relative z-1">
             <Navbar />
             <main>{children}</main>
             <Footer />

@@ -3,11 +3,11 @@ import SectionTitle from '@/components/SectionTitle';
 import { gsap, useSectionGsap } from '@/lib/use-section-gsap';
 import { cn } from '@/lib/utils';
 import {
-  BarChart3,
-  GitFork,
-  Globe2,
-  LineChart,
-  WalletCards,
+    BarChart3,
+    GitFork,
+    Globe2,
+    LineChart,
+    WalletCards,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -113,7 +113,7 @@ const DemoLab = () => {
       id="demo-lab"
       ref={sectionRef}
     >
-      <div className="relative z-[1] w-full px-4">
+      <div className="relative z-1 w-full px-4">
         <SectionTitle
           title="Demos"
           className="demo-reveal pl-[7%]"

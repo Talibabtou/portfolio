@@ -1,11 +1,11 @@
 'use client';
+import Project from '@/app/_components/Project';
 import SectionTitle from '@/components/SectionTitle';
 import { PROJECTS } from '@/lib/data';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import Project from '@/app/_components/Project';
 
 const ProjectList = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -121,7 +121,7 @@ const ProjectList = () => {
         <div className="group/projects relative" ref={containerRef}>
           {selectedProject !== null && (
             <div
-              className="pointer-events-none absolute top-0 right-0 z-[1] aspect-[3/4] w-[200px] overflow-hidden opacity-0 max-md:hidden xl:w-[350px]"
+              className="pointer-events-none absolute top-0 right-0 z-1 aspect-[3/4] w-[200px] overflow-hidden opacity-0 max-md:hidden xl:w-[350px]"
               ref={imageContainer}
             >
               {PROJECTS.map((project) => (

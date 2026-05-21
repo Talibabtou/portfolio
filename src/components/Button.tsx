@@ -92,7 +92,7 @@ const Button = ({
           {variant !== 'link' && (
             <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
           )}
-          <span className="z-[1]">
+          <span className="z-1">
             {loading ? <LoadingIndicator icon={icon} /> : children}
           </span>
         </a>
@@ -104,7 +104,7 @@ const Button = ({
         {variant !== 'link' && (
           <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
         )}
-        <span className="z-[1]">
+        <span className="z-1">
           {loading ? <LoadingIndicator icon={icon} /> : children}
         </span>
       </Link>
@@ -117,7 +117,7 @@ const Button = ({
         {variant !== 'link' && (
           <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
         )}
-        <span className="z-[1]">
+        <span className="z-1">
           {loading ? <LoadingIndicator icon={icon} /> : children}
         </span>
       </button>

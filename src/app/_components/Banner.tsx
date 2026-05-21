@@ -44,9 +44,8 @@ const Banner = () => {
           <p className="banner-description slide-up-and-fade mt-6 text-lg text-muted-foreground">
             Hi, I&apos;m{' '}
             <span className="font-medium text-foreground">Talibabtou</span>. I
-            build Web3 and fintech product interfaces: prediction markets,
-            trading, prediction markets, wallet-aware flows and API-connected
-            screens.
+            build sharp frontend interfaces for Web3, fintech and data-heavy
+            products.
           </p>
           <Button
             as="link"
@@ -69,21 +68,21 @@ const Banner = () => {
         <div className="right-[7%] bottom-[10%] flex gap-4 text-center md:absolute md:flex-col md:gap-8 md:text-right">
           <div className="slide-up-and-fade">
             <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
-              42
+              2+
             </h5>
-            <p className="text-muted-foreground">Lyon Common Core</p>
+            <p className="text-muted-foreground">Years of Experience</p>
           </div>
           <div className="slide-up-and-fade">
             <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
-              Web3
+              30+
             </h5>
-            <p className="text-muted-foreground">Solana & DeFi Interfaces</p>
+            <p className="text-muted-foreground">Completed Projects</p>
           </div>
           <div className="slide-up-and-fade">
             <h5 className="mb-1.5 font-anton text-3xl text-primary sm:text-4xl">
-              Craft
+              5K+
             </h5>
-            <p className="text-muted-foreground">Hermes Quality Standards</p>
+            <p className="text-muted-foreground">Hours Worked</p>
           </div>
         </div>
       </div>

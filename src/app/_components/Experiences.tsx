@@ -107,7 +107,7 @@ const Experiences = () => {
                   </div>
 
                   <div className="relative hidden justify-center md:order-2 md:flex">
-                    <div className="relative z-[1] size-4 rounded-full border border-primary bg-background shadow-[0_0_0_0.5rem_hsl(var(--background))]" />
+                    <div className="relative z-1 size-4 rounded-full border border-primary bg-background shadow-[0_0_0_0.5rem_hsl(var(--background))]" />
                   </div>
 
                   <div

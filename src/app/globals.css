@@ -142,6 +142,18 @@
     font-family: var(--font-roboto-flex);
   }
 
+  .portrait-hover:hover .portrait-border-wave {
+    animation: portrait-border-wave 1100ms ease-out both;
+  }
+
+  .portrait-hover:hover .portrait-border-wave-delay {
+    animation-delay: 140ms;
+  }
+
+  .portrait-hover:hover .portrait-border-wave-delay-long {
+    animation-delay: 280ms;
+  }
+
   .custom-cursor {
     opacity: 0;
     visibility: hidden;
@@ -187,5 +199,21 @@
     list-style-type: disc;
     margin-top: 0.5rem;
     padding-left: 1.25rem;
+  }
+}
+
+@keyframes portrait-border-wave {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+
+  18% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
   }
 }
