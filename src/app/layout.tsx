@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Anton, Roboto_Flex } from 'next/font/google';
-import Script from 'next/script';
 
 import StickyEmail from '@/app/_components/StickyEmail';
 import CustomCursor from '@/components/CustomCursor';
@@ -57,9 +56,11 @@ export default function RootLayout({
       <body
         className={`${antonFont.variable} ${robotoFlex.variable} antialiased`}
       >
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Must run before client hydration to apply the saved theme class.
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+          id="theme-init"
+        />
         <LenisProvider>
           <div className="custom-cursor-scope relative z-1">
             <Navbar />
