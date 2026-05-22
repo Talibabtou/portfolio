@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { DemoTrack } from '@/app/_components/demos/types';
 import {
   readPortfolioStorageValue,
@@ -249,7 +249,6 @@ const fetchGitHubLeaderboard = (tabId: LeaderboardTabId) => {
   const request = fetch(searchUrl, {
     headers: {
       Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
     },
   })
     .then((response) => {
@@ -347,8 +346,7 @@ const getRepositoryAvatarUrl = (repository: GitHubRepository) =>
 const getRepositoryAvatarSource = (
   avatarUrl: string,
   avatarDataUrls: Record<string, string>,
-) =>
-  avatarDataUrls[avatarUrl] ?? getCachedAvatarDataUrl(avatarUrl) ?? avatarUrl;
+) => avatarDataUrls[avatarUrl] ?? getCachedAvatarDataUrl(avatarUrl);
 
 const GitHubRadarDemo = () => {
   const [activeTab, setActiveTab] = useState<LeaderboardTabId>(DEFAULT_TAB);
@@ -364,6 +362,10 @@ const GitHubRadarDemo = () => {
   const hasRepositories = repositories.length > 0;
   const shouldShowErrorState = Boolean(error) && !hasRepositories;
   const shouldShowLoadingState = isLoading && !hasRepositories;
+  const visibleRepositories = useMemo(
+    () => getSortedRepositories(repositories, activeTab).slice(0, 3),
+    [activeTab, repositories],
+  );
 
   useEffect(() => {
     const cachedLeaderboard = getGitHubLeaderboardCache(activeTab, {
@@ -406,9 +408,13 @@ const GitHubRadarDemo = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    const avatarUrls = repositories
-      .map(getRepositoryAvatarUrl)
-      .filter((avatarUrl): avatarUrl is string => Boolean(avatarUrl));
+    const avatarUrls = Array.from(
+      new Set(
+        visibleRepositories
+          .map(getRepositoryAvatarUrl)
+          .filter((avatarUrl): avatarUrl is string => Boolean(avatarUrl)),
+      ),
+    );
 
     const missingAvatarUrls = avatarUrls.filter((avatarUrl) => {
       if (avatarDataUrls[avatarUrl]) return false;
@@ -450,7 +456,7 @@ const GitHubRadarDemo = () => {
     return () => {
       ignoreRequest = true;
     };
-  }, [avatarDataUrls, repositories]);
+  }, [avatarDataUrls, visibleRepositories]);
 
   const handleTabChange = (tabId: LeaderboardTabId) => {
     setActiveTab(tabId);
@@ -537,63 +543,61 @@ const GitHubRadarDemo = () => {
             </div>
 
             <div className="grid min-h-0 flex-1 grid-rows-3 divide-y divide-foreground/10 overflow-hidden">
-              {getSortedRepositories(repositories, activeTab)
-                .slice(0, 3)
-                .map((repository, index) => {
-                  const signal = getRepositorySignal(repository, activeTab);
-                  const SignalIcon = signal.icon;
-                  const avatarUrl = getRepositoryAvatarUrl(repository);
+              {visibleRepositories.map((repository, index) => {
+                const signal = getRepositorySignal(repository, activeTab);
+                const SignalIcon = signal.icon;
+                const avatarUrl = getRepositoryAvatarUrl(repository);
+                const avatarSource = avatarUrl
+                  ? getRepositoryAvatarSource(avatarUrl, avatarDataUrls)
+                  : undefined;
 
-                  return (
-                    <a
-                      className="grid min-h-0 grid-cols-[3rem_1fr_auto] items-center gap-4 px-5 py-4 transition-colors hover:bg-background"
-                      href={repository.html_url}
-                      key={repository.id}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      <span className="font-anton text-4xl text-primary leading-none">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="flex items-center gap-3">
-                          <span className="grid size-8 shrink-0 place-items-center overflow-hidden border border-foreground/10 bg-background">
-                            {avatarUrl ? (
-                              <Image
-                                alt=""
-                                className="size-full object-cover"
-                                height={32}
-                                src={getRepositoryAvatarSource(
-                                  avatarUrl,
-                                  avatarDataUrls,
-                                )}
-                                unoptimized
-                                width={32}
-                              />
-                            ) : (
-                              <GitFork className="text-primary" size={16} />
-                            )}
-                          </span>
-                          <span className="min-w-0 truncate font-anton text-2xl leading-none">
-                            {repository.full_name}
-                          </span>
+                return (
+                  <a
+                    className="grid min-h-0 grid-cols-[3rem_1fr_auto] items-center gap-4 px-5 py-4 transition-colors hover:bg-background"
+                    href={repository.html_url}
+                    key={repository.id}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <span className="font-anton text-4xl text-primary leading-none">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-3">
+                        <span className="grid size-8 shrink-0 place-items-center overflow-hidden border border-foreground/10 bg-background">
+                          {avatarSource ? (
+                            <Image
+                              alt=""
+                              className="size-full object-cover"
+                              height={32}
+                              src={avatarSource}
+                              unoptimized
+                              width={32}
+                            />
+                          ) : (
+                            <GitFork className="text-primary" size={16} />
+                          )}
                         </span>
-                        <span className="mt-2 line-clamp-2 text-muted-foreground text-sm leading-snug">
-                          {repository.description ?? 'No description provided'}
+                        <span className="min-w-0 truncate font-anton text-2xl leading-none">
+                          {repository.full_name}
                         </span>
                       </span>
-                      <span className="flex min-w-20 flex-col items-end gap-1 font-anton">
-                        <span className="flex items-center gap-2 text-2xl text-primary leading-none">
-                          <SignalIcon size={19} />
-                          {signal.value}
-                        </span>
-                        <span className="text-muted-foreground text-xs uppercase">
-                          {signal.label}
-                        </span>
+                      <span className="mt-2 line-clamp-2 text-muted-foreground text-sm leading-snug">
+                        {repository.description ?? 'No description provided'}
                       </span>
-                    </a>
-                  );
-                })}
+                    </span>
+                    <span className="flex min-w-20 flex-col items-end gap-1 font-anton">
+                      <span className="flex items-center gap-2 text-2xl text-primary leading-none">
+                        <SignalIcon size={19} />
+                        {signal.value}
+                      </span>
+                      <span className="text-muted-foreground text-xs uppercase">
+                        {signal.label}
+                      </span>
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}
