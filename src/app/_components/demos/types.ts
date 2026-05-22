@@ -9,5 +9,6 @@ export type DemoTrack = {
   id: string;
   label: string;
   metrics: string[];
+  preload?: () => void;
   title: string;
 };

@@ -36,8 +36,11 @@ export const metadata: Metadata = {
 const themeInitScript = `
 (() => {
   try {
-    const storedPreferences = window.localStorage.getItem('${STORAGE_KEYS.userPreferences}');
-    const theme = storedPreferences ? JSON.parse(storedPreferences).theme : '${THEME_VALUES.dark}';
+    const storedState = window.localStorage.getItem('${STORAGE_KEYS.localState}');
+    const parsedState = storedState ? JSON.parse(storedState) : undefined;
+    const storedPreferences = parsedState?.values?.userPreferences;
+    const legacyPreferences = window.localStorage.getItem('${STORAGE_KEYS.legacyUserPreferences}');
+    const theme = storedPreferences?.theme ?? (legacyPreferences ? JSON.parse(legacyPreferences).theme : '${THEME_VALUES.dark}');
 
     document.documentElement.classList.toggle('${THEME_CLASS}', theme !== '${THEME_VALUES.light}');
   } catch {

@@ -2,26 +2,59 @@
 
 import SectionTitle from '@/components/SectionTitle';
 import { DEMO_TRACKS } from '@/app/_components/demos/demo-tracks';
+import type { DemoTrack } from '@/app/_components/demos/types';
+import { useIntentPreload } from '@/lib/use-intent-preload';
 import { useRevealSectionGsap } from '@/lib/use-section-gsap';
 import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
 import { useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
+
+type DemoTrackButtonProps = {
+  children: ReactNode;
+  onActivate: () => void;
+  track: DemoTrack;
+};
+
+const DemoTrackButton = ({
+  children,
+  onActivate,
+  track,
+}: DemoTrackButtonProps) => {
+  const preloadOnIntent = useIntentPreload(track.preload);
+
+  const activateTrack = () => {
+    preloadOnIntent();
+    onActivate();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+
+    event.preventDefault();
+    activateTrack();
+  };
+
+  return (
+    <button
+      className="relative flex h-full w-full min-w-0 flex-col p-5 text-left"
+      onClick={activateTrack}
+      onFocus={activateTrack}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={preloadOnIntent}
+      onTouchStart={preloadOnIntent}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+};
 
 const DemoLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeTrackId, setActiveTrackId] = useState(DEMO_TRACKS[0].id);
   const activeTrack =
     DEMO_TRACKS.find((track) => track.id === activeTrackId) ?? DEMO_TRACKS[0];
-
-  const handleTrackKeyDown = (
-    event: KeyboardEvent<HTMLButtonElement>,
-    trackId: string,
-  ) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-
-    event.preventDefault();
-    setActiveTrackId(trackId);
-  };
 
   useRevealSectionGsap({
     scope: sectionRef,
@@ -93,12 +126,9 @@ const DemoLab = () => {
                     <TrackComponent />
                   </div>
                 ) : (
-                  <button
-                    className="relative flex h-full w-full min-w-0 flex-col p-5 text-left"
-                    onClick={() => setActiveTrackId(track.id)}
-                    onFocus={() => setActiveTrackId(track.id)}
-                    onKeyDown={(event) => handleTrackKeyDown(event, track.id)}
-                    type="button"
+                  <DemoTrackButton
+                    onActivate={() => setActiveTrackId(track.id)}
+                    track={track}
                   >
                     {trackHeader}
 
@@ -120,7 +150,7 @@ const DemoLab = () => {
                         {track.detail}
                       </p>
                     </div>
-                  </button>
+                  </DemoTrackButton>
                 )}
               </div>
             );

@@ -6,12 +6,16 @@ export const THEME_VALUES = {
 export const THEME_CLASS = THEME_VALUES.dark;
 
 export const STORAGE_KEYS = {
-  preloaderSeen: 'portfolio:preloader-seen',
-  userPreferences: 'portfolio:user-preferences',
+  localState: 'portfolio:local-state',
+  sessionState: 'portfolio:session-state',
+  legacyPreloaderSeen: 'portfolio:preloader-seen',
+  legacyUserPreferences: 'portfolio:user-preferences',
 } as const;
 
 export const BROWSER_EVENTS = {
+  localStateChange: 'portfolio:local-state-change',
   preloaderSeenChange: 'portfolio:preloader-seen-change',
+  sessionStateChange: 'portfolio:session-state-change',
   userPreferencesChange: 'portfolio:user-preferences-change',
 } as const;
 

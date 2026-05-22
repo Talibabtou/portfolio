@@ -22,6 +22,10 @@ import type {
   UTCTimestamp,
 } from 'lightweight-charts';
 import type { DemoTrack } from '@/app/_components/demos/types';
+import {
+  readPortfolioStorageValue,
+  writePortfolioStorageValue,
+} from '@/lib/user-preferences';
 
 type BitcoinRange = '1' | '7' | '30';
 
@@ -52,7 +56,7 @@ const BITCOIN_RANGES: { days: BitcoinRange; label: string }[] = [
 const COINGECKO_MARKET_CHART_URL =
   'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart';
 
-const BITCOIN_MARKET_CACHE_KEY = 'portfolio:btc-market-chart';
+const BITCOIN_MARKET_CACHE_KEY = 'demos.bitcoin-market-chart';
 const BITCOIN_MARKET_CACHE_TTL = 5 * 60 * 1000;
 const DEFAULT_BITCOIN_RANGE: BitcoinRange = '30';
 const MILLISECONDS_IN_DAY = 86_400_000;
@@ -104,30 +108,34 @@ const normalizeMarketChart = (data: MarketChartResponse): MarketPoint[] =>
   }));
 
 const getBitcoinMarketCache = (range: BitcoinRange) => {
-  try {
-    const rawCache = sessionStorage.getItem(
-      `${BITCOIN_MARKET_CACHE_KEY}:${range}`,
-    );
-    if (!rawCache) return undefined;
+  const marketCache =
+    readPortfolioStorageValue<
+      Partial<Record<BitcoinRange, CachedMarketPoints>>
+    >('session', BITCOIN_MARKET_CACHE_KEY) ?? {};
+  const rangeCache = marketCache[range];
+  if (!rangeCache) return undefined;
 
-    const cache = JSON.parse(rawCache) as CachedMarketPoints;
-    const isFresh = Date.now() - cache.savedAt < BITCOIN_MARKET_CACHE_TTL;
+  const isFresh = Date.now() - rangeCache.savedAt < BITCOIN_MARKET_CACHE_TTL;
 
-    return isFresh && cache.points.length > 0 ? cache.points : undefined;
-  } catch {
-    return undefined;
-  }
+  return isFresh && rangeCache.points.length > 0
+    ? rangeCache.points
+    : undefined;
 };
 
 const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
   try {
-    sessionStorage.setItem(
-      `${BITCOIN_MARKET_CACHE_KEY}:${range}`,
-      JSON.stringify({
+    const marketCache =
+      readPortfolioStorageValue<
+        Partial<Record<BitcoinRange, CachedMarketPoints>>
+      >('session', BITCOIN_MARKET_CACHE_KEY) ?? {};
+
+    writePortfolioStorageValue('session', BITCOIN_MARKET_CACHE_KEY, {
+      ...marketCache,
+      [range]: {
         points,
         savedAt: Date.now(),
-      } satisfies CachedMarketPoints),
-    );
+      } satisfies CachedMarketPoints,
+    });
   } catch {
     // Session storage is a progressive enhancement for rate-limit friendliness.
   }
