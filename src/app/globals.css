@@ -156,11 +156,10 @@
 
   .custom-cursor {
     opacity: 0;
-    transform: translate3d(-100px, -100px, 0);
     visibility: hidden;
   }
 
-  .custom-cursor[data-ready="true"] {
+  html:hover .custom-cursor {
     opacity: 1;
     visibility: visible;
   }

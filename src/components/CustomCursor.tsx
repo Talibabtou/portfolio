@@ -1,25 +1,14 @@
 'use client';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { useEffect, useRef, useState } from 'react';
-
-const HIDDEN_CURSOR_TRANSFORM = 'translate3d(-100px, -100px, 0)';
+import { useEffect, useRef } from 'react';
 
 const CustomCursor = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
     if (window.innerWidth < 768) return;
-
-    const hideCursor = () => {
-      setIsReady(false);
-
-      if (!svgRef.current) return;
-
-      svgRef.current.style.transform = HIDDEN_CURSOR_TRANSFORM;
-    };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!svgRef.current) return;
@@ -27,23 +16,12 @@ const CustomCursor = () => {
       const { clientX, clientY } = e;
 
       svgRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
-      setIsReady(true);
     };
 
-    hideCursor();
-
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', hideCursor);
-    window.addEventListener('blur', hideCursor);
-    window.addEventListener('pagehide', hideCursor);
-    window.addEventListener('pageshow', hideCursor);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', hideCursor);
-      window.removeEventListener('blur', hideCursor);
-      window.removeEventListener('pagehide', hideCursor);
-      window.removeEventListener('pageshow', hideCursor);
     };
   }, [prefersReducedMotion]);
 
@@ -59,7 +37,6 @@ const CustomCursor = () => {
       fill="none"
       id="cursor"
       strokeWidth="2"
-      data-ready={isReady ? 'true' : 'false'}
       opacity="0"
       xmlns="http://www.w3.org/2000/svg"
       ref={svgRef}
