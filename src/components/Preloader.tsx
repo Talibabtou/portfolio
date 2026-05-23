@@ -1,12 +1,7 @@
 'use client';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import {
-  readPreloaderSeen,
-  subscribeToPortfolioStorage,
-  writePreloaderSeen,
-} from '@/lib/user-preferences';
-import { useRef, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const PRELOADER_PANELS = [
   'panel-01',
@@ -21,35 +16,28 @@ const PRELOADER_PANELS = [
   'panel-10',
 ];
 
-const readHasSeenPreloader = () => {
-  return readPreloaderSeen();
-};
-
-const subscribeToPreloaderSession = (onStoreChange: () => void) => {
-  return subscribeToPortfolioStorage('session', onStoreChange);
-};
-
-const markPreloaderAsSeen = () => {
-  writePreloaderSeen();
-};
-
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
-  const hasSeenPreloader = useSyncExternalStore(
-    subscribeToPreloaderSession,
-    readHasSeenPreloader,
-    () => false,
-  );
+  const [hasMounted, setHasMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const preloaderText = 'TALIBABTOU';
   const preloaderLetters = Array.from(preloaderText, (letter, index) => ({
     id: `${letter}-${preloaderText.slice(0, index + 1)}`,
     letter,
   }));
 
+  useEffect(() => {
+    const animationFrame = requestAnimationFrame(() => {
+      setHasMounted(true);
+    });
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
   useGSAP(
     () => {
-      if (hasSeenPreloader) return;
+      if (!hasMounted) return;
       if (prefersReducedMotion) return;
 
       const tl = gsap.timeline({
@@ -80,19 +68,20 @@ const Preloader = () => {
           {
             autoAlpha: 0,
             onComplete: () => {
-              markPreloaderAsSeen();
+              setIsVisible(false);
             },
           },
           '<1',
         );
     },
     {
-      dependencies: [hasSeenPreloader, prefersReducedMotion],
+      dependencies: [hasMounted, prefersReducedMotion],
       scope: preloaderRef,
     },
   );
 
-  if (hasSeenPreloader) return null;
+  if (!hasMounted) return null;
+  if (!isVisible) return null;
   if (prefersReducedMotion) return null;
 
   return (

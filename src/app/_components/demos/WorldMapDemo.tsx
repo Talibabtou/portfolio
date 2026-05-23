@@ -86,8 +86,11 @@ const MAP_RENDER_DELAY = 350;
 const GLOBE_AUTO_ROTATE_SPEED = 0.18;
 const GLOBE_ROTATE_SPEED = 0.12;
 const GLOBE_ZOOM_SPEED = 0.35;
-const getMagnitudeScale = (magnitude: number) =>
-  Math.max(0, magnitude - MIN_EARTHQUAKE_MAGNITUDE);
+const getMagnitudeScale = (magnitude: number) => {
+  const min = MIN_EARTHQUAKE_MAGNITUDE;
+  const base = Math.max(0, magnitude - min + 1);
+  return Math.max(0, base ** 1.7 / 6);
+};
 
 const earthquakeRequest = new Map<string, Promise<CachedEarthquakes>>();
 const countriesRequest = new Map<string, Promise<CachedCountries>>();
@@ -453,7 +456,7 @@ const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
         }}
         pointAltitude={(earthquake) =>
           (earthquake as EarthquakePulse).id === hoveredEarthquakeId
-            ? 0.17
+            ? 0.12
             : 0.03 +
               getMagnitudeScale((earthquake as EarthquakePulse).magnitude) *
                 0.018
@@ -464,7 +467,7 @@ const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
         pointLng={(earthquake) => (earthquake as EarthquakePulse).lng}
         pointRadius={(earthquake) =>
           (earthquake as EarthquakePulse).id === hoveredEarthquakeId
-            ? 2
+            ? 1.45
             : 0.34 +
               getMagnitudeScale((earthquake as EarthquakePulse).magnitude) *
                 0.52

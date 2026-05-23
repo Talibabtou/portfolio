@@ -7,7 +7,6 @@ const DEFAULT_USER_PREFERENCES: UserPreferences = {
 };
 const PORTFOLIO_STORAGE_VERSION = 1;
 const USER_PREFERENCES_STORAGE_KEY = 'userPreferences';
-const PRELOADER_SEEN_STORAGE_KEY = 'preloaderSeen';
 
 type PortfolioStorageArea = 'local' | 'session';
 type PortfolioStorageState = {
@@ -139,25 +138,6 @@ const readLegacyUserPreferences = () => {
   } catch {
     return undefined;
   }
-};
-
-const readLegacyPreloaderSeen = () => {
-  if (typeof window === 'undefined') return undefined;
-
-  const storedValue = window.sessionStorage.getItem(
-    STORAGE_KEYS.legacyPreloaderSeen,
-  );
-
-  return storedValue ? storedValue === 'true' : undefined;
-};
-
-export const readPreloaderSeen = () =>
-  readPortfolioStorageValue<boolean>('session', PRELOADER_SEEN_STORAGE_KEY) ??
-  readLegacyPreloaderSeen() ??
-  false;
-
-export const writePreloaderSeen = () => {
-  writePortfolioStorageValue('session', PRELOADER_SEEN_STORAGE_KEY, true);
 };
 
 export const readUserPreferences = (): UserPreferences => {

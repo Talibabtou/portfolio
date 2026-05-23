@@ -8,6 +8,7 @@ import LenisProvider from '@/components/LenisProvider';
 import Navbar from '@/components/Navbar';
 import Preloader from '@/components/Preloader';
 import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import TopographicBackground from '@/components/TopographicBackground';
 import { STORAGE_KEYS, THEME_CLASS, THEME_VALUES } from '@/lib/constants';
 import 'lenis/dist/lenis.css';
@@ -70,6 +71,7 @@ export default function RootLayout({
             <main>{children}</main>
             <Footer />
             <StickyEmail />
+            <ScrollToTopButton />
           </div>
 
           <CustomCursor />
