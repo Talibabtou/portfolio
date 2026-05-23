@@ -156,12 +156,26 @@
 
   .custom-cursor {
     opacity: 0;
+    transform: translate3d(-100px, -100px, 0);
     visibility: hidden;
   }
 
-  html:hover .custom-cursor {
+  .custom-cursor[data-ready="true"] {
     opacity: 1;
     visibility: visible;
+  }
+
+  .world-map-tooltip-foreground,
+  .world-map-tooltip-muted {
+    color: hsl(0 0% 100%);
+  }
+
+  .dark .world-map-tooltip-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .dark .world-map-tooltip-muted {
+    color: hsl(var(--muted-foreground));
   }
 
   @media (prefers-reduced-motion: reduce) {

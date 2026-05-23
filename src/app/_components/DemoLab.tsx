@@ -90,7 +90,7 @@ const DemoLab = () => {
             const TrackComponent = track.Component;
             const trackHeader = isActive ? (
               <div
-                className="flex items-center justify-between gap-4"
+                className="relative z-1 flex items-center justify-between gap-4"
                 key={`${track.id}-header`}
               >
                 <Icon className="text-primary" size={24} />
@@ -110,7 +110,7 @@ const DemoLab = () => {
             return (
               <div
                 className={cn(
-                  'group relative overflow-hidden border border-foreground/10 text-left transition-[flex,background-color,color] duration-500 ease-out',
+                  'group relative overflow-hidden border border-foreground/10 text-left transition-[flex,background-color,color] duration-300 ease-out',
                   'max-lg:min-h-26 max-lg:w-full',
                   {
                     'flex-6 bg-background': isActive,
@@ -132,7 +132,7 @@ const DemoLab = () => {
                   >
                     {trackHeader}
 
-                    <div className="mt-auto translate-y-8 opacity-0 transition-all duration-500 max-lg:translate-y-0 max-lg:opacity-100">
+                    <div className="mt-auto translate-y-8 opacity-0 transition-all duration-300 max-lg:translate-y-0 max-lg:opacity-100">
                       <div className="mb-8 flex flex-wrap gap-3">
                         {track.metrics.map((metric) => (
                           <span

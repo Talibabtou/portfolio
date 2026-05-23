@@ -604,7 +604,7 @@ const GitHubRadarDemo = () => {
       </div>
 
       <p className="mt-3 text-muted-foreground text-sm">
-        Source: GitHub public Search API. Results cached in session storage.
+        Source: GitHub public Search API.
       </p>
     </div>
   );

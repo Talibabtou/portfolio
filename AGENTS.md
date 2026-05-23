@@ -37,6 +37,12 @@ careful animation, responsive layout, and clean accessibility defaults.
 - `pnpm run check` runs fixes, ESLint, TypeScript, and a production build.
 - `pnpm run build` creates a production build.
 
+## Dependencies
+
+If adding a dependency is blocked by pnpm store permissions or store-version
+mismatch, tell the user the exact `pnpm add` command to run so they can install
+it directly, then continue once it is installed.
+
 ## Dev Server
 
 If `pnpm run dev` is already running, reuse the existing server instead of
