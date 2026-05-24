@@ -14,6 +14,9 @@ const runWarmStartupTasks = () => {
     import('@/app/_components/demos/BitcoinMarketDemo').then((module) =>
       module.preloadBitcoinMarketDemo(),
     ),
+    import('@/app/_components/demos/DataRoomDemo').then((module) =>
+      module.preloadProtocolRevenueTerminal(),
+    ),
     import('@/app/_components/demos/GitHubRadarDemo').then((module) =>
       module.preloadGitHubRadarDemo(),
     ),

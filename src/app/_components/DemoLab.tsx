@@ -149,11 +149,9 @@ const DemoLab = () => {
                 {isActive ? (
                   <div className="relative flex h-full min-w-0 flex-col p-5">
                     {trackHeader}
-                    <div className="relative min-h-0 flex-1">
-                      {mountedTrackIds.has(track.id) ? (
-                        <TrackComponent isActive />
-                      ) : null}
-                    </div>
+                    {mountedTrackIds.has(track.id) ? (
+                      <TrackComponent isActive />
+                    ) : null}
                   </div>
                 ) : (
                   <DemoTrackButton
