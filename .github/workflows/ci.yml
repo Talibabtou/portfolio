@@ -191,6 +191,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Require Vercel secrets
         run: |
@@ -224,7 +226,23 @@ jobs:
         run: vercel build
 
       - name: Deploy prebuilt preview
-        run: vercel deploy --prebuilt --archive=tgz
+        env:
+          DEPLOY_SHA: ${{ github.event.pull_request.head.sha }}
+          DEPLOY_REF: ${{ github.head_ref }}
+          DEPLOY_ACTOR: ${{ github.event.pull_request.user.login }}
+          DEPLOY_ORG: ${{ github.repository_owner }}
+          DEPLOY_REPO: ${{ github.event.repository.name }}
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s | tr '\n' ' ' | tr '"' "'")
+          vercel deploy --prebuilt --archive=tgz \
+            -m "githubCommitSha=${DEPLOY_SHA}" \
+            -m "githubCommitRef=${DEPLOY_REF}" \
+            -m "githubCommitMessage=${COMMIT_MESSAGE}" \
+            -m "githubCommitAuthorLogin=${DEPLOY_ACTOR}" \
+            -m "githubCommitAuthorName=${DEPLOY_ACTOR}" \
+            -m "githubOrg=${DEPLOY_ORG}" \
+            -m "githubRepo=${DEPLOY_REPO}" \
+            -m "githubDeployment=1"
 
   deploy-production:
     name: Deploy production to Vercel
@@ -241,6 +259,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Require Vercel secrets
         run: |
@@ -274,4 +294,20 @@ jobs:
         run: vercel build --prod
 
       - name: Deploy prebuilt production
-        run: vercel deploy --prebuilt --prod --archive=tgz
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_REF: ${{ github.ref_name }}
+          DEPLOY_ACTOR: ${{ github.actor }}
+          DEPLOY_ORG: ${{ github.repository_owner }}
+          DEPLOY_REPO: ${{ github.event.repository.name }}
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s | tr '\n' ' ' | tr '"' "'")
+          vercel deploy --prebuilt --prod --archive=tgz \
+            -m "githubCommitSha=${DEPLOY_SHA}" \
+            -m "githubCommitRef=${DEPLOY_REF}" \
+            -m "githubCommitMessage=${COMMIT_MESSAGE}" \
+            -m "githubCommitAuthorLogin=${DEPLOY_ACTOR}" \
+            -m "githubCommitAuthorName=${DEPLOY_ACTOR}" \
+            -m "githubOrg=${DEPLOY_ORG}" \
+            -m "githubRepo=${DEPLOY_REPO}" \
+            -m "githubDeployment=1"
