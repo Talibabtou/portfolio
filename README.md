@@ -85,7 +85,7 @@ Issues and PRs are welcome. Please:
 
 ## Attribution
 
-Forked and heavily adapted from [Tajmirul Islam's portfolio](https://github.com/Tajmirul/portfolio-2.0) ([tajmirul.site](https://tajmirul.site/)). Content, demos, and direction are Guillaume's own.
+Forked and heavily adapted from [Tajmirul Islam's portfolio](https://github.com/Tajmirul/portfolio-2.0) ([tajmirul.site](https://tajmirul.site/)). Content, demos, and direction are my own.
 
 ## License
 
