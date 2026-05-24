@@ -1,12 +1,19 @@
-import { BROWSER_EVENTS, STORAGE_KEYS, THEME_VALUES } from '@/lib/constants';
-import type { UserPreferences } from '@/types';
+import {
+  BROWSER_EVENTS,
+  STORAGE_KEYS,
+  THEME_COOKIE_NAME,
+  THEME_VALUES,
+} from '@/lib/constants';
+import type { ThemePreference, UserPreferences } from '@/types';
 import { useSyncExternalStore } from 'react';
 
 const DEFAULT_USER_PREFERENCES: UserPreferences = {
   theme: THEME_VALUES.dark,
 };
+const LIGHT_USER_PREFERENCES: UserPreferences = {
+  theme: THEME_VALUES.light,
+};
 const PORTFOLIO_STORAGE_VERSION = 1;
-const USER_PREFERENCES_STORAGE_KEY = 'userPreferences';
 
 type PortfolioStorageArea = 'local' | 'session';
 type PortfolioStorageState = {
@@ -125,30 +132,26 @@ export const subscribeToPortfolioStorage = (
   };
 };
 
-const readLegacyUserPreferences = () => {
+const readThemeCookie = () => {
   if (typeof window === 'undefined') return undefined;
 
-  const storedPreferences = window.localStorage.getItem(
-    STORAGE_KEYS.legacyUserPreferences,
-  );
-  if (!storedPreferences) return undefined;
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(`${THEME_COOKIE_NAME}=`))
+    ?.split('=')[1];
 
-  try {
-    return JSON.parse(storedPreferences) as Partial<UserPreferences>;
-  } catch {
-    return undefined;
+  if (cookieValue === THEME_VALUES.light || cookieValue === THEME_VALUES.dark) {
+    return cookieValue;
   }
+
+  return undefined;
 };
 
 export const readUserPreferences = (): UserPreferences => {
   if (typeof window === 'undefined') return DEFAULT_USER_PREFERENCES;
 
-  const storedPreferences = JSON.stringify(
-    readPortfolioStorageValue<Partial<UserPreferences>>(
-      'local',
-      USER_PREFERENCES_STORAGE_KEY,
-    ) ?? readLegacyUserPreferences(),
-  );
+  const theme = readThemeCookie();
+  const storedPreferences = theme ? JSON.stringify({ theme }) : null;
 
   if (storedPreferences === cachedPreferencesKey) {
     return cachedPreferences;
@@ -193,33 +196,30 @@ export const writeUserPreferences = (preferences: Partial<UserPreferences>) => {
     ...preferences,
   };
 
-  writePortfolioStorageValue(
-    'local',
-    USER_PREFERENCES_STORAGE_KEY,
-    nextPreferences,
-  );
-
   cachedPreferencesKey = JSON.stringify(nextPreferences);
   cachedPreferences = nextPreferences;
+
+  // biome-ignore lint/suspicious/noDocumentCookie: Theme cookie is the server-readable source of truth for first paint.
+  document.cookie = `${THEME_COOKIE_NAME}=${nextPreferences.theme}; path=/; max-age=31536000; samesite=lax`;
 
   window.dispatchEvent(new Event(BROWSER_EVENTS.userPreferencesChange));
 };
 
 const subscribeToUserPreferences = (onStoreChange: () => void) => {
-  const handleStorageChange = (event: StorageEvent) => {
-    if (
-      event.key === STORAGE_KEYS.localState ||
-      event.key === STORAGE_KEYS.legacyUserPreferences
-    ) {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
       onStoreChange();
     }
   };
+  const handleWindowFocus = () => onStoreChange();
 
-  window.addEventListener('storage', handleStorageChange);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  window.addEventListener('focus', handleWindowFocus);
   window.addEventListener(BROWSER_EVENTS.userPreferencesChange, onStoreChange);
 
   return () => {
-    window.removeEventListener('storage', handleStorageChange);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.removeEventListener('focus', handleWindowFocus);
     window.removeEventListener(
       BROWSER_EVENTS.userPreferencesChange,
       onStoreChange,
@@ -227,10 +227,15 @@ const subscribeToUserPreferences = (onStoreChange: () => void) => {
   };
 };
 
-export const useUserPreferences = () => {
+export const useUserPreferences = (initialTheme?: ThemePreference) => {
+  const serverSnapshot =
+    initialTheme === THEME_VALUES.light
+      ? LIGHT_USER_PREFERENCES
+      : DEFAULT_USER_PREFERENCES;
+
   return useSyncExternalStore(
     subscribeToUserPreferences,
     readUserPreferences,
-    () => DEFAULT_USER_PREFERENCES,
+    () => serverSnapshot,
   );
 };

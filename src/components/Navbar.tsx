@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import type { ThemePreference } from '@/types';
 import { useEffect, useState } from 'react';
 
 const COLORS = [
@@ -36,9 +37,13 @@ const MENU_LINKS = [
   },
 ];
 
-const Navbar = () => {
+type NavbarProps = {
+  initialTheme: ThemePreference;
+};
+
+const Navbar = ({ initialTheme }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme } = useUserPreferences();
+  const { theme } = useUserPreferences(initialTheme);
   const isDarkMode = theme === THEME_VALUES.dark;
   const router = useRouter();
 

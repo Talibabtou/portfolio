@@ -8,8 +8,9 @@ export const THEME_CLASS = THEME_VALUES.dark;
 export const STORAGE_KEYS = {
   localState: 'portfolio:local-state',
   sessionState: 'portfolio:session-state',
-  legacyUserPreferences: 'portfolio:user-preferences',
 } as const;
+
+export const THEME_COOKIE_NAME = 'portfolio-theme';
 
 export const BROWSER_EVENTS = {
   localStateChange: 'portfolio:local-state-change',

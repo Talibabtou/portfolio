@@ -1,7 +1,7 @@
 'use client';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const PRELOADER_PANELS = [
   'panel-01',
@@ -19,7 +19,6 @@ const PRELOADER_PANELS = [
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [isVisible, setIsVisible] = useState(true);
   const preloaderText = 'TALIBABTOU';
   const preloaderLetters = Array.from(preloaderText, (letter, index) => ({
     id: `${letter}-${preloaderText.slice(0, index + 1)}`,
@@ -39,6 +38,10 @@ const Preloader = () => {
       tl.set('.name-text', {
         autoAlpha: 1,
       });
+      tl.set(preloaderRef.current, {
+        autoAlpha: 1,
+        pointerEvents: 'auto',
+      });
 
       tl.to('.name-text span', {
         y: 0,
@@ -57,9 +60,7 @@ const Preloader = () => {
           preloaderRef.current,
           {
             autoAlpha: 0,
-            onComplete: () => {
-              setIsVisible(false);
-            },
+            pointerEvents: 'none',
           },
           '<1',
         );
@@ -70,7 +71,6 @@ const Preloader = () => {
     },
   );
 
-  if (!isVisible) return null;
   if (prefersReducedMotion) return null;
 
   return (
