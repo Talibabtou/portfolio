@@ -127,6 +127,9 @@ export type Topography = {
   width: number;
 };
 
+let topographyPromise: Promise<Topography> | null = null;
+let topographySnapshot: Topography | null = null;
+
 type Point = [number, number];
 
 type Peak = {
@@ -352,4 +355,26 @@ export const generateTopography = (): Topography => {
       })
       .filter((line) => line.d.length > 0),
   };
+};
+
+export const getTopographySnapshot = () => topographySnapshot;
+
+export const preloadTopography = () => {
+  if (topographySnapshot) {
+    return Promise.resolve(topographySnapshot);
+  }
+
+  if (topographyPromise) {
+    return topographyPromise;
+  }
+
+  topographyPromise = Promise.resolve().then(() => {
+    const nextTopography = generateTopography();
+    topographySnapshot = nextTopography;
+    topographyPromise = null;
+
+    return nextTopography;
+  });
+
+  return topographyPromise;
 };

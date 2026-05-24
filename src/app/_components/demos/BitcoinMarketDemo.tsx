@@ -140,6 +140,45 @@ const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
   }
 };
 
+const fetchBitcoinMarketPoints = (
+  range: BitcoinRange,
+  options: { signal?: AbortSignal } = {},
+) => {
+  const cachedPoints = getBitcoinMarketCache(range);
+  if (cachedPoints) {
+    return Promise.resolve(cachedPoints);
+  }
+
+  const marketChartUrl = new URL(COINGECKO_MARKET_CHART_URL);
+  marketChartUrl.searchParams.set('vs_currency', 'usd');
+  marketChartUrl.searchParams.set('days', range);
+
+  return fetch(marketChartUrl, { signal: options.signal })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`CoinGecko returned ${response.status}`);
+      }
+
+      return response.json() as Promise<MarketChartResponse>;
+    })
+    .then((data) => {
+      const normalizedPoints = normalizeMarketChart(data);
+      setBitcoinMarketCache(range, normalizedPoints);
+
+      return normalizedPoints;
+    });
+};
+
+export const preloadBitcoinMarketDemo = async () => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    await fetchBitcoinMarketPoints(DEFAULT_BITCOIN_RANGE);
+  } catch {
+    // Preloading is opportunistic; mounted state handles recoverable failures.
+  }
+};
+
 const getClosestPoint = (points: MarketPoint[], timestamp: number) =>
   points.reduce((closestPoint, point) => {
     const closestDistance = Math.abs(closestPoint.timestamp - timestamp);
@@ -421,21 +460,8 @@ const BitcoinMarketDemo = () => {
 
     const controller = new AbortController();
 
-    const marketChartUrl = new URL(COINGECKO_MARKET_CHART_URL);
-    marketChartUrl.searchParams.set('vs_currency', 'usd');
-    marketChartUrl.searchParams.set('days', activeRange);
-
-    fetch(marketChartUrl, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`CoinGecko returned ${response.status}`);
-        }
-
-        return response.json() as Promise<MarketChartResponse>;
-      })
-      .then((data) => {
-        const normalizedPoints = normalizeMarketChart(data);
-        setBitcoinMarketCache(activeRange, normalizedPoints);
+    fetchBitcoinMarketPoints(activeRange, { signal: controller.signal })
+      .then((normalizedPoints) => {
         setPoints(normalizedPoints);
       })
       .catch((fetchError: Error) => {
@@ -615,6 +641,7 @@ export const bitcoinMarketDemo = {
   id: 'trading-view',
   label: 'BTC Chart',
   metrics: ['BTC / USD', '1D / 7D / 30D', 'CoinGecko'],
+  preload: preloadBitcoinMarketDemo,
   title: 'BTC / USD market chart with live API data.',
 } satisfies DemoTrack;
 

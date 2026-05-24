@@ -1,7 +1,8 @@
 'use client';
 import { gsap, useGSAP } from '@/lib/gsap';
 import {
-  generateTopography,
+  getTopographySnapshot,
+  preloadTopography,
   randomBetween,
   TOPOGRAPHIC_GRID_COLUMNS,
   TOPOGRAPHIC_GRID_PADDING,
@@ -13,15 +14,25 @@ import { useEffect, useRef, useState } from 'react';
 
 const TopographicBackground = () => {
   const pathsRef = useRef<SVGPathElement[]>([]);
-  const [topography, setTopography] = useState<Topography | null>(null);
+  const [topography, setTopography] = useState<Topography | null>(() =>
+    getTopographySnapshot(),
+  );
 
   useEffect(() => {
-    const animationFrame = requestAnimationFrame(() => {
-      setTopography(generateTopography());
+    if (topography) return;
+
+    let ignoreResult = false;
+
+    void preloadTopography().then((nextTopography) => {
+      if (!ignoreResult) {
+        setTopography(nextTopography);
+      }
     });
 
-    return () => cancelAnimationFrame(animationFrame);
-  }, []);
+    return () => {
+      ignoreResult = true;
+    };
+  }, [topography]);
 
   useGSAP(
     () => {

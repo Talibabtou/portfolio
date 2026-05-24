@@ -15,3 +15,8 @@ export const THEME_COOKIE_NAME = 'portfolio-theme';
 export const BROWSER_EVENTS = {
   themePreferenceChange: 'portfolio:theme-preference-change',
 } as const;
+
+export const UI_TIMINGS = {
+  demoTabTransitionMs: 300,
+  demoTabVisibilityDelayMs: 340,
+} as const;

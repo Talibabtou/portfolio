@@ -7,7 +7,7 @@ import { useIntentPreload } from '@/lib/use-intent-preload';
 import { useRevealSectionGsap } from '@/lib/use-section-gsap';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 
 type DemoTrackButtonProps = {
@@ -53,8 +53,24 @@ const DemoTrackButton = ({
 const DemoLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeTrackId, setActiveTrackId] = useState(DEMO_TRACKS[0].id);
+  const [visitedTrackIds, setVisitedTrackIds] = useState(
+    () => new Set([DEMO_TRACKS[0].id]),
+  );
   const activeTrack =
     DEMO_TRACKS.find((track) => track.id === activeTrackId) ?? DEMO_TRACKS[0];
+  const mountedTrackIds = useMemo(
+    () => new Set([...visitedTrackIds, activeTrack.id]),
+    [activeTrack.id, visitedTrackIds],
+  );
+
+  const activateTrack = (trackId: string) => {
+    setActiveTrackId(trackId);
+    setVisitedTrackIds((currentVisitedTrackIds) => {
+      if (currentVisitedTrackIds.has(trackId)) return currentVisitedTrackIds;
+
+      return new Set([...currentVisitedTrackIds, trackId]);
+    });
+  };
 
   useRevealSectionGsap({
     scope: sectionRef,
@@ -120,14 +136,28 @@ const DemoLab = () => {
                 )}
                 key={track.id}
               >
+                {!isActive &&
+                mountedTrackIds.has(track.id) &&
+                track.keepMountedWhenInactive !== false ? (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 opacity-0"
+                  >
+                    <TrackComponent isActive={false} />
+                  </div>
+                ) : null}
                 {isActive ? (
                   <div className="relative flex h-full min-w-0 flex-col p-5">
                     {trackHeader}
-                    <TrackComponent />
+                    <div className="relative min-h-0 flex-1">
+                      {mountedTrackIds.has(track.id) ? (
+                        <TrackComponent isActive />
+                      ) : null}
+                    </div>
                   </div>
                 ) : (
                   <DemoTrackButton
-                    onActivate={() => setActiveTrackId(track.id)}
+                    onActivate={() => activateTrack(track.id)}
                     track={track}
                   >
                     {trackHeader}

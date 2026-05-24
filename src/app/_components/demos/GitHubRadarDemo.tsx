@@ -41,8 +41,7 @@ type CachedGitHubLeaderboard = {
 const GITHUB_SEARCH_REPOSITORIES_URL =
   'https://api.github.com/search/repositories';
 const GITHUB_LEADERBOARD_CACHE_KEY = 'demos.github-radar.leaderboards';
-const GITHUB_AVATAR_CACHE_KEY = 'demos.github-radar.avatars';
-const GITHUB_LEADERBOARD_CACHE_TTL = 30 * 60 * 1000;
+const GITHUB_LEADERBOARD_CACHE_TTL = 60 * 60 * 1000;
 const DEFAULT_TAB: LeaderboardTabId = 'rising';
 const RISING_CANDIDATE_COUNT = 50;
 const RISING_WINDOW_DAYS = 90;
@@ -50,7 +49,6 @@ const githubLeaderboardRequests = new Map<
   LeaderboardTabId,
   Promise<CachedGitHubLeaderboard>
 >();
-const githubAvatarRequests = new Map<string, Promise<string>>();
 
 const compactNumberFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 1,
@@ -102,68 +100,6 @@ const getAvatarUrl = (avatarUrl: string) => {
   url.searchParams.set('s', '64');
 
   return url.toString();
-};
-
-const readBlobAsDataUrl = (blob: Blob) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener('error', () => reject(reader.error));
-    reader.addEventListener('load', () => resolve(String(reader.result)));
-    reader.readAsDataURL(blob);
-  });
-
-const getCachedAvatarDataUrl = (avatarUrl: string) => {
-  return readStorageValue<Record<string, string>>(
-    'session',
-    GITHUB_AVATAR_CACHE_KEY,
-  )?.[avatarUrl];
-};
-
-const setCachedAvatarDataUrl = (avatarUrl: string, dataUrl: string) => {
-  try {
-    const avatarCache =
-      readStorageValue<Record<string, string>>(
-        'session',
-        GITHUB_AVATAR_CACHE_KEY,
-      ) ?? {};
-
-    writeStorageValue('session', GITHUB_AVATAR_CACHE_KEY, {
-      ...avatarCache,
-      [avatarUrl]: dataUrl,
-    });
-  } catch {
-    // Avatars are decorative; keep the remote URL fallback if storage is full.
-  }
-};
-
-const fetchCachedAvatarDataUrl = (avatarUrl: string) => {
-  const cachedAvatar = getCachedAvatarDataUrl(avatarUrl);
-  if (cachedAvatar) return Promise.resolve(cachedAvatar);
-
-  const pendingRequest = githubAvatarRequests.get(avatarUrl);
-  if (pendingRequest) return pendingRequest;
-
-  const request = fetch(avatarUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`GitHub avatar returned ${response.status}`);
-      }
-
-      return response.blob();
-    })
-    .then(readBlobAsDataUrl)
-    .then((dataUrl) => {
-      setCachedAvatarDataUrl(avatarUrl, dataUrl);
-
-      return dataUrl;
-    })
-    .finally(() => {
-      githubAvatarRequests.delete(avatarUrl);
-    });
-
-  githubAvatarRequests.set(avatarUrl, request);
-
-  return request;
 };
 
 const getGitHubSearchParams = (tabId: LeaderboardTabId) => {
@@ -275,12 +211,14 @@ const fetchGitHubLeaderboard = (tabId: LeaderboardTabId) => {
   return request;
 };
 
-const preloadGitHubRadarDemo = () => {
+export const preloadGitHubRadarDemo = async () => {
   if (typeof window === 'undefined') return;
 
-  void fetchGitHubLeaderboard(DEFAULT_TAB).catch(() => {
+  try {
+    await fetchGitHubLeaderboard(DEFAULT_TAB);
+  } catch {
     // Preloading is opportunistic; the mounted demo renders the recoverable error.
-  });
+  }
 };
 
 const getRepositorySignal = (
@@ -340,16 +278,8 @@ const getRepositoryAvatarUrl = (repository: GitHubRepository) =>
     ? getAvatarUrl(repository.owner.avatar_url)
     : undefined;
 
-const getRepositoryAvatarSource = (
-  avatarUrl: string,
-  avatarDataUrls: Record<string, string>,
-) => avatarDataUrls[avatarUrl] ?? getCachedAvatarDataUrl(avatarUrl);
-
 const GitHubRadarDemo = () => {
   const [activeTab, setActiveTab] = useState<LeaderboardTabId>(DEFAULT_TAB);
-  const [avatarDataUrls, setAvatarDataUrls] = useState<Record<string, string>>(
-    {},
-  );
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [repositories, setRepositories] = useState<GitHubRepository[]>([]);
@@ -403,57 +333,6 @@ const GitHubRadarDemo = () => {
       ignoreRequest = true;
     };
   }, [activeTab]);
-
-  useEffect(() => {
-    const avatarUrls = Array.from(
-      new Set(
-        visibleRepositories
-          .map(getRepositoryAvatarUrl)
-          .filter((avatarUrl): avatarUrl is string => Boolean(avatarUrl)),
-      ),
-    );
-
-    const missingAvatarUrls = avatarUrls.filter((avatarUrl) => {
-      if (avatarDataUrls[avatarUrl]) return false;
-
-      const cachedAvatar = getCachedAvatarDataUrl(avatarUrl);
-      if (cachedAvatar) {
-        queueMicrotask(() => {
-          setAvatarDataUrls((currentAvatarDataUrls) => ({
-            ...currentAvatarDataUrls,
-            [avatarUrl]: cachedAvatar,
-          }));
-        });
-
-        return false;
-      }
-
-      return true;
-    });
-
-    if (missingAvatarUrls.length === 0) return;
-
-    let ignoreRequest = false;
-
-    for (const avatarUrl of missingAvatarUrls) {
-      void fetchCachedAvatarDataUrl(avatarUrl)
-        .then((dataUrl) => {
-          if (ignoreRequest) return;
-
-          setAvatarDataUrls((currentAvatarDataUrls) => ({
-            ...currentAvatarDataUrls,
-            [avatarUrl]: dataUrl,
-          }));
-        })
-        .catch(() => {
-          // Keep the remote GitHub avatar fallback.
-        });
-    }
-
-    return () => {
-      ignoreRequest = true;
-    };
-  }, [avatarDataUrls, visibleRepositories]);
 
   const handleTabChange = (tabId: LeaderboardTabId) => {
     setActiveTab(tabId);
@@ -544,9 +423,6 @@ const GitHubRadarDemo = () => {
                 const signal = getRepositorySignal(repository, activeTab);
                 const SignalIcon = signal.icon;
                 const avatarUrl = getRepositoryAvatarUrl(repository);
-                const avatarSource = avatarUrl
-                  ? getRepositoryAvatarSource(avatarUrl, avatarDataUrls)
-                  : undefined;
 
                 return (
                   <a
@@ -562,13 +438,13 @@ const GitHubRadarDemo = () => {
                     <span className="min-w-0">
                       <span className="flex items-center gap-3">
                         <span className="grid size-8 shrink-0 place-items-center overflow-hidden border border-foreground/10 bg-background">
-                          {avatarSource ? (
+                          {avatarUrl ? (
                             <Image
                               alt=""
                               className="size-full object-cover"
                               height={32}
-                              src={avatarSource}
-                              unoptimized
+                              sizes="32px"
+                              src={avatarUrl}
                               width={32}
                             />
                           ) : (

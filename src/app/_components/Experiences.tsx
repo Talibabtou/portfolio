@@ -95,8 +95,7 @@ const Experiences = () => {
                           alt={`${item.company} logo`}
                           width="72"
                           height="72"
-                          className="h-full max-w-none object-contain"
-                          style={{ height: '72px', width: 'auto' }}
+                          className="h-full w-auto max-w-none object-contain"
                         />
                       </div>
                     ) : (

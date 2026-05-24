@@ -1,12 +1,19 @@
 'use client';
 
-import type { DemoTrack } from '@/app/_components/demos/types';
+import type {
+  DemoComponentProps,
+  DemoTrack,
+} from '@/app/_components/demos/types';
+import { UI_TIMINGS } from '@/lib/constants';
 import { readStorageValue, writeStorageValue } from '@/lib/storage';
+import { useDebouncedActivation } from '@/lib/use-debounced-activation';
 import { Globe2, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { GlobeMethods } from 'react-globe.gl';
 import { MeshPhongMaterial } from 'three';
+
+const preloadGlobeLibrary = () => import('react-globe.gl');
 
 const Globe = dynamic(() => import('react-globe.gl'), {
   ssr: false,
@@ -72,14 +79,13 @@ const COUNTRIES_GEOJSON_URL =
   'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson';
 const WORLD_MAP_COUNTRIES_CACHE_KEY = 'demos.world-map.countries';
 const WORLD_MAP_CACHE_KEY = 'demos.world-map.earthquakes.v1';
-const WORLD_MAP_CACHE_TTL = 15 * 60 * 1000;
+const WORLD_MAP_CACHE_TTL = 24 * 60 * 60 * 1000;
 const EARTHQUAKE_LOOKBACK_DAYS = 365;
 const EARTHQUAKE_LIMIT = 160;
 const MIN_EARTHQUAKE_MAGNITUDE = 4.5;
 const MILLISECONDS_IN_DAY = 86_400_000;
 const GLOBE_VIEWPOINT = { altitude: 1.5, lat: 42, lng: 8 };
 const GLOBE_VIEW_TRANSITION = 900;
-const MAP_RENDER_DELAY = 350;
 const GLOBE_AUTO_ROTATE_SPEED = 0.18;
 const GLOBE_ROTATE_SPEED = 0.12;
 const GLOBE_ZOOM_SPEED = 0.35;
@@ -302,15 +308,12 @@ const fetchCountries = () => {
   return request;
 };
 
-const preloadWorldMapDemo = () => {
+export const preloadWorldMapDemo = async () => {
   if (typeof window === 'undefined') return;
 
-  void fetchEarthquakes().catch(() => {
-    // Preloading is opportunistic; the mounted demo renders the recoverable error.
-  });
-  void fetchCountries().catch(() => {
-    // Country outlines can still be requested when the demo mounts.
-  });
+  void preloadGlobeLibrary();
+
+  await Promise.allSettled([fetchEarthquakes(), fetchCountries()]);
 };
 
 const getPointLabel = (point: object) => {
@@ -337,10 +340,17 @@ const getPointLabel = (point: object) => {
 
 type GlobeSurfaceProps = {
   earthquakes: EarthquakePulse[];
+  isActive: boolean;
+  isVisible: boolean;
   isLoading: boolean;
 };
 
-const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
+const GlobeSurface = ({
+  earthquakes,
+  isActive,
+  isVisible,
+  isLoading,
+}: GlobeSurfaceProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
   const [countries, setCountries] = useState<CountryFeature[]>(
@@ -434,11 +444,38 @@ const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
     };
   }, [isGlobeReady]);
 
+  useEffect(() => {
+    if (!isGlobeReady) return;
+
+    const globe = globeRef.current;
+    if (!globe) return;
+
+    const controls = globe.controls();
+
+    if (isActive && isVisible) {
+      globe.resumeAnimation();
+      controls.enabled = true;
+      controls.autoRotate = !hoveredEarthquakeId;
+      return;
+    }
+
+    controls.autoRotate = false;
+    controls.enabled = false;
+    globe.pauseAnimation();
+  }, [hoveredEarthquakeId, isActive, isGlobeReady, isVisible]);
+
   return (
-    <div className="absolute inset-0 z-0" ref={containerRef}>
+    <div
+      className="absolute inset-0 z-0 transition-opacity duration-150"
+      ref={containerRef}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        visibility: isVisible ? 'visible' : 'hidden',
+      }}
+    >
       <Globe
         ref={globeRef}
-        animateIn
+        animateIn={false}
         atmosphereAltitude={0.1}
         atmosphereColor={theme.halo}
         backgroundColor="rgba(0,0,0,0)"
@@ -508,21 +545,14 @@ const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
   );
 };
 
-const WorldMapDemo = () => {
-  const [canRenderGlobe, setCanRenderGlobe] = useState(false);
+const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [earthquakes, setEarthquakes] = useState<EarthquakePulse[]>([]);
-
-  useEffect(() => {
-    const renderDelay = window.setTimeout(() => {
-      setCanRenderGlobe(true);
-    }, MAP_RENDER_DELAY);
-
-    return () => {
-      window.clearTimeout(renderDelay);
-    };
-  }, []);
+  const { hasMounted, isVisible } = useDebouncedActivation(isActive, {
+    delayMs: UI_TIMINGS.demoTabVisibilityDelayMs,
+    preferIdleMount: true,
+  });
 
   useEffect(() => {
     const cachedEarthquakes = getEarthquakesCache({ allowStale: true });
@@ -564,9 +594,11 @@ const WorldMapDemo = () => {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      {canRenderGlobe ? (
+      {hasMounted ? (
         <GlobeSurface
           earthquakes={error ? [] : earthquakes}
+          isActive={isActive}
+          isVisible={isVisible}
           isLoading={isLoading}
         />
       ) : null}
@@ -580,5 +612,6 @@ const WorldMapDemo = () => {
 export const worldMapDemo = {
   ...worldMapContent,
   Component: WorldMapDemo,
+  keepMountedWhenInactive: false,
   preload: preloadWorldMapDemo,
 } satisfies DemoTrack;

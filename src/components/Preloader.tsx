@@ -1,5 +1,6 @@
 'use client';
 import { gsap, useGSAP } from '@/lib/gsap';
+import { runStartupTasks } from '@/lib/startup';
 import { useRef } from 'react';
 
 const PRELOADER_PANELS = [
@@ -25,6 +26,7 @@ const Preloader = () => {
 
   useGSAP(
     () => {
+      let isActive = true;
       const tl = gsap.timeline({
         defaults: {
           ease: 'power1.inOut',
@@ -45,21 +47,38 @@ const Preloader = () => {
         duration: 0.15,
       });
 
-      tl.to('.preloader-item', {
-        delay: 0.3,
-        y: '100%',
-        duration: 0.4,
-        stagger: 0.07,
-      })
-        .to('.name-text span', { autoAlpha: 0 }, '<0.5')
-        .to(
-          preloaderRef.current,
-          {
-            autoAlpha: 0,
-            pointerEvents: 'none',
-          },
-          '<1',
-        );
+      const introCompleted = new Promise<void>((resolve) => {
+        tl.eventCallback('onComplete', resolve);
+      });
+
+      void Promise.allSettled([introCompleted, runStartupTasks()]).then(() => {
+        if (!isActive) return;
+
+        gsap
+          .timeline({
+            defaults: {
+              ease: 'power1.inOut',
+            },
+          })
+          .to('.preloader-item', {
+            y: '100%',
+            duration: 0.4,
+            stagger: 0.07,
+          })
+          .to('.name-text span', { autoAlpha: 0 }, '<0.5')
+          .to(
+            preloaderRef.current,
+            {
+              autoAlpha: 0,
+              pointerEvents: 'none',
+            },
+            '<1',
+          );
+      });
+
+      return () => {
+        isActive = false;
+      };
     },
     {
       scope: preloaderRef,
