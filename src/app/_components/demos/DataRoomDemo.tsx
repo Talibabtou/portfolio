@@ -692,7 +692,7 @@ const DataRoomDemo = ({ isActive = false }: DemoComponentProps) => {
                 </div>
               </div>
 
-              <div className="grid h-[23rem] auto-rows-[3rem] grid-cols-12 gap-2">
+              <div className="grid h-92 auto-rows-[3rem] grid-cols-12 gap-2">
                 {treemapProtocols.map((protocol) => {
                   const isSelected = protocol.id === selectedProtocol?.id;
                   const isDimmed =
