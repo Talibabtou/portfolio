@@ -37,7 +37,6 @@ const CustomCursor = () => {
       fill="none"
       id="cursor"
       strokeWidth="2"
-      opacity="0"
       xmlns="http://www.w3.org/2000/svg"
       ref={svgRef}
     >

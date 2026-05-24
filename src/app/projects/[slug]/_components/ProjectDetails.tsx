@@ -54,9 +54,7 @@ const ProjectDetails = ({ project }: Props) => {
         autoAlpha: 0,
         y: 30,
       });
-      const tl = gsap.timeline({
-        delay: 0.5,
-      });
+      const tl = gsap.timeline();
 
       tl.to('.fade-in-later', {
         autoAlpha: 1,

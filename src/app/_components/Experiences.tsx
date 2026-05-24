@@ -96,7 +96,7 @@ const Experiences = () => {
                           width="72"
                           height="72"
                           className="h-full max-w-none object-contain"
-                          style={{ width: 'auto' }}
+                          style={{ height: '72px', width: 'auto' }}
                         />
                       </div>
                     ) : (

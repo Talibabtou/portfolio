@@ -1,5 +1,163 @@
 # Portfolio Audit
 
+## Current Engineering Audit - May 2026
+
+### Navigation Freeze / External Return
+
+The current failure mode is most likely caused by a fullscreen GSAP layer being
+restored in a bad visual state after browser back/forward cache, not by the
+topographic background itself.
+
+High-risk files:
+
+- `src/app/template.tsx`
+  - Owns the fullscreen `.page-transition` and `.page-transition--inner`
+    overlays.
+  - These layers are `fixed`, full viewport and `z-5`, so if a GSAP transform
+    is restored at `yPercent: 0`, the whole site is hidden behind the transition
+    color.
+  - The component resets on `pageshow`, `popstate` and `visibilitychange`, but
+    not before the page is cached on `pagehide`.
+  - The overlay is not hidden by default in markup. It depends on GSAP running
+    successfully to move it out of view.
+  - Audit recommendation: make the transition overlay fail-safe by default
+    (`-translate-y-full` / hidden initial state), and only bring it onscreen
+    during intentional internal transitions.
+
+- `src/components/TransitionLink.tsx`
+  - Prevents default navigation for every wrapped link and waits for a GSAP
+    timeline before calling `router.push` or `router.back`.
+  - If the transition timeline is interrupted by leaving the site, browser
+    restore, reduced motion, or an exception, navigation can leave the overlay
+    in the visible state.
+  - Audit recommendation: keep transition navigation scoped to internal links
+    only. External links should never run this transition layer.
+
+- `src/components/Preloader.tsx`
+  - Another fullscreen layer, `fixed inset-0 z-6`, controlled by GSAP
+    `autoAlpha`.
+  - It currently reappears per mount because "seen preloader" session storage
+    was removed from the earlier implementation.
+  - Audit recommendation: either restore session-level "preloader seen" state
+    or remove the preloader during navigation debugging. Do not allow both
+    preloader and page-transition fullscreen layers to overlap during route
+    changes.
+
+- `src/components/ScrollProgressIndicator.tsx`
+  - Shows a full bar if its inline transform is missing or stale.
+  - It updates on `scroll` only, so bfcache restores or visibility changes can
+    show stale progress until the next scroll.
+  - Audit recommendation: update on `pageshow`, `visibilitychange`, and
+    `resize`, and give the inner bar a safe default transform that represents
+    top-of-page.
+
+### GSAP / ScrollTrigger Risks
+
+- Several scroll animations create `ScrollTrigger` timelines but do not call
+  `ScrollTrigger.refresh()` after route transitions, image loads, or bfcache
+  restore.
+- `LenisProvider` uses Lenis smooth scrolling, but there is no explicit
+  Lenis/ScrollTrigger bridge (`lenis.on('scroll', ScrollTrigger.update)` and a
+  shared ticker). This can cause scroll-linked GSAP state to feel stale after
+  browser history restoration.
+- `src/lib/use-section-gsap.ts` abstracts reveal/exit timelines but does not
+  enable `invalidateOnRefresh`, so trigger calculations can drift when content
+  height changes after demos/images mount.
+- Several animations use global selectors:
+  - `#banner-arrow-svg`
+  - `.slide-up-and-fade`
+  - `#info`
+  - `#images > div`
+  These are easy to break when a page is cached, partially remounted, or when
+  two route segments temporarily coexist.
+
+Audit recommendation:
+
+1. First make fullscreen overlays fail-safe. This should be fixed before
+   touching Lenis, topo or route remounting.
+2. Then add a small `GsapRuntime` component that only refreshes
+   `ScrollTrigger` after route changes and `pageshow`. Do not remount
+   `TopographicBackground`.
+3. Finally move global GSAP selectors toward refs or scoped selectors, one
+   component at a time.
+
+### Performance / Lag Risks
+
+- `src/lib/topography.ts`
+  - Generates a 300 x 300 contour field plus padding, then animates 40 SVG
+    paths indefinitely.
+  - This is acceptable on desktop, but expensive for lower-end laptops and
+    mobile/tablet GPUs.
+  - Recommendation: keep it disabled or simplified for reduced motion and
+    consider lowering grid size or line count on small screens.
+
+- `src/components/TopographicBackground.tsx`
+  - Runs infinite GSAP tweens on all contour paths.
+  - Recommendation: pause or avoid starting these animations when the document
+    is hidden, and resume only when visible.
+
+- `src/app/_components/demos/WorldMapDemo.tsx`
+  - Dynamically loads `react-globe.gl` and `three`, which is heavy.
+  - It fetches country GeoJSON and earthquake data, then renders a 3D globe.
+  - Recommendation: keep it lazy and do not mount it until the demo is likely to
+    be viewed. The current dynamic import is good, but verify that the selected
+    demo is the only heavy one actively rendering.
+
+- `src/app/_components/demos/GitHubRadarDemo.tsx`
+  - Fetches remote avatars and converts them to base64 data URLs for session
+    storage.
+  - Recommendation: watch storage size and memory use. Prefer normal image URLs
+    or Next image optimization unless base64 caching is clearly needed.
+
+- `src/app/_components/ProjectList.tsx`
+  - Registers a `mousemove` listener on `window` and calls `gsap.to` frequently.
+  - Recommendation: use `quickTo` / `quickSetter` or throttle via GSAP ticker
+    if this feels janky on desktop.
+
+- `src/components/CustomCursor.tsx`
+  - Also listens to every `mousemove`.
+  - Recommendation: keep it simple and CSS-driven. The current `html:hover`
+    visibility pattern is better than JS state for leaving the page.
+
+### Prioritized Technical Fix Plan
+
+1. Fix the fullscreen overlay failure mode.
+   - Make `.page-transition` hidden by default in markup/CSS.
+   - Add a `pagehide` cleanup so bfcache snapshots the hidden state.
+   - Keep external links outside transition handling.
+
+2. Restore stable preloader behavior.
+   - Restore session storage for "preloader seen", or temporarily remove
+     `Preloader` until routing is stable.
+   - Avoid two competing fullscreen GSAP layers.
+   - Once routing is stable, use the preloader window as a startup coordinator
+     for critical work: generate topo data, warm hero/portrait/experience
+     images, and start demo data requests in the background with a timeout.
+
+3. Add minimal GSAP runtime refresh.
+   - On `pageshow`, `popstate`, and pathname changes, call
+     `ScrollTrigger.refresh()` after a `requestAnimationFrame`.
+   - Do not regenerate topography and do not key/remount layout components.
+
+4. Refactor high-risk GSAP selectors.
+   - Start with `ProjectDetails` (`#info`, `#images > div`) and `Banner`
+     (`.slide-up-and-fade`).
+   - Prefer component refs and `gsap.utils.selector(scope)`.
+
+5. Performance pass.
+   - Profile the demo section with the browser Performance panel.
+   - Confirm that globe/three code does not run before the demo is viewed.
+   - Reduce topo animation cost if frame time is unstable.
+
+### Current Launch Blockers
+
+- External back navigation can restore a fullscreen GSAP transition layer in a
+  visible state.
+- The preloader and page-transition layers both own fullscreen z-index states.
+- Scroll progress can show stale state after browser restore.
+- Lenis and ScrollTrigger are not explicitly synchronized.
+- The heaviest demos need profiling before launch.
+
 ## Highest Recruiter Impact
 
 1. Replace all placeholder project visuals.

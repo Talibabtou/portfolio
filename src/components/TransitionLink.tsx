@@ -1,4 +1,5 @@
 'use client';
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { gsap, useGSAP } from '@/lib/gsap';
 import {
   PAGE_TRANSITION_INNER_SELECTOR,
@@ -20,34 +21,54 @@ const TransitionLink = ({
   ...rest
 }: Props) => {
   const router = useRouter();
-
+  const prefersReducedMotion = usePrefersReducedMotion();
   const { contextSafe } = useGSAP(() => {});
 
-  const handleLinkClick = contextSafe(
-    async (e: MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
+  const handleLinkClick = contextSafe((e: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(e);
 
-      gsap.set(PAGE_TRANSITION_SELECTOR, { yPercent: 100 });
-      gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
+    if (e.defaultPrevented) return;
+    if (!back && !href) return;
 
-      const tl = gsap.timeline();
+    e.preventDefault();
 
-      tl.to(PAGE_TRANSITION_SELECTOR, {
+    if (prefersReducedMotion) {
+      if (back) {
+        router.back();
+      }
+      if (href) {
+        router.push(href.toString());
+      }
+      return;
+    }
+
+    gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 1, yPercent: 100 });
+    gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
+
+    gsap
+      .timeline()
+      .to(PAGE_TRANSITION_SELECTOR, {
         yPercent: 0,
-        duration: 0.3,
-      });
-
-      tl.then(() => {
+        duration: 0.28,
+        ease: 'power2.out',
+      })
+      .to(
+        PAGE_TRANSITION_INNER_SELECTOR,
+        {
+          yPercent: 0,
+          duration: 0.22,
+          ease: 'power2.out',
+        },
+        '-=0.12',
+      )
+      .then(() => {
         if (back) {
           router.back();
         } else if (href) {
           router.push(href.toString());
-        } else if (onClick) {
-          onClick(e);
         }
       });
-    },
-  );
+  });
 
   return (
     <Link href={href} {...rest} onClick={handleLinkClick}>

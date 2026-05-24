@@ -10,25 +10,32 @@ const ScrollProgressIndicator = () => {
         const { scrollHeight, clientHeight } = document.documentElement;
         const scrollableHeight = scrollHeight - clientHeight;
         const scrollY = window.scrollY;
-        const scrollProgress = (scrollY / scrollableHeight) * 100;
+        const rawProgress =
+          scrollableHeight > 0 ? scrollY / scrollableHeight : 0;
+        const scrollProgress = Math.min(Math.max(rawProgress, 0), 1);
 
-        scrollBarRef.current.style.transform = `translateY(-${
-          100 - scrollProgress
-        }%)`;
+        scrollBarRef.current.style.transform = `scaleY(${scrollProgress})`;
       }
     };
 
     handleScroll();
 
+    window.addEventListener('pageshow', handleScroll);
+    window.addEventListener('resize', handleScroll);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('pageshow', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
-    <div className="fixed top-[50svh] right-[2%] z-1 h-25 w-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-background-light">
+    <div className="fixed top-[50svh] right-[2%] z-0 h-25 w-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-background-light">
       <div
-        className="h-full w-full rounded-full bg-primary"
+        className="h-full w-full origin-bottom rounded-full bg-primary"
         ref={scrollBarRef}
+        style={{ transform: 'scaleY(0)' }}
       ></div>
     </div>
   );

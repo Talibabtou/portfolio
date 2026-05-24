@@ -6,6 +6,7 @@ import CustomCursor from '@/components/CustomCursor';
 import Footer from '@/components/Footer';
 import LenisProvider from '@/components/LenisProvider';
 import Navbar from '@/components/Navbar';
+import PageTransitionOverlay from '@/components/PageTransitionOverlay';
 import Preloader from '@/components/Preloader';
 import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
@@ -50,6 +51,31 @@ const themeInitScript = `
 })();
 `;
 
+const historyRestoreScript = `
+(() => {
+  window.addEventListener('pagehide', (event) => {
+    if (event.persisted) {
+      document.documentElement.style.visibility = 'hidden';
+    }
+  });
+
+  window.addEventListener('pageshow', (event) => {
+    const navigationEntry = performance.getEntriesByType('navigation')[0];
+    const isHistoryRestore =
+      event.persisted || navigationEntry?.type === 'back_forward';
+
+    if (!isHistoryRestore) {
+      document.documentElement.style.visibility = '';
+      return;
+    }
+
+    if (isHistoryRestore) {
+      window.location.reload();
+    }
+  });
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -65,6 +91,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
           id="theme-init"
         />
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Must run before hydration so browser history restores fall back to a clean reload.
+          dangerouslySetInnerHTML={{ __html: historyRestoreScript }}
+          id="history-restore"
+        />
         <LenisProvider>
           <div className="custom-cursor-scope relative z-1">
             <Navbar />
@@ -75,6 +106,7 @@ export default function RootLayout({
           </div>
 
           <CustomCursor />
+          <PageTransitionOverlay />
           <Preloader />
           <ScrollProgressIndicator />
           <TopographicBackground />
