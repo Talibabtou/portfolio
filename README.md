@@ -1,92 +1,92 @@
-# Talibabtou Portfolio
+<p align="center">
+  <a href="https://talibabtou.dev">
+    <img src="./public/preview.png" alt="Talibabtou portfolio homepage" width="900" />
+  </a>
+</p>
 
-Personal portfolio for Guillaume Dumas, a frontend developer focused on Web3,
-fintech and product interfaces.
+# Talibabtou's Portfolio
 
-The goal of this website is to present a sharper profile than a generic
-developer portfolio. It should quickly communicate the kind of work Guillaume
-is best positioned for:
+Personal site for **Guillaume Dumas** — frontend product engineer focused on Web3, fintech, and data-heavy interfaces.
 
-- frontend and product engineering roles;
-- Web3, fintech, banking, SaaS and product-led startup contexts;
-- trading dashboards, prediction markets, wallet-aware flows and data-heavy
-  interfaces;
-- API-connected product screens built with clarity, maintainability and strong
-  implementation standards;
-- the mix of 42 Lyon engineering rigor and high-end craft quality standards
-  from previous Hermes leatherwork experience.
+**Live:** [talibabtou.dev](https://talibabtou.dev)
 
-## What Changed
+## Stack
 
-This repo started from an existing open-source portfolio, but the content is
-being refactored into a portfolio that fits Guillaume's actual profile and
-target roles.
+| Layer | Tools |
+| --- | --- |
+| Framework | [Next.js](https://nextjs.org/) 16 (App Router), [React](https://react.dev/) 19, TypeScript |
+| Styling | [Tailwind CSS](https://tailwindcss.com/) 4, CSS variables in `src/app/globals.css` |
+| Motion | [GSAP](https://gsap.com/) (`src/lib/gsap.ts`, section hooks) |
+| Data viz / 3D | lightweight-charts, d3-geo, react-globe.gl, Three.js |
+| Quality | Biome, ESLint, strict `pnpm run check` |
+| Hosting | [Vercel](https://vercel.com/) — deploy gated by GitHub Actions |
 
-The first content pass replaced the original author's identity with CV-derived
-information:
+## How it is built
 
-- updated hero positioning to "Frontend Product Engineer";
-- replaced generic copy with Web3, fintech, trading dashboard and wallet-aware
-  UX positioning;
-- rebuilt the stack around TypeScript, React, Next.js, APIs, WebSockets, Solana,
-  Python, C/C++, Docker and engineering fundamentals;
-- replaced sample projects with CV-relevant work: Jupiter Prediction Market,
-  Adrena, Versus, ft_transcendence and 42 Common Core;
-- replaced experience entries with Jupiter, Adrena, Versus, Magicake / Doge
-  Capital, 42 Lyon and Hermes;
-- updated contact links, CV link, metadata and sitemap;
-- removed original analytics and the original repository stats call.
+The homepage is a single scroll experience composed of section components (`Banner`, `AboutMe`, `Experiences`, `Skills`, `ProjectList`, `DemoLab`). Copy, projects, and stack metadata live in **`src/lib/data.ts`**; project detail pages use the dynamic route `src/app/projects/[slug]/`.
 
-## Why These Changes Matter
+**Demo Lab** (`src/app/_components/DemoLab.tsx`) is the technical showcase: five interactive tracks (market chart, protocol data room, world map, GitHub radar, wallet flow) registered in `demo-tracks.ts` and loaded on demand via `preload` hooks to keep the initial bundle lean.
 
-The website should help recruiters, founders and product teams understand the
-profile in a few seconds. The strongest signal is not "creative frontend
-developer"; it is frontend/product engineering for complex product interfaces,
-especially in Web3 and fintech.
+Shared UI (navbar, cursor, page transitions, topography background) sits under `src/components/`. Animation and layout helpers are in `src/lib/` (`use-section-gsap`, `page-transition`, `topography`, etc.).
 
-The refactor therefore prioritizes:
+Design tokens (accent color, surfaces) are centralized in **`globals.css`** — change `--primary` to retint the whole site.
 
-- concrete domain positioning over generic portfolio language;
-- proof of product context through Jupiter, Adrena and Versus;
-- maintainable UI and API/data workflow strengths;
-- a credible differentiation: 42 technical autonomy plus Hermes-level precision
-  and finish quality.
+## Project layout
 
-Future passes should keep improving the site in that direction: stronger real
-project visuals, clearer case studies, better accessibility, lighter motion,
-privacy-conscious analytics if needed, and a visual system that feels more like
-fintech/product tooling than a template portfolio.
+```text
+src/
+├── app/                 # routes, homepage sections, demos, project pages
+├── components/          # reusable UI (navbar, footer, buttons, icons)
+├── lib/                 # content data, hooks, GSAP, utilities
+└── types/               # shared TypeScript types
+.github/workflows/     # CI + Vercel deploy
+```
 
-## Development
+## Local development
 
-Install dependencies and start the local development server:
+**Requirements:** Node.js 22+, [pnpm](https://pnpm.io/)
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev          # http://localhost:3000
 ```
 
-Run checks before publishing:
+Before opening a PR:
 
 ```bash
-pnpm run check
-pnpm run build
+pnpm run check    # Biome, ESLint, typecheck, production build
 ```
 
-## Fork Attribution
+Other scripts: `pnpm run fix` (auto-fix), `pnpm run lint`, `pnpm run typecheck`, `pnpm run build`.
 
-This portfolio is a fork and adaptation of Tajmirul Islam's open-source
-portfolio project. The original project and design work belong to Tajmirul
-Islam.
+## CI / deployment
 
-Original author: Tajmirul Islam  
-Original website: https://tajmirul.site/  
-Original repository: https://github.com/Tajmirul/portfolio-2.0
+Every push and PR to `main` runs parallel checks:
 
-This version is being substantially revised with Guillaume Dumas's own content,
-positioning, projects and site direction.
+- Format and Biome
+- ESLint
+- TypeScript
+- Production build
+- Production smoke test (`next start` + HTTP checks on `/` and `/sitemap.xml`)
+
+Deploy to Vercel runs **only if all checks pass**. Automatic Vercel Git deploys are disabled (`vercel.json`); GitHub Actions owns preview (PR) and production (`main`) deploys.
+
+For local Vercel linking: `vercel link` (creates `.vercel/project.json`, gitignored).
+
+## Contributing
+
+Issues and PRs are welcome. Please:
+
+1. Fork the repo and branch from `main`.
+2. Keep changes scoped; match existing patterns (see `AGENTS.md` for conventions).
+3. Run `pnpm run check` locally — CI must be green.
+4. Use `rem` over `px` for custom sizing; put shared types/constants in `src/types/` and `src/lib/constants.ts` when reused across files.
+5. Do not commit secrets (`.env.local` stays local).
+
+## Attribution
+
+Forked and heavily adapted from [Tajmirul Islam's portfolio](https://github.com/Tajmirul/portfolio-2.0) ([tajmirul.site](https://tajmirul.site/)). Content, demos, and direction are Guillaume's own.
 
 ## License
 
-This project is open source and available under the
-[MIT License](https://github.com/Tajmirul/portfolio-2.0/blob/main/LICENSE).
+[MIT](LICENSE) — Copyright (c) 2026 Talibabtou
