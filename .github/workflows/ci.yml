@@ -186,22 +186,34 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Require Vercel secrets
+        run: |
+          missing=0
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub secret: $name"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Pull Vercel preview environment
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview
 
       - name: Build Vercel output
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build
 
       - name: Deploy prebuilt preview
-        run: vercel deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --archive=tgz
 
   deploy-production:
     name: Deploy production to Vercel
@@ -213,19 +225,31 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Require Vercel secrets
+        run: |
+          missing=0
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub secret: $name"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Pull Vercel production environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production
 
       - name: Build Vercel output
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod
 
       - name: Deploy prebuilt production
-        run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --archive=tgz
