@@ -22,10 +22,7 @@ import type {
   UTCTimestamp,
 } from 'lightweight-charts';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import {
-  readPortfolioStorageValue,
-  writePortfolioStorageValue,
-} from '@/lib/user-preferences';
+import { readStorageValue, writeStorageValue } from '@/lib/storage';
 
 type BitcoinRange = '1' | '7' | '30';
 
@@ -109,9 +106,10 @@ const normalizeMarketChart = (data: MarketChartResponse): MarketPoint[] =>
 
 const getBitcoinMarketCache = (range: BitcoinRange) => {
   const marketCache =
-    readPortfolioStorageValue<
-      Partial<Record<BitcoinRange, CachedMarketPoints>>
-    >('session', BITCOIN_MARKET_CACHE_KEY) ?? {};
+    readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
+      'session',
+      BITCOIN_MARKET_CACHE_KEY,
+    ) ?? {};
   const rangeCache = marketCache[range];
   if (!rangeCache) return undefined;
 
@@ -125,11 +123,12 @@ const getBitcoinMarketCache = (range: BitcoinRange) => {
 const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
   try {
     const marketCache =
-      readPortfolioStorageValue<
-        Partial<Record<BitcoinRange, CachedMarketPoints>>
-      >('session', BITCOIN_MARKET_CACHE_KEY) ?? {};
+      readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
+        'session',
+        BITCOIN_MARKET_CACHE_KEY,
+      ) ?? {};
 
-    writePortfolioStorageValue('session', BITCOIN_MARKET_CACHE_KEY, {
+    writeStorageValue('session', BITCOIN_MARKET_CACHE_KEY, {
       ...marketCache,
       [range]: {
         points,

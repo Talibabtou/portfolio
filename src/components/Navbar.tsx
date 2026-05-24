@@ -2,9 +2,9 @@
 import { THEME_CLASS, THEME_VALUES } from '@/lib/constants';
 import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import {
-  useUserPreferences,
-  writeUserPreferences,
-} from '@/lib/user-preferences';
+  useThemePreference,
+  writeThemePreference,
+} from '@/lib/theme-preference';
 import { cn } from '@/lib/utils';
 import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -43,7 +43,7 @@ type NavbarProps = {
 
 const Navbar = ({ initialTheme }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme } = useUserPreferences(initialTheme);
+  const { theme } = useThemePreference(initialTheme);
   const isDarkMode = theme === THEME_VALUES.dark;
   const router = useRouter();
 
@@ -52,7 +52,7 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
   }, [isDarkMode]);
 
   const toggleTheme = () => {
-    writeUserPreferences({
+    writeThemePreference({
       theme: isDarkMode ? THEME_VALUES.light : THEME_VALUES.dark,
     });
   };

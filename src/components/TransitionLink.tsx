@@ -1,5 +1,4 @@
 'use client';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { gsap, useGSAP } from '@/lib/gsap';
 import {
   PAGE_TRANSITION_INNER_SELECTOR,
@@ -21,7 +20,6 @@ const TransitionLink = ({
   ...rest
 }: Props) => {
   const router = useRouter();
-  const prefersReducedMotion = usePrefersReducedMotion();
   const { contextSafe } = useGSAP(() => {});
 
   const handleLinkClick = contextSafe((e: MouseEvent<HTMLAnchorElement>) => {
@@ -31,16 +29,6 @@ const TransitionLink = ({
     if (!back && !href) return;
 
     e.preventDefault();
-
-    if (prefersReducedMotion) {
-      if (back) {
-        router.back();
-      }
-      if (href) {
-        router.push(href.toString());
-      }
-      return;
-    }
 
     gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 1, yPercent: 100 });
     gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });

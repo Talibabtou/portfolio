@@ -1,9 +1,7 @@
 'use client';
 
 import Button from '@/components/Button';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { cn } from '@/lib/utils';
-import { useLenis } from 'lenis/react';
 import { ChevronUp } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -13,7 +11,6 @@ const TOP_SCROLL_THRESHOLD = 8;
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const wasPastBannerRef = useRef(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
 
   const updateVisibility = useCallback(() => {
     const banner = document.getElementById(BANNER_ID);
@@ -38,8 +35,6 @@ const ScrollToTopButton = () => {
     setIsVisible(wasPastBannerRef.current);
   }, []);
 
-  const lenis = useLenis();
-
   useEffect(() => {
     const onScroll = () => updateVisibility();
     const frame = requestAnimationFrame(onScroll);
@@ -52,17 +47,9 @@ const ScrollToTopButton = () => {
   }, [updateVisibility]);
 
   const scrollToTop = () => {
-    if (lenis) {
-      lenis.scrollTo(0, {
-        duration: prefersReducedMotion ? 0 : 1.4,
-        force: true,
-      });
-      return;
-    }
-
     window.scrollTo({
       top: 0,
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      behavior: 'smooth',
     });
   };
 

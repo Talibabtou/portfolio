@@ -1,5 +1,4 @@
 'use client';
-import { REDUCED_MOTION_QUERY } from '@/lib/constants';
 import { gsap, useGSAP } from '@/lib/gsap';
 import {
   generateTopography,
@@ -27,9 +26,6 @@ const TopographicBackground = () => {
   useGSAP(
     () => {
       if (!topography) return;
-      if (window.matchMedia(REDUCED_MOTION_QUERY).matches) {
-        return;
-      }
 
       pathsRef.current.forEach((path, index) => {
         gsap.to(path, {

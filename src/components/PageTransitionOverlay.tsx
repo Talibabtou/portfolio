@@ -7,23 +7,14 @@ import {
   PAGE_TRANSITION_INNER_SELECTOR,
   PAGE_TRANSITION_SELECTOR,
 } from '@/lib/page-transition';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { usePathname } from 'next/navigation';
 import { useRef } from 'react';
 
 export default function PageTransitionOverlay() {
   const pathname = usePathname();
-  const prefersReducedMotion = usePrefersReducedMotion();
   const hasMounted = useRef(false);
 
   useGSAP(() => {
-    if (prefersReducedMotion) {
-      gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 0, yPercent: -100 });
-      gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
-      hasMounted.current = true;
-      return;
-    }
-
     if (!hasMounted.current) {
       gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 0, yPercent: -100 });
       gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
@@ -51,7 +42,7 @@ export default function PageTransitionOverlay() {
         '-=0.08',
       )
       .set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 0 });
-  }, [pathname, prefersReducedMotion]);
+  }, [pathname]);
 
   return (
     <div

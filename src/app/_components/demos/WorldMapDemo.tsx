@@ -1,10 +1,7 @@
 'use client';
 
 import type { DemoTrack } from '@/app/_components/demos/types';
-import {
-  readPortfolioStorageValue,
-  writePortfolioStorageValue,
-} from '@/lib/user-preferences';
+import { readStorageValue, writeStorageValue } from '@/lib/storage';
 import { Globe2, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -162,7 +159,7 @@ const isCountriesCacheFresh = (cache: CachedCountries) =>
   Date.now() - cache.savedAt < WORLD_MAP_CACHE_TTL;
 
 const getEarthquakesCache = (options: { allowStale?: boolean } = {}) => {
-  const cache = readPortfolioStorageValue<CachedEarthquakes>(
+  const cache = readStorageValue<CachedEarthquakes>(
     'local',
     WORLD_MAP_CACHE_KEY,
   );
@@ -173,7 +170,7 @@ const getEarthquakesCache = (options: { allowStale?: boolean } = {}) => {
 };
 
 const getCountriesCache = (options: { allowStale?: boolean } = {}) => {
-  const cache = readPortfolioStorageValue<CachedCountries>(
+  const cache = readStorageValue<CachedCountries>(
     'local',
     WORLD_MAP_COUNTRIES_CACHE_KEY,
   );
@@ -185,7 +182,7 @@ const getCountriesCache = (options: { allowStale?: boolean } = {}) => {
 
 const setEarthquakesCache = (cache: CachedEarthquakes) => {
   try {
-    writePortfolioStorageValue('local', WORLD_MAP_CACHE_KEY, cache);
+    writeStorageValue('local', WORLD_MAP_CACHE_KEY, cache);
   } catch {
     // The demo can still render from the live request when storage is full.
   }
@@ -193,7 +190,7 @@ const setEarthquakesCache = (cache: CachedEarthquakes) => {
 
 const setCountriesCache = (cache: CachedCountries) => {
   try {
-    writePortfolioStorageValue('local', WORLD_MAP_COUNTRIES_CACHE_KEY, cache);
+    writeStorageValue('local', WORLD_MAP_COUNTRIES_CACHE_KEY, cache);
   } catch {
     // Country outlines are visual enhancement only; the demo can still run live.
   }
@@ -438,11 +435,7 @@ const GlobeSurface = ({ earthquakes, isLoading }: GlobeSurfaceProps) => {
   }, [isGlobeReady]);
 
   return (
-    <div
-      className="absolute inset-0 z-0"
-      data-lenis-prevent-wheel
-      ref={containerRef}
-    >
+    <div className="absolute inset-0 z-0" ref={containerRef}>
       <Globe
         ref={globeRef}
         animateIn

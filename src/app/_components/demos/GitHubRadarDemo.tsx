@@ -5,10 +5,7 @@ import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import {
-  readPortfolioStorageValue,
-  writePortfolioStorageValue,
-} from '@/lib/user-preferences';
+import { readStorageValue, writeStorageValue } from '@/lib/storage';
 
 type LeaderboardTabId = 'stars' | 'forks' | 'rising';
 
@@ -116,7 +113,7 @@ const readBlobAsDataUrl = (blob: Blob) =>
   });
 
 const getCachedAvatarDataUrl = (avatarUrl: string) => {
-  return readPortfolioStorageValue<Record<string, string>>(
+  return readStorageValue<Record<string, string>>(
     'session',
     GITHUB_AVATAR_CACHE_KEY,
   )?.[avatarUrl];
@@ -125,12 +122,12 @@ const getCachedAvatarDataUrl = (avatarUrl: string) => {
 const setCachedAvatarDataUrl = (avatarUrl: string, dataUrl: string) => {
   try {
     const avatarCache =
-      readPortfolioStorageValue<Record<string, string>>(
+      readStorageValue<Record<string, string>>(
         'session',
         GITHUB_AVATAR_CACHE_KEY,
       ) ?? {};
 
-    writePortfolioStorageValue('session', GITHUB_AVATAR_CACHE_KEY, {
+    writeStorageValue('session', GITHUB_AVATAR_CACHE_KEY, {
       ...avatarCache,
       [avatarUrl]: dataUrl,
     });
@@ -204,7 +201,7 @@ const getGitHubLeaderboardCache = (
   options: { allowStale?: boolean } = {},
 ) => {
   const leaderboardCache =
-    readPortfolioStorageValue<
+    readStorageValue<
       Partial<Record<LeaderboardTabId, CachedGitHubLeaderboard>>
     >('session', GITHUB_LEADERBOARD_CACHE_KEY) ?? {};
   const cache = leaderboardCache[tabId];
@@ -221,11 +218,11 @@ const setGitHubLeaderboardCache = (
 ) => {
   try {
     const leaderboardCache =
-      readPortfolioStorageValue<
+      readStorageValue<
         Partial<Record<LeaderboardTabId, CachedGitHubLeaderboard>>
       >('session', GITHUB_LEADERBOARD_CACHE_KEY) ?? {};
 
-    writePortfolioStorageValue('session', GITHUB_LEADERBOARD_CACHE_KEY, {
+    writeStorageValue('session', GITHUB_LEADERBOARD_CACHE_KEY, {
       ...leaderboardCache,
       [tabId]: cache,
     });

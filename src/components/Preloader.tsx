@@ -1,6 +1,5 @@
 'use client';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useRef } from 'react';
 
 const PRELOADER_PANELS = [
@@ -18,7 +17,6 @@ const PRELOADER_PANELS = [
 
 const Preloader = () => {
   const preloaderRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
   const preloaderText = 'TALIBABTOU';
   const preloaderLetters = Array.from(preloaderText, (letter, index) => ({
     id: `${letter}-${preloaderText.slice(0, index + 1)}`,
@@ -27,8 +25,6 @@ const Preloader = () => {
 
   useGSAP(
     () => {
-      if (prefersReducedMotion) return;
-
       const tl = gsap.timeline({
         defaults: {
           ease: 'power1.inOut',
@@ -66,12 +62,9 @@ const Preloader = () => {
         );
     },
     {
-      dependencies: [prefersReducedMotion],
       scope: preloaderRef,
     },
   );
-
-  if (prefersReducedMotion) return null;
 
   return (
     <div className="preloader fixed inset-0 z-6 flex" ref={preloaderRef}>
