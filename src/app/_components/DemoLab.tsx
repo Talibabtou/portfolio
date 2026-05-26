@@ -3,8 +3,8 @@
 import SectionTitle from '@/components/SectionTitle';
 import { DEMO_TRACKS } from '@/app/_components/demos/demo-tracks';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import { useIntentPreload } from '@/lib/use-intent-preload';
-import { useRevealSectionGsap } from '@/lib/use-section-gsap';
+import { useIntentPreload } from '@/hooks/use-intent-preload';
+import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
 import { useMemo, useRef, useState } from 'react';

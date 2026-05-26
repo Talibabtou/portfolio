@@ -1,34 +1,10 @@
 # AGENTS.md
 
-## Project
+Personal portfolio for **Guillaume Dumas** (Talibabtou). Web3/fintech product-engineering tone — not a generic template.
 
-This is Talibabtou's personal portfolio website.
+**Stack:** Next.js 16, React 19, TS, Tailwind 4, Biome, ESLint, GSAP · **Live:** talibabtou.dev
 
-It is a Next.js app using React, TypeScript, Tailwind CSS, Biome, ESLint, and
-GSAP animations. The project favors a polished visual portfolio experience with
-careful animation, responsive layout, and clean accessibility defaults.
-
-## Basic Rules
-
-- Respect the existing design and component style before adding new patterns.
-- Keep changes scoped to the user's request.
-- Do not revert unrelated local changes.
-- Use `pnpm` for package scripts.
-- Prefer `rg` for searching files and code.
-- Use `apply_patch` for manual file edits.
-- Keep TypeScript imports type-only when they are only used as types.
-- Treat SVGs used only as decoration as `aria-hidden="true"`.
-- Give every `<button>` an explicit `type`.
-- Avoid array indexes as React keys when a stable value is available.
-- Keep design tokens in `src/app/globals.css`; change `--primary` to update
-  the site accent color globally.
-- Use `rem` instead of `px` for custom sizes in Tailwind arbitrary values and
-  CSS. Prefer standard Tailwind utilities or project tokens before adding custom
-  classes; only add custom classes when they are needed as JS/CSS animation
-  hooks or reusable project-level utilities.
-- Keep component-only types and constants local. If the same type or constant
-  contract is needed in more than two files, move types to `src/types/index.ts`
-  and app-level constants to `src/lib/constants.ts`.
+Setup, scripts, CI, and project tree: **`README.md`**.
 
 ## Common Commands
 
@@ -37,21 +13,32 @@ careful animation, responsive layout, and clean accessibility defaults.
 - `pnpm run check` runs fixes, ESLint, TypeScript, and a production build.
 - `pnpm run build` creates a production build.
 
+## Where to edit
+
+- **Copy / projects / stack:** `src/lib/data.ts` (edit here first)
+- **Homepage sections:** `src/app/_components/` → `src/app/page.tsx`
+- **Demo Lab:** `src/app/_components/demos/` — export `DemoTrack`, register in `demo-tracks.ts`
+- **Protocol revenue terminal:** `src/app/protocol-revenue-terminal/` + `src/lib/protocol-revenue-terminal.ts`
+- **Project pages:** `src/app/projects/[slug]/`
+- **Shared UI:** `src/components/` · **Motion:** `@/lib/gsap`, `use-section-gsap.ts`
+- **Tokens:** `src/app/globals.css` (`--primary` retints globally)
+- **Shared types/constants:** `src/types/index.ts`, `src/lib/constants.ts` (when reused in 3+ files)
+
 ## Dependencies
 
-If adding a dependency is blocked by pnpm store permissions or store-version
-mismatch, tell the user the exact `pnpm add` command to run so they can install
-it directly, then continue once it is installed.
+## Rules
 
-## Dev Server
+- Scoped changes only; don't edit unrelated local work.
+- Never touch `.vercel/`, `.env*`; don't commit secrets.
+- Do not invent employers, metrics, or URLs. Remote images: hosts in `next.config.ts` only.
+- Do not commit, push, or open PRs unless the user asks.
+- `pnpm` for scripts; `rg` for search. Reuse a running dev server if present, or let the user manage it
 
-If `pnpm run dev` is already running, reuse the existing server instead of
-starting a second one. If a new server is needed and port 3000 is busy, use a
-different port and mention the URL.
+**Demos:** `preload` heavy deps; respect `isActive` (pause timers/animations); smallest change in large demo files unless refactor requested; keep logic in `demos/`, not `DemoLab.tsx`.
 
-## Verification
+**UI/code:** Match existing patterns. GSAP from `@/lib/gsap` only; clean up ScrollTriggers/listeners on unmount. `rem` over `px`; `import type` for type-only imports; explicit `button type`; stable React keys; decorative SVGs `aria-hidden`.
 
-After code changes, run:
+## Verify
 
 ```bash
 pnpm run check

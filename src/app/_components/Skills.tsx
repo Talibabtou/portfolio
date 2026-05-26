@@ -1,7 +1,7 @@
 'use client';
 import SectionTitle from '@/components/SectionTitle';
 import { MY_STACK } from '@/lib/data';
-import { useRevealSectionGsap } from '@/lib/use-section-gsap';
+import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import Image from 'next/image';
 import { useRef } from 'react';
 

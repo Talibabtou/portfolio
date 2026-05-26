@@ -5,7 +5,7 @@ import {
   gsap,
   useRevealSectionGsap,
   useSectionGsap,
-} from '@/lib/use-section-gsap';
+} from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useRef } from 'react';

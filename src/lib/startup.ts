@@ -11,16 +11,16 @@ const runWarmStartupTasks = () => {
   warmTasksStarted = true;
 
   void Promise.allSettled([
-    import('@/app/_components/demos/BitcoinMarketDemo').then((module) =>
+    import('@/app/_components/demos/data/BitcoinMarketDemo').then((module) =>
       module.preloadBitcoinMarketDemo(),
     ),
-    import('@/app/_components/demos/DataRoomDemo').then((module) =>
+    import('@/app/_components/demos/data/ProtocolHeatmapDemo').then((module) =>
       module.preloadProtocolRevenueTerminal(),
     ),
-    import('@/app/_components/demos/GitHubRadarDemo').then((module) =>
+    import('@/app/_components/demos/data/GitHubRadarDemo').then((module) =>
       module.preloadGitHubRadarDemo(),
     ),
-    import('@/app/_components/demos/WorldMapDemo').then((module) =>
+    import('@/app/_components/demos/data/WorldMapDemo').then((module) =>
       module.preloadWorldMapDemo(),
     ),
   ]);

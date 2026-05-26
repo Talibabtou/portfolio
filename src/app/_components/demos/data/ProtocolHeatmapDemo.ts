@@ -3,7 +3,7 @@ import { createStorageNamespace } from '@/lib/storage';
 const LLAMA_API_BASE_URL = 'https://api.llama.fi';
 const PROTOCOL_REVENUE_NAMESPACE = createStorageNamespace(
   'local',
-  'demos.protocol-revenue-terminal',
+  'demos.protocol-heatmap.v3',
 );
 const PROTOCOL_REVENUE_CACHE_TTL = 60 * 60 * 1000;
 const PROTOCOL_DIRECTORY_CACHE_TTL = 24 * 60 * 60 * 1000;
@@ -13,27 +13,15 @@ let protocolDirectorySnapshot: LlamaProtocolDirectoryItem[] | null = null;
 
 type LlamaOverviewProtocol = {
   category?: string;
-  change_1d?: number;
-  change_7d?: number;
   change_1m?: number;
   chains?: string[];
-  dailyFees?: number;
-  dailyRevenue?: number;
   module?: string;
   name?: string;
   parentProtocol?: string;
-  total14dto7d?: number;
-  total14dto7dRevenue?: number;
-  total24h?: number;
-  total24hRevenue?: number;
   total30d?: number;
   total30dRevenue?: number;
-  total48hto24h?: number;
-  total48hto24hRevenue?: number;
   total60dto30d?: number;
   total60dto30dRevenue?: number;
-  total7d?: number;
-  total7dRevenue?: number;
 };
 
 type LlamaOverviewResponse = {
@@ -63,9 +51,6 @@ type CachedProtocolDetail = {
   savedAt: number;
 };
 
-export type RevenueMetricKey = 'fees' | 'revenue';
-export type RevenueTimeframe = '24h' | '7d' | '30d';
-
 export type TerminalChartPoint = {
   timestamp: number;
   value: number;
@@ -73,25 +58,14 @@ export type TerminalChartPoint = {
 
 export type TerminalProtocol = {
   category: string;
-  chains: string[];
   detailSlug: string;
-  feeCapture: number;
-  fees24h: number;
-  fees30d: number;
-  fees7d: number;
-  feesToTvl: number;
-  growth24h: number;
   growth30d: number;
-  growth7d: number;
+  id: string;
   name: string;
   primaryChain: string;
-  revenue24h: number;
   revenue30d: number;
-  revenue7d: number;
   revenueToTvl: number;
-  id: string;
   slug: string;
-  symbol: string;
   tvl: number;
 };
 
@@ -103,6 +77,9 @@ const detailRequests = new Map<string, Promise<CachedProtocolDetail>>();
 
 const isCacheFresh = (savedAt: number, ttl: number) =>
   Date.now() - savedAt < ttl;
+
+const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
 
 const toFiniteNumber = (value: unknown) =>
   typeof value === 'number' && Number.isFinite(value) ? value : 0;
@@ -119,7 +96,33 @@ const computeGrowth = (currentValue: number, previousValue: number) => {
 };
 
 const toLookupKey = (value: string | undefined) =>
-  value?.trim().toLowerCase().replaceAll(/\s+/g, '-') ?? '';
+  value
+    ?.trim()
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') ?? '';
+
+const toLookupKeys = (value: string | undefined): string[] => {
+  if (!value) return [];
+
+  const trimmedValue = value.trim().toLowerCase();
+  const hyphenatedKey = toLookupKey(value);
+  const compactKey = trimmedValue.replaceAll(/[^a-z0-9]+/g, '');
+  const hashSuffix = trimmedValue.includes('#')
+    ? trimmedValue.split('#').at(-1)
+    : undefined;
+
+  return [
+    ...new Set(
+      [
+        hyphenatedKey,
+        compactKey,
+        toLookupKey(hashSuffix),
+        hashSuffix?.replaceAll(/[^a-z0-9]+/g, ''),
+      ].filter((lookupKey): lookupKey is string => Boolean(lookupKey)),
+    ),
+  ];
+};
 
 const isValidProtocolIdentifier = (value: unknown): value is string => {
   return (
@@ -130,25 +133,29 @@ const isValidProtocolIdentifier = (value: unknown): value is string => {
 };
 
 const isTerminalProtocol = (value: unknown): value is TerminalProtocol => {
-  if (typeof value !== 'object' || value === null) return false;
-
-  const protocol = value as Partial<TerminalProtocol>;
+  if (!isObjectRecord(value)) return false;
 
   return (
-    isValidProtocolIdentifier(protocol.slug) &&
-    isValidProtocolIdentifier(protocol.detailSlug) &&
-    typeof protocol.name === 'string' &&
-    typeof protocol.category === 'string' &&
-    Array.isArray(protocol.chains) &&
-    typeof protocol.primaryChain === 'string' &&
-    typeof protocol.symbol === 'string'
+    isValidProtocolIdentifier(value.slug) &&
+    isValidProtocolIdentifier(value.detailSlug) &&
+    typeof value.name === 'string' &&
+    typeof value.category === 'string' &&
+    typeof value.primaryChain === 'string' &&
+    typeof value.revenue30d === 'number' &&
+    typeof value.growth30d === 'number' &&
+    typeof value.tvl === 'number'
   );
 };
 
 const getCachedOverview = (allowStale = false) => {
   const cache =
     PROTOCOL_REVENUE_NAMESPACE.get<CachedProtocolRevenueSnapshot>('snapshot');
-  if (!cache || cache.protocols.length === 0) return undefined;
+  if (!isObjectRecord(cache) || !Array.isArray(cache.protocols)) {
+    PROTOCOL_REVENUE_NAMESPACE.remove('snapshot');
+    return undefined;
+  }
+
+  if (cache.protocols.length === 0) return undefined;
   if (!cache.protocols.every(isTerminalProtocol)) {
     PROTOCOL_REVENUE_NAMESPACE.remove('snapshot');
     return undefined;
@@ -168,7 +175,12 @@ const getCachedDirectory = (allowStale = false) => {
     items: LlamaProtocolDirectoryItem[];
     savedAt: number;
   }>('directory');
-  if (!cache || cache.items.length === 0) return undefined;
+  if (!isObjectRecord(cache) || !Array.isArray(cache.items)) {
+    PROTOCOL_REVENUE_NAMESPACE.remove('directory');
+    return undefined;
+  }
+
+  if (cache.items.length === 0) return undefined;
 
   return allowStale || isCacheFresh(cache.savedAt, PROTOCOL_DIRECTORY_CACHE_TTL)
     ? cache.items
@@ -182,30 +194,26 @@ const setCachedDirectory = (items: LlamaProtocolDirectoryItem[]) => {
   });
 };
 
-const getDetailCacheKey = (slug: string, metric: RevenueMetricKey) =>
-  `detail.${metric}.${slug}`;
+const getDetailCacheKey = (slug: string) => `detail.revenue.${slug}`;
 
-const getCachedDetail = (
-  slug: string,
-  metric: RevenueMetricKey,
-  allowStale = false,
-) => {
+const getCachedDetail = (slug: string, allowStale = false) => {
   const cache = PROTOCOL_REVENUE_NAMESPACE.get<CachedProtocolDetail>(
-    getDetailCacheKey(slug, metric),
+    getDetailCacheKey(slug),
   );
-  if (!cache || cache.points.length === 0) return undefined;
+  if (!isObjectRecord(cache) || !Array.isArray(cache.points)) {
+    PROTOCOL_REVENUE_NAMESPACE.remove(getDetailCacheKey(slug));
+    return undefined;
+  }
+
+  if (cache.points.length === 0) return undefined;
 
   return allowStale || isCacheFresh(cache.savedAt, PROTOCOL_DETAIL_CACHE_TTL)
     ? cache
     : undefined;
 };
 
-const setCachedDetail = (
-  slug: string,
-  metric: RevenueMetricKey,
-  cache: CachedProtocolDetail,
-) => {
-  PROTOCOL_REVENUE_NAMESPACE.set(getDetailCacheKey(slug, metric), cache);
+const setCachedDetail = (slug: string, cache: CachedProtocolDetail) => {
+  PROTOCOL_REVENUE_NAMESPACE.set(getDetailCacheKey(slug), cache);
 };
 
 const fetchJson = async <Response>(path: string) => {
@@ -238,63 +246,61 @@ const getOverviewProtocols = (
   response: LlamaOverviewResponse | LlamaOverviewProtocol[],
 ) => (Array.isArray(response) ? response : (response.protocols ?? []));
 
-const getOverviewProtocolKey = (overviewProtocol: LlamaOverviewProtocol) =>
-  toLookupKey(
-    overviewProtocol.parentProtocol ??
-      overviewProtocol.module ??
-      overviewProtocol.name,
-  );
+const getProtocolRevenue30d = (protocol: LlamaOverviewProtocol) =>
+  toFiniteNumber(protocol.total30dRevenue) || toFiniteNumber(protocol.total30d);
 
-const getProtocolMetric = (
-  overviewProtocol: LlamaOverviewProtocol,
-  timeframe: RevenueTimeframe,
-): number => {
-  if (timeframe === '24h') {
-    return toFiniteNumber(overviewProtocol.total24h);
-  }
-
-  if (timeframe === '7d') {
-    return toFiniteNumber(overviewProtocol.total7d);
-  }
-
-  return toFiniteNumber(overviewProtocol.total30d);
-};
+const getProtocolPreviousRevenue30d = (protocol: LlamaOverviewProtocol) =>
+  toFiniteNumber(protocol.total60dto30dRevenue) ||
+  toFiniteNumber(protocol.total60dto30d);
 
 const createDirectoryLookup = (directory: LlamaProtocolDirectoryItem[]) => {
   const lookup = new Map<string, LlamaProtocolDirectoryItem>();
 
   directory.forEach((protocol) => {
-    [protocol.slug, protocol.name].forEach((candidate) => {
-      const lookupKey = toLookupKey(candidate);
-      if (lookupKey) {
+    [protocol.slug, protocol.name, protocol.symbol].forEach((candidate) => {
+      toLookupKeys(candidate).forEach((lookupKey) => {
         lookup.set(lookupKey, protocol);
-      }
+      });
     });
   });
 
   return lookup;
 };
 
+const resolveDirectoryProtocol = (
+  directoryLookup: Map<string, LlamaProtocolDirectoryItem>,
+  candidates: Array<string | undefined>,
+) => {
+  for (const candidate of candidates) {
+    const protocol = toLookupKeys(candidate)
+      .map((lookupKey) => directoryLookup.get(lookupKey))
+      .find((lookupProtocol): lookupProtocol is LlamaProtocolDirectoryItem =>
+        Boolean(lookupProtocol),
+      );
+
+    if (protocol) return protocol;
+  }
+
+  return undefined;
+};
+
 const normalizeProtocol = (
-  feesOverviewProtocol: LlamaOverviewProtocol,
-  revenueOverviewProtocol: LlamaOverviewProtocol | undefined,
+  overviewProtocol: LlamaOverviewProtocol,
   directoryLookup: Map<string, LlamaProtocolDirectoryItem>,
 ): TerminalProtocol | undefined => {
-  const slugCandidate =
-    feesOverviewProtocol.parentProtocol ??
-    feesOverviewProtocol.module ??
-    feesOverviewProtocol.name;
-  const lookupProtocol = directoryLookup.get(toLookupKey(slugCandidate));
+  const lookupProtocol = resolveDirectoryProtocol(directoryLookup, [
+    overviewProtocol.parentProtocol,
+    overviewProtocol.module,
+    overviewProtocol.name,
+  ]);
   const slug =
     lookupProtocol?.slug ??
-    feesOverviewProtocol.parentProtocol ??
-    feesOverviewProtocol.module;
+    overviewProtocol.parentProtocol ??
+    overviewProtocol.module;
   const name =
-    lookupProtocol?.name ??
-    feesOverviewProtocol.name ??
-    feesOverviewProtocol.module;
+    lookupProtocol?.name ?? overviewProtocol.name ?? overviewProtocol.module;
   const detailSlug =
-    feesOverviewProtocol.parentProtocol ?? feesOverviewProtocol.module ?? slug;
+    overviewProtocol.parentProtocol ?? overviewProtocol.module ?? slug;
 
   if (
     !isValidProtocolIdentifier(slug) ||
@@ -304,61 +310,27 @@ const normalizeProtocol = (
     return undefined;
   }
 
+  const revenue30d = getProtocolRevenue30d(overviewProtocol);
+  if (revenue30d <= 0) return undefined;
+
   const tvl = toFiniteNumber(lookupProtocol?.tvl);
-  const fees24h = getProtocolMetric(feesOverviewProtocol, '24h');
-  const fees7d = getProtocolMetric(feesOverviewProtocol, '7d');
-  const fees30d = getProtocolMetric(feesOverviewProtocol, '30d');
-  const revenue24h = revenueOverviewProtocol
-    ? getProtocolMetric(revenueOverviewProtocol, '24h')
-    : 0;
-  const revenue7d = revenueOverviewProtocol
-    ? getProtocolMetric(revenueOverviewProtocol, '7d')
-    : 0;
-  const revenue30d = revenueOverviewProtocol
-    ? getProtocolMetric(revenueOverviewProtocol, '30d')
-    : 0;
-  const growth24h =
-    normalizePercent(revenueOverviewProtocol?.change_1d) ||
-    normalizePercent(feesOverviewProtocol.change_1d) ||
-    computeGrowth(fees24h, toFiniteNumber(feesOverviewProtocol.total48hto24h));
-  const growth7d =
-    normalizePercent(revenueOverviewProtocol?.change_7d) ||
-    normalizePercent(feesOverviewProtocol.change_7d) ||
-    computeGrowth(fees7d, toFiniteNumber(feesOverviewProtocol.total14dto7d));
   const growth30d =
-    normalizePercent(revenueOverviewProtocol?.change_1m) ||
-    normalizePercent(feesOverviewProtocol.change_1m) ||
-    computeGrowth(fees30d, toFiniteNumber(feesOverviewProtocol.total60dto30d));
+    normalizePercent(overviewProtocol.change_1m) ||
+    computeGrowth(revenue30d, getProtocolPreviousRevenue30d(overviewProtocol));
 
   return {
-    category:
-      lookupProtocol?.category ?? feesOverviewProtocol.category ?? 'Other',
-    chains: lookupProtocol?.chains?.length
-      ? lookupProtocol.chains
-      : feesOverviewProtocol.chains?.length
-        ? feesOverviewProtocol.chains
-        : ['Multi-chain'],
+    category: lookupProtocol?.category ?? overviewProtocol.category ?? 'Other',
     detailSlug,
-    feeCapture: fees30d > 0 ? revenue30d / fees30d : 0,
-    fees24h,
-    fees30d,
-    fees7d,
-    feesToTvl: tvl > 0 ? fees30d / tvl : 0,
-    growth24h,
     growth30d,
-    growth7d,
-    id: `${detailSlug}:${lookupProtocol?.chains?.[0] ?? feesOverviewProtocol.chains?.[0] ?? 'multi'}:${slug}`,
+    id: `${detailSlug}:${lookupProtocol?.chains?.[0] ?? overviewProtocol.chains?.[0] ?? 'multi'}:${slug}`,
     name,
     primaryChain:
       lookupProtocol?.chains?.[0] ??
-      feesOverviewProtocol.chains?.[0] ??
+      overviewProtocol.chains?.[0] ??
       'Multi-chain',
-    revenue24h,
     revenue30d,
-    revenue7d,
     revenueToTvl: tvl > 0 ? revenue30d / tvl : 0,
     slug,
-    symbol: lookupProtocol?.symbol ?? name.slice(0, 4).toUpperCase(),
     tvl,
   };
 };
@@ -373,30 +345,15 @@ export const fetchProtocolRevenueSnapshot = async () => {
 
   const request = Promise.all([
     fetchJson<LlamaOverviewResponse | LlamaOverviewProtocol[]>(
-      '/overview/fees?dataType=dailyFees',
-    ),
-    fetchJson<LlamaOverviewResponse | LlamaOverviewProtocol[]>(
       '/overview/fees?dataType=dailyRevenue',
     ),
     fetchProtocolDirectory(),
   ])
-    .then(([feesOverviewResponse, revenueOverviewResponse, directory]) => {
+    .then(([revenueOverviewResponse, directory]) => {
       const directoryLookup = createDirectoryLookup(directory);
-      const revenueLookup = new Map(
-        getOverviewProtocols(revenueOverviewResponse).map(
-          (overviewProtocol) => [
-            getOverviewProtocolKey(overviewProtocol),
-            overviewProtocol,
-          ],
-        ),
-      );
-      const protocols = getOverviewProtocols(feesOverviewResponse)
+      const protocols = getOverviewProtocols(revenueOverviewResponse)
         .map((overviewProtocol) =>
-          normalizeProtocol(
-            overviewProtocol,
-            revenueLookup.get(getOverviewProtocolKey(overviewProtocol)),
-            directoryLookup,
-          ),
+          normalizeProtocol(overviewProtocol, directoryLookup),
         )
         .filter((protocol): protocol is TerminalProtocol => Boolean(protocol))
         .sort((firstProtocol, secondProtocol) => {
@@ -447,21 +404,15 @@ const normalizeChartPoints = (response: LlamaProtocolDetailResponse) => {
     .filter((point): point is TerminalChartPoint => Boolean(point));
 };
 
-export const fetchProtocolMetricHistory = async (
-  detailSlug: string,
-  metric: RevenueMetricKey,
-) => {
-  const cachedDetail = getCachedDetail(detailSlug, metric);
+export const fetchProtocolMetricHistory = async (detailSlug: string) => {
+  const cachedDetail = getCachedDetail(detailSlug);
   if (cachedDetail) return cachedDetail;
 
-  const requestKey = `${metric}.${detailSlug}`;
-  const pendingRequest = detailRequests.get(requestKey);
+  const pendingRequest = detailRequests.get(detailSlug);
   if (pendingRequest) return pendingRequest;
 
-  const dataType = metric === 'fees' ? 'dailyFees' : 'dailyRevenue';
-
   const request = fetchJson<LlamaProtocolDetailResponse>(
-    `/summary/fees/${detailSlug}?dataType=${dataType}`,
+    `/summary/fees/${detailSlug}?dataType=dailyRevenue`,
   )
     .then((response) => {
       const cache = {
@@ -469,15 +420,15 @@ export const fetchProtocolMetricHistory = async (
         savedAt: Date.now(),
       } satisfies CachedProtocolDetail;
 
-      setCachedDetail(detailSlug, metric, cache);
+      setCachedDetail(detailSlug, cache);
 
       return cache;
     })
     .finally(() => {
-      detailRequests.delete(requestKey);
+      detailRequests.delete(detailSlug);
     });
 
-  detailRequests.set(requestKey, request);
+  detailRequests.set(detailSlug, request);
 
   return request;
 };
@@ -489,8 +440,5 @@ export const preloadProtocolRevenueTerminal = async () => {
   const leadProtocol = snapshot.protocols[0];
   if (!leadProtocol) return;
 
-  await Promise.allSettled([
-    fetchProtocolMetricHistory(leadProtocol.detailSlug, 'fees'),
-    fetchProtocolMetricHistory(leadProtocol.detailSlug, 'revenue'),
-  ]);
+  await fetchProtocolMetricHistory(leadProtocol.detailSlug);
 };

@@ -1,5 +1,5 @@
 'use client';
-import { useRevealSectionGsap } from '@/lib/use-section-gsap';
+import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import Image from 'next/image';
 import { useRef } from 'react';
 

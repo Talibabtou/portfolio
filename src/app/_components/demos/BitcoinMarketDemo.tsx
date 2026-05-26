@@ -1,5 +1,17 @@
 'use client';
 
+import {
+  BITCOIN_RANGES,
+  DEFAULT_BITCOIN_RANGE,
+  fetchBitcoinMarketPoints,
+  getBitcoinMarketCache,
+  getClosestPoint,
+  MILLISECONDS_IN_DAY,
+  preloadBitcoinMarketDemo,
+  type BitcoinRange,
+  type MarketPoint,
+} from '@/app/_components/demos/data/BitcoinMarketDemo';
+import type { DemoTrack } from '@/app/_components/demos/types';
 import { cn } from '@/lib/utils';
 import { LineChart } from 'lucide-react';
 import {
@@ -21,42 +33,7 @@ import type {
   Time,
   UTCTimestamp,
 } from 'lightweight-charts';
-import type { DemoTrack } from '@/app/_components/demos/types';
-import { readStorageValue, writeStorageValue } from '@/lib/storage';
 
-type BitcoinRange = '1' | '7' | '30';
-
-type MarketChartResponse = {
-  market_caps?: [number, number][];
-  prices: [number, number][];
-  total_volumes?: [number, number][];
-};
-
-type MarketPoint = {
-  marketCap?: number;
-  price: number;
-  timestamp: number;
-  volume?: number;
-};
-
-type CachedMarketPoints = {
-  points: MarketPoint[];
-  savedAt: number;
-};
-
-const BITCOIN_RANGES: { days: BitcoinRange; label: string }[] = [
-  { days: '1', label: '1D' },
-  { days: '7', label: '7D' },
-  { days: '30', label: '30D' },
-];
-
-const COINGECKO_MARKET_CHART_URL =
-  'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart';
-
-const BITCOIN_MARKET_CACHE_KEY = 'demos.bitcoin-market-chart';
-const BITCOIN_MARKET_CACHE_TTL = 5 * 60 * 1000;
-const DEFAULT_BITCOIN_RANGE: BitcoinRange = '30';
-const MILLISECONDS_IN_DAY = 86_400_000;
 const MARKET_CHANGE_COLORS = {
   negative: 'text-[#e5484d] dark:text-[#ff6b6b]',
   positive: 'text-[#0f8f4d] dark:text-[#4ade80]',
@@ -95,97 +72,6 @@ const getChangePercent = (current?: number, previous?: number) => {
   if (!(current && previous)) return undefined;
   return ((current - previous) / previous) * 100;
 };
-
-const normalizeMarketChart = (data: MarketChartResponse): MarketPoint[] =>
-  data.prices.map(([timestamp, price], index) => ({
-    marketCap: data.market_caps?.[index]?.[1],
-    price,
-    timestamp,
-    volume: data.total_volumes?.[index]?.[1],
-  }));
-
-const getBitcoinMarketCache = (range: BitcoinRange) => {
-  const marketCache =
-    readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
-      'session',
-      BITCOIN_MARKET_CACHE_KEY,
-    ) ?? {};
-  const rangeCache = marketCache[range];
-  if (!rangeCache) return undefined;
-
-  const isFresh = Date.now() - rangeCache.savedAt < BITCOIN_MARKET_CACHE_TTL;
-
-  return isFresh && rangeCache.points.length > 0
-    ? rangeCache.points
-    : undefined;
-};
-
-const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
-  try {
-    const marketCache =
-      readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
-        'session',
-        BITCOIN_MARKET_CACHE_KEY,
-      ) ?? {};
-
-    writeStorageValue('session', BITCOIN_MARKET_CACHE_KEY, {
-      ...marketCache,
-      [range]: {
-        points,
-        savedAt: Date.now(),
-      } satisfies CachedMarketPoints,
-    });
-  } catch {
-    // Session storage is a progressive enhancement for rate-limit friendliness.
-  }
-};
-
-const fetchBitcoinMarketPoints = (
-  range: BitcoinRange,
-  options: { signal?: AbortSignal } = {},
-) => {
-  const cachedPoints = getBitcoinMarketCache(range);
-  if (cachedPoints) {
-    return Promise.resolve(cachedPoints);
-  }
-
-  const marketChartUrl = new URL(COINGECKO_MARKET_CHART_URL);
-  marketChartUrl.searchParams.set('vs_currency', 'usd');
-  marketChartUrl.searchParams.set('days', range);
-
-  return fetch(marketChartUrl, { signal: options.signal })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`CoinGecko returned ${response.status}`);
-      }
-
-      return response.json() as Promise<MarketChartResponse>;
-    })
-    .then((data) => {
-      const normalizedPoints = normalizeMarketChart(data);
-      setBitcoinMarketCache(range, normalizedPoints);
-
-      return normalizedPoints;
-    });
-};
-
-export const preloadBitcoinMarketDemo = async () => {
-  if (typeof window === 'undefined') return;
-
-  try {
-    await fetchBitcoinMarketPoints(DEFAULT_BITCOIN_RANGE);
-  } catch {
-    // Preloading is opportunistic; mounted state handles recoverable failures.
-  }
-};
-
-const getClosestPoint = (points: MarketPoint[], timestamp: number) =>
-  points.reduce((closestPoint, point) => {
-    const closestDistance = Math.abs(closestPoint.timestamp - timestamp);
-    const pointDistance = Math.abs(point.timestamp - timestamp);
-
-    return pointDistance < closestDistance ? point : closestPoint;
-  }, points[0]);
 
 const getChartTime = (timestamp: number) =>
   Math.floor(timestamp / 1000) as UTCTimestamp;
