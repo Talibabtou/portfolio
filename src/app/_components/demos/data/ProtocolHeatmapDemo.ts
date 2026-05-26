@@ -3,12 +3,12 @@ import { createStorageNamespace } from '@/lib/storage';
 const LLAMA_API_BASE_URL = 'https://api.llama.fi';
 const PROTOCOL_REVENUE_NAMESPACE = createStorageNamespace(
   'local',
-  'demos.protocol-heatmap.v3',
+  'demos.protocol-heatmap.v4',
 );
 const PROTOCOL_REVENUE_CACHE_TTL = 60 * 60 * 1000;
 const PROTOCOL_DIRECTORY_CACHE_TTL = 24 * 60 * 60 * 1000;
-const PROTOCOL_DETAIL_CACHE_TTL = 60 * 60 * 1000;
 const DEFAULT_PROTOCOL_LIMIT = 18;
+const MIN_REALISTIC_TVL = 1000;
 let protocolDirectorySnapshot: LlamaProtocolDirectoryItem[] | null = null;
 
 type LlamaOverviewProtocol = {
@@ -37,23 +37,9 @@ type LlamaProtocolDirectoryItem = {
   tvl?: number;
 };
 
-type LlamaProtocolDetailResponse = {
-  totalDataChart?: unknown[];
-};
-
 type CachedProtocolRevenueSnapshot = {
   protocols: TerminalProtocol[];
   savedAt: number;
-};
-
-type CachedProtocolDetail = {
-  points: TerminalChartPoint[];
-  savedAt: number;
-};
-
-export type TerminalChartPoint = {
-  timestamp: number;
-  value: number;
 };
 
 export type TerminalProtocol = {
@@ -73,7 +59,6 @@ const overviewRequests = new Map<
   string,
   Promise<CachedProtocolRevenueSnapshot>
 >();
-const detailRequests = new Map<string, Promise<CachedProtocolDetail>>();
 
 const isCacheFresh = (savedAt: number, ttl: number) =>
   Date.now() - savedAt < ttl;
@@ -194,28 +179,6 @@ const setCachedDirectory = (items: LlamaProtocolDirectoryItem[]) => {
   });
 };
 
-const getDetailCacheKey = (slug: string) => `detail.revenue.${slug}`;
-
-const getCachedDetail = (slug: string, allowStale = false) => {
-  const cache = PROTOCOL_REVENUE_NAMESPACE.get<CachedProtocolDetail>(
-    getDetailCacheKey(slug),
-  );
-  if (!isObjectRecord(cache) || !Array.isArray(cache.points)) {
-    PROTOCOL_REVENUE_NAMESPACE.remove(getDetailCacheKey(slug));
-    return undefined;
-  }
-
-  if (cache.points.length === 0) return undefined;
-
-  return allowStale || isCacheFresh(cache.savedAt, PROTOCOL_DETAIL_CACHE_TTL)
-    ? cache
-    : undefined;
-};
-
-const setCachedDetail = (slug: string, cache: CachedProtocolDetail) => {
-  PROTOCOL_REVENUE_NAMESPACE.set(getDetailCacheKey(slug), cache);
-};
-
 const fetchJson = async <Response>(path: string) => {
   const response = await fetch(`${LLAMA_API_BASE_URL}${path}`);
   if (!response.ok) {
@@ -314,6 +277,7 @@ const normalizeProtocol = (
   if (revenue30d <= 0) return undefined;
 
   const tvl = toFiniteNumber(lookupProtocol?.tvl);
+  const hasRealisticTvl = tvl >= MIN_REALISTIC_TVL;
   const growth30d =
     normalizePercent(overviewProtocol.change_1m) ||
     computeGrowth(revenue30d, getProtocolPreviousRevenue30d(overviewProtocol));
@@ -329,7 +293,7 @@ const normalizeProtocol = (
       overviewProtocol.chains?.[0] ??
       'Multi-chain',
     revenue30d,
-    revenueToTvl: tvl > 0 ? revenue30d / tvl : 0,
+    revenueToTvl: hasRealisticTvl ? revenue30d / tvl : 0,
     slug,
     tvl,
   };
@@ -383,62 +347,8 @@ export const fetchProtocolRevenueSnapshot = async () => {
   return request;
 };
 
-const normalizeChartPoints = (response: LlamaProtocolDetailResponse) => {
-  return (response.totalDataChart ?? [])
-    .map((entry) => {
-      if (!Array.isArray(entry) || entry.length < 2) return undefined;
-
-      const [timestamp, value] = entry;
-      const normalizedTimestamp = toFiniteNumber(timestamp) * 1000;
-      const normalizedValue = toFiniteNumber(value);
-
-      if (!normalizedTimestamp || !Number.isFinite(normalizedValue)) {
-        return undefined;
-      }
-
-      return {
-        timestamp: normalizedTimestamp,
-        value: normalizedValue,
-      } satisfies TerminalChartPoint;
-    })
-    .filter((point): point is TerminalChartPoint => Boolean(point));
-};
-
-export const fetchProtocolMetricHistory = async (detailSlug: string) => {
-  const cachedDetail = getCachedDetail(detailSlug);
-  if (cachedDetail) return cachedDetail;
-
-  const pendingRequest = detailRequests.get(detailSlug);
-  if (pendingRequest) return pendingRequest;
-
-  const request = fetchJson<LlamaProtocolDetailResponse>(
-    `/summary/fees/${detailSlug}?dataType=dailyRevenue`,
-  )
-    .then((response) => {
-      const cache = {
-        points: normalizeChartPoints(response),
-        savedAt: Date.now(),
-      } satisfies CachedProtocolDetail;
-
-      setCachedDetail(detailSlug, cache);
-
-      return cache;
-    })
-    .finally(() => {
-      detailRequests.delete(detailSlug);
-    });
-
-  detailRequests.set(detailSlug, request);
-
-  return request;
-};
-
 export const preloadProtocolRevenueTerminal = async () => {
   if (typeof window === 'undefined') return;
 
-  const snapshot = await fetchProtocolRevenueSnapshot();
-  const leadProtocol = snapshot.protocols[0];
-  if (!leadProtocol) return;
-
-  await fetchProtocolMetricHistory(leadProtocol.detailSlug);
+  await fetchProtocolRevenueSnapshot();
 };

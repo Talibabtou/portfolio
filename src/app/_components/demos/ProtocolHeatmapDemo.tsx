@@ -5,10 +5,8 @@ import type {
   DemoTrack,
 } from '@/app/_components/demos/types';
 import {
-  fetchProtocolMetricHistory,
   fetchProtocolRevenueSnapshot,
   preloadProtocolRevenueTerminal,
-  type TerminalChartPoint,
   type TerminalProtocol,
 } from '@/app/_components/demos/data/ProtocolHeatmapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
@@ -28,7 +26,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 echarts.use([TreemapChart, TooltipComponent, CanvasRenderer]);
 
-const TREEMAP_PROTOCOL_COUNT = 24;
+const TREEMAP_PROTOCOL_COUNT = 50;
+const MIN_REALISTIC_TVL = 1000;
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
@@ -54,27 +53,16 @@ const protocolHeatmapContent = {
   title: 'A dense terminal for crypto protocol fundamentals.',
 };
 
-type ProtocolMetricHistory = {
-  protocolId?: string;
-  revenue: TerminalChartPoint[];
-};
-
-const EMPTY_HISTORY: ProtocolMetricHistory = {
-  revenue: [],
-};
-
 type ThemePalette = {
-  detailGradient: string;
-  divider: string;
   primary: string;
   primarySoft: string;
-  surfaceBorder: string;
+  tileBase: string;
   textMuted: string;
   textPrimary: string;
   tooltipBackground: string;
   tooltipBorder: string;
   tileBorder: string;
-  tileColor: (intensity: number) => string;
+  tileColor: (rankOpacity: number) => string;
 };
 
 const formatCurrency = (value: number) => currencyFormatter.format(value);
@@ -82,50 +70,91 @@ const formatGrowth = (value: number) => percentFormatter.format(value / 100);
 
 const clampScore = (value: number) => Math.max(0, Math.min(100, value));
 
-const getConsistencyScore = (points: TerminalChartPoint[]) => {
-  if (points.length < 4) return 50;
+const hasRealisticTvl = (value: number) => value >= MIN_REALISTIC_TVL;
 
-  const values = points.slice(-30).map((point) => point.value);
-  const mean =
-    values.reduce((sum, value) => sum + value, 0) / values.length || 1;
-  const variance =
-    values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
-  const coefficientOfVariation = Math.sqrt(variance) / mean;
+const getProtocolBusinessScore = (protocol: TerminalProtocol) => {
+  const revenueGrowthScore = clampScore(50 + protocol.growth30d * 2);
+  const revenue30dScore = clampScore(
+    Math.log10(Math.max(protocol.revenue30d, 1)) * 18,
+  );
+  const revenueToTvlScore = hasRealisticTvl(protocol.tvl)
+    ? clampScore(protocol.revenueToTvl * 1000)
+    : 50;
 
-  return clampScore(100 - coefficientOfVariation * 100);
+  return Math.round(
+    revenue30dScore * 0.42 +
+      revenueGrowthScore * 0.33 +
+      revenueToTvlScore * 0.25,
+  );
+};
+
+const getTileRankOpacity = (index: number, totalCount: number) => {
+  const progress = totalCount <= 1 ? 0 : index / (totalCount - 1);
+
+  return 0.08 + (1 - progress) ** 1.45 * 0.92;
+};
+
+const mixRgb = (
+  from: [number, number, number],
+  to: [number, number, number],
+  amount: number,
+) => {
+  const [fromRed, fromGreen, fromBlue] = from;
+  const [toRed, toGreen, toBlue] = to;
+
+  return `rgb(${Math.round(fromRed + (toRed - fromRed) * amount)} ${Math.round(
+    fromGreen + (toGreen - fromGreen) * amount,
+  )} ${Math.round(fromBlue + (toBlue - fromBlue) * amount)})`;
+};
+
+const getTileLabelSize = (intensity: number) => {
+  if (intensity > 0.72) {
+    return {
+      fontSize: 52,
+      lineHeight: 54,
+    };
+  }
+
+  if (intensity > 0.32) {
+    return {
+      fontSize: 40,
+      lineHeight: 43,
+    };
+  }
+
+  return {
+    fontSize: 14,
+    lineHeight: 16,
+  };
 };
 
 const getThemePalette = (isDarkMode: boolean): ThemePalette => {
   if (isDarkMode) {
     return {
-      detailGradient:
-        'linear-gradient(180deg, hsl(0 0% 9% / 0.96) 0%, hsl(196 100% 78% / 0.08) 100%)',
-      divider: 'hsl(196 100% 78% / 0.12)',
       primary: 'hsl(196 100% 78%)',
       primarySoft: 'hsl(196 100% 78% / 0.16)',
-      surfaceBorder: 'hsl(196 100% 78% / 0.26)',
+      tileBase: 'hsl(0 0% 9% / 0.92)',
       textMuted: 'hsl(0 0% 71% / 0.78)',
-      textPrimary: 'hsl(0 0% 94%)',
-      tileBorder: 'hsl(196 100% 78% / 0.22)',
+      textPrimary: 'hsl(0 0% 100%)',
+      tileBorder: 'hsl(0 0% 100% / 0.2)',
       tooltipBackground: 'hsl(0 0% 9% / 0.98)',
       tooltipBorder: 'hsl(196 100% 78% / 0.36)',
-      tileColor: (intensity) => `hsl(196 100% ${12 + intensity * 24}%)`,
+      tileColor: (rankProgress) =>
+        mixRgb([143, 237, 255], [23, 23, 23], 1 - rankProgress),
     };
   }
 
   return {
-    detailGradient:
-      'linear-gradient(180deg, hsl(42 78% 96% / 0.98) 0%, hsl(24 100% 56% / 0.08) 100%)',
-    divider: 'hsl(24 38% 8% / 0.12)',
     primary: 'hsl(24 100% 56%)',
     primarySoft: 'hsl(24 100% 56% / 0.14)',
-    surfaceBorder: 'hsl(24 100% 56% / 0.24)',
+    tileBase: 'hsl(42 78% 96% / 0.98)',
     textMuted: 'hsl(24 18% 32% / 0.82)',
     textPrimary: 'hsl(24 38% 8%)',
-    tileBorder: 'hsl(24 100% 56% / 0.22)',
+    tileBorder: 'hsl(24 38% 8% / 0.2)',
     tooltipBackground: 'hsl(42 78% 97% / 0.99)',
     tooltipBorder: 'hsl(24 100% 56% / 0.32)',
-    tileColor: (intensity) => `hsl(24 100% ${96 - intensity * 28}%)`,
+    tileColor: (rankProgress) =>
+      mixRgb([255, 118, 31], [253, 247, 237], 1 - rankProgress),
   };
 };
 
@@ -139,33 +168,16 @@ const escapeHtml = (value: string) =>
 
 type TreemapDataParams = {
   data?: {
-    chainLabel?: string;
     protocolId?: string;
-    revenueLabel?: string;
   };
 };
 
 type TreemapNodeData = NonNullable<TreemapDataParams['data']>;
 
-const MetricCard = ({ label, value }: { label: string; value: string }) => (
-  <div className="border-foreground/10 border-t py-3 first:border-t-0">
-    <span className="font-anton text-[10px] text-muted-foreground uppercase">
-      {label}
-    </span>
-    <p className="mt-1.5 font-anton text-2xl leading-none sm:text-[1.75rem]">
-      {value}
-    </p>
-  </div>
-);
-
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-  const [protocolHistory, setProtocolHistory] =
-    useState<ProtocolMetricHistory>(EMPTY_HISTORY);
   const [protocols, setProtocols] = useState<TerminalProtocol[]>([]);
-  const [selectedProtocolId, setSelectedProtocolId] = useState<string>();
   const { theme } = useThemePreference();
   const isDarkMode = theme === THEME_VALUES.dark;
   const palette = useMemo(() => getThemePalette(isDarkMode), [isDarkMode]);
@@ -180,9 +192,6 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       .then((snapshot) => {
         if (ignoreRequest) return;
         setProtocols(snapshot.protocols);
-        setSelectedProtocolId((currentSelectedProtocolId) => {
-          return currentSelectedProtocolId ?? snapshot.protocols[0]?.id;
-        });
       })
       .catch(() => {
         if (ignoreRequest) return;
@@ -207,19 +216,6 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       .slice(0, TREEMAP_PROTOCOL_COUNT);
   }, [protocols]);
 
-  const selectedProtocol = useMemo(
-    () =>
-      selectedProtocolId
-        ? treemapProtocols.find(
-            (protocol) => protocol.id === selectedProtocolId,
-          )
-        : treemapProtocols[0],
-    [selectedProtocolId, treemapProtocols],
-  );
-  const activeRevenueHistory =
-    protocolHistory.protocolId === selectedProtocol?.id
-      ? protocolHistory.revenue
-      : EMPTY_HISTORY.revenue;
   const protocolsById = useMemo(
     () =>
       new Map(
@@ -227,61 +223,6 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       ),
     [treemapProtocols],
   );
-  const shouldShowDetailLoading =
-    isLoadingDetail ||
-    Boolean(
-      selectedProtocol && protocolHistory.protocolId !== selectedProtocol.id,
-    );
-
-  useEffect(() => {
-    if (!selectedProtocol) return;
-
-    let ignoreRequest = false;
-
-    fetchProtocolMetricHistory(selectedProtocol.detailSlug)
-      .then((revenueHistory) => {
-        if (ignoreRequest) return;
-        setProtocolHistory({
-          protocolId: selectedProtocol.id,
-          revenue: revenueHistory.points,
-        });
-      })
-      .catch(() => {
-        if (ignoreRequest) return;
-        setProtocolHistory({
-          protocolId: selectedProtocol.id,
-          revenue: [],
-        });
-        setError('Protocol detail unavailable. Try again in a moment.');
-      })
-      .finally(() => {
-        if (!ignoreRequest) {
-          setIsLoadingDetail(false);
-        }
-      });
-
-    return () => {
-      ignoreRequest = true;
-    };
-  }, [selectedProtocol]);
-
-  const businessScore = useMemo(() => {
-    if (!selectedProtocol) return 0;
-
-    const revenueGrowthScore = clampScore(50 + selectedProtocol.growth30d * 2);
-    const revenue30dScore = clampScore(
-      Math.log10(Math.max(selectedProtocol.revenue30d, 1)) * 18,
-    );
-    const revenueConsistencyScore = getConsistencyScore(activeRevenueHistory);
-    const revenueToTvlScore = clampScore(selectedProtocol.revenueToTvl * 1000);
-
-    return Math.round(
-      revenue30dScore * 0.25 +
-        revenueGrowthScore * 0.3 +
-        revenueConsistencyScore * 0.25 +
-        revenueToTvlScore * 0.2,
-    );
-  }, [activeRevenueHistory, selectedProtocol]);
 
   const chartOption = useMemo<EChartsOption>(() => {
     const maxRevenue = Math.max(
@@ -302,23 +243,34 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           breadcrumb: { show: false },
           roam: false,
           nodeClick: false,
-          data: treemapProtocols.map((protocol) => {
+          data: treemapProtocols.map((protocol, index) => {
             const intensity = Math.max(
               0.16,
               Math.min(1, protocol.revenue30d / maxRevenue),
             );
+            const labelSize = getTileLabelSize(intensity);
+
             return {
-              chainLabel: protocol.primaryChain,
               id: protocol.id,
               itemStyle: {
                 borderColor: palette.tileBorder,
-                borderWidth: 1.2,
-                color: palette.tileColor(intensity),
-                gapWidth: 6,
+                borderWidth: 1,
+                color: palette.tileColor(
+                  getTileRankOpacity(index, treemapProtocols.length),
+                ),
+                gapWidth: 5,
+              },
+              label: {
+                color: palette.textPrimary,
+                fontFamily: 'Impact, Anton, sans-serif',
+                fontSize: labelSize.fontSize,
+                fontWeight: 900,
+                lineHeight: labelSize.lineHeight,
+                overflow: 'truncate',
+                padding: 0,
               },
               name: protocol.name,
               protocolId: protocol.id,
-              revenueLabel: formatCurrency(protocol.revenue30d),
               value: Math.max(protocol.revenue30d, 1),
             };
           }),
@@ -326,7 +278,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             itemStyle: {
               color: palette.primarySoft,
               borderColor: palette.primary,
-              borderWidth: 2,
+              borderWidth: 1.5,
               shadowBlur: 0,
             },
             label: {
@@ -334,26 +286,22 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             },
           },
           itemStyle: {
+            color: palette.tileBase,
             borderJoin: 'round',
           },
           label: {
             color: palette.textPrimary,
-            fontFamily: 'var(--font-anton)',
-            fontSize: 16,
+            fontFamily: 'Impact, Anton, sans-serif',
+            fontSize: 22,
+            fontWeight: 900,
             formatter: (params) => {
               const data = params.data as TreemapNodeData | undefined;
 
-              return [
-                data?.protocolId ? params.name : undefined,
-                data?.chainLabel,
-                data?.revenueLabel,
-              ]
-                .filter(Boolean)
-                .join('\n');
+              return data?.protocolId ? params.name : '';
             },
-            lineHeight: 19,
+            lineHeight: 25,
             overflow: 'truncate',
-            padding: [8, 8, 8, 8],
+            padding: 0,
             show: true,
           },
           leafDepth: 1,
@@ -381,6 +329,10 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           const name = escapeHtml(protocol.name);
           const chain = escapeHtml(protocol.primaryChain);
           const category = escapeHtml(protocol.category);
+          const businessScore = getProtocolBusinessScore(protocol);
+          const tvlRow = hasRealisticTvl(protocol.tvl)
+            ? `<div><span style="color:${palette.textMuted};">TVL</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.tvl)}</span></div>`
+            : '';
 
           return `
             <div style="min-width: 12rem; font-family: var(--font-roboto-flex), sans-serif; color: ${palette.textPrimary};">
@@ -391,8 +343,9 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
                 ${chain} · ${category}
               </div>
               <div style="margin-top: 0.75rem; display: grid; gap: 0.4rem; font-size: 0.78rem;">
+                <div><span style="color:${palette.textMuted};">Business score</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${businessScore}</span></div>
                 <div><span style="color:${palette.textMuted};">30D revenue</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.revenue30d)}</span></div>
-                <div><span style="color:${palette.textMuted};">TVL</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.tvl)}</span></div>
+                ${tvlRow}
                 <div><span style="color:${palette.textMuted};">30D growth</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatGrowth(protocol.growth30d)}</span></div>
               </div>
             </div>
@@ -406,21 +359,6 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       },
     };
   }, [palette, protocolsById, treemapProtocols]);
-
-  const chartEvents = useMemo(
-    () => ({
-      click: (params: TreemapDataParams) => {
-        const protocolId = params.data?.protocolId;
-        const protocol = protocolId ? protocolsById.get(protocolId) : undefined;
-        if (!protocol) return;
-
-        setError(undefined);
-        setIsLoadingDetail(true);
-        setSelectedProtocolId(protocol.id);
-      },
-    }),
-    [protocolsById],
-  );
 
   if (!hasMounted) return null;
 
@@ -436,78 +374,19 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
         <div className="grid h-full place-items-center">
           <Loader2 className="animate-spin text-primary" size={28} />
         </div>
-      ) : error && !selectedProtocol ? (
+      ) : error ? (
         <div className="grid h-full place-items-center px-6 text-center">
           <span className="max-w-96 text-muted-foreground">{error}</span>
         </div>
       ) : (
-        <div className="grid h-full grid-cols-1 gap-4 p-2 lg:grid-cols-[minmax(0,0.7fr)_minmax(10rem,0.3fr)]">
-          <div className="min-h-0">
-            <div className="h-full min-h-104">
-              <ReactEChartsCore
-                echarts={echarts}
-                notMerge
-                onEvents={chartEvents}
-                option={chartOption}
-                opts={{ renderer: 'canvas' }}
-                style={{ height: '100%', width: '100%' }}
-              />
-            </div>
-          </div>
-          <aside
-            className="flex min-h-0 flex-col justify-between border-l pl-4"
-            style={{
-              background: palette.detailGradient,
-              borderColor: palette.surfaceBorder,
-            }}
-          >
-            {selectedProtocol ? (
-              <div className="flex h-full flex-col">
-                <div
-                  className="border-b pb-4"
-                  style={{ borderColor: palette.divider }}
-                >
-                  <span className="font-anton text-[10px] text-muted-foreground uppercase">
-                    {selectedProtocol.primaryChain} ·{' '}
-                    {selectedProtocol.category}
-                  </span>
-                  <h2 className="mt-2 font-anton text-4xl leading-[0.95] sm:text-5xl">
-                    {selectedProtocol.name}
-                  </h2>
-                </div>
-                {shouldShowDetailLoading ? (
-                  <div className="grid flex-1 place-items-center">
-                    <Loader2 className="animate-spin text-primary" size={28} />
-                  </div>
-                ) : (
-                  <div className="mt-4 grid content-start">
-                    <div
-                      className="mb-2 h-px w-full"
-                      style={{ backgroundColor: palette.divider }}
-                    />
-                    <div className="grid content-start">
-                      <MetricCard
-                        label="Business score"
-                        value={String(businessScore)}
-                      />
-                      <MetricCard
-                        label="TVL"
-                        value={formatCurrency(selectedProtocol.tvl)}
-                      />
-                      <MetricCard
-                        label="30D revenue"
-                        value={formatCurrency(selectedProtocol.revenue30d)}
-                      />
-                      <MetricCard
-                        label="30D growth"
-                        value={formatGrowth(selectedProtocol.growth30d)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </aside>
+        <div className="h-full p-2">
+          <ReactEChartsCore
+            echarts={echarts}
+            notMerge
+            option={chartOption}
+            opts={{ renderer: 'canvas' }}
+            style={{ height: '100%', minHeight: '26rem', width: '100%' }}
+          />
         </div>
       )}
 

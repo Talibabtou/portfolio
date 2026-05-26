@@ -3,13 +3,7 @@ import { preloadTopography } from '@/lib/topography';
 let startupPromise: Promise<void> | null = null;
 let warmTasksStarted = false;
 
-const runWarmStartupTasks = () => {
-  if (warmTasksStarted || typeof window === 'undefined') {
-    return;
-  }
-
-  warmTasksStarted = true;
-
+const preloadDemoData = () => {
   void Promise.allSettled([
     import('@/app/_components/demos/data/BitcoinMarketDemo').then((module) =>
       module.preloadBitcoinMarketDemo(),
@@ -26,15 +20,30 @@ const runWarmStartupTasks = () => {
   ]);
 };
 
+const scheduleWarmStartupTasks = () => {
+  if (warmTasksStarted || typeof window === 'undefined') {
+    return;
+  }
+
+  warmTasksStarted = true;
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(preloadDemoData, { timeout: 2500 });
+    return;
+  }
+
+  setTimeout(preloadDemoData, 900);
+};
+
 export const runStartupTasks = () => {
   if (typeof window === 'undefined') {
     return Promise.resolve();
   }
 
-  runWarmStartupTasks();
-
   if (!startupPromise) {
-    startupPromise = preloadTopography().then(() => undefined);
+    startupPromise = preloadTopography().then(() => {
+      scheduleWarmStartupTasks();
+    });
   }
 
   return startupPromise;
