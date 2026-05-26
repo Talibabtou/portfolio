@@ -1,4 +1,5 @@
 import { readStorageValue, writeStorageValue } from '@/lib/storage';
+import { toFiniteNumber } from '@/lib/utils';
 
 export type BitcoinRange = '1' | '7' | '30';
 
@@ -33,14 +34,13 @@ const BITCOIN_MARKET_CACHE_KEY = 'demos.bitcoin-market-chart';
 const BITCOIN_MARKET_CACHE_TTL = 5 * 60 * 1000;
 
 export const DEFAULT_BITCOIN_RANGE: BitcoinRange = '30';
-export const MILLISECONDS_IN_DAY = 86_400_000;
 
 const normalizeMarketChart = (data: MarketChartResponse): MarketPoint[] =>
   data.prices.map(([timestamp, price], index) => ({
-    marketCap: data.market_caps?.[index]?.[1],
-    price,
-    timestamp,
-    volume: data.total_volumes?.[index]?.[1],
+    marketCap: toFiniteNumber(data.market_caps?.[index]?.[1], undefined),
+    price: toFiniteNumber(price),
+    timestamp: toFiniteNumber(timestamp),
+    volume: toFiniteNumber(data.total_volumes?.[index]?.[1], undefined),
   }));
 
 export const getBitcoinMarketCache = (range: BitcoinRange) => {
@@ -74,9 +74,7 @@ const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
         savedAt: Date.now(),
       } satisfies CachedMarketPoints,
     });
-  } catch {
-    // Session storage is a progressive enhancement for rate-limit friendliness.
-  }
+  } catch {}
 };
 
 export const fetchBitcoinMarketPoints = (
@@ -113,9 +111,7 @@ export const preloadBitcoinMarketDemo = async () => {
 
   try {
     await fetchBitcoinMarketPoints(DEFAULT_BITCOIN_RANGE);
-  } catch {
-    // Preloading is opportunistic; mounted state handles recoverable failures.
-  }
+  } catch {}
 };
 
 export const getClosestPoint = (points: MarketPoint[], timestamp: number) =>

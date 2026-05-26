@@ -1,4 +1,5 @@
 import { readStorageValue, writeStorageValue } from '@/lib/storage';
+import { getIsoDateDaysAgo } from '@/lib/utils';
 
 export type LeaderboardTabId = 'stars' | 'forks' | 'rising';
 
@@ -45,12 +46,7 @@ const githubLeaderboardRequests = new Map<
   Promise<CachedGitHubLeaderboard>
 >();
 
-const getRisingSearchDate = () => {
-  const date = new Date();
-  date.setDate(date.getDate() - RISING_WINDOW_DAYS);
-
-  return date.toISOString().slice(0, 10);
-};
+const getRisingSearchDate = () => getIsoDateDaysAgo(RISING_WINDOW_DAYS);
 
 const getAvatarUrl = (avatarUrl: string) => {
   const url = new URL(avatarUrl);
@@ -119,9 +115,7 @@ const setGitHubLeaderboardCache = (
       ...leaderboardCache,
       [tabId]: cache,
     });
-  } catch {
-    // Session storage avoids repeated unauthenticated GitHub Search API calls.
-  }
+  } catch {}
 };
 
 export const fetchGitHubLeaderboard = (tabId: LeaderboardTabId) => {
@@ -173,9 +167,7 @@ export const preloadGitHubRadarDemo = async () => {
 
   try {
     await fetchGitHubLeaderboard(DEFAULT_TAB);
-  } catch {
-    // Preloading is opportunistic; the mounted demo renders the recoverable error.
-  }
+  } catch {}
 };
 
 export const getRepositoryStarsPerDay = (repository: GitHubRepository) => {

@@ -51,7 +51,6 @@ export const writeThemePreference = (preferences: Partial<UserPreferences>) => {
     ...preferences,
   };
 
-  // biome-ignore lint/suspicious/noDocumentCookie: Theme cookie is the server-readable source of truth for first paint.
   document.cookie = `${THEME_COOKIE_NAME}=${nextPreferences.theme}; path=/; max-age=31536000; samesite=lax`;
 
   window.dispatchEvent(new Event(BROWSER_EVENTS.themePreferenceChange));

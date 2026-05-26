@@ -12,6 +12,13 @@ import {
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { THEME_VALUES, UI_TIMINGS } from '@/lib/constants';
 import { useThemePreference } from '@/lib/theme-preference';
+import {
+  clamp,
+  escapeHtml,
+  formatCompactUsd,
+  formatSignedPercent,
+  normalizeLogRange,
+} from '@/lib/utils';
 import type {
   EChartsOption,
   TooltipComponentFormatterCallbackParams,
@@ -21,35 +28,24 @@ import { TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { BarChart3, Loader2 } from 'lucide-react';
+import { BarChart3, CircleHelp, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 echarts.use([TreemapChart, TooltipComponent, CanvasRenderer]);
 
 const TREEMAP_PROTOCOL_COUNT = 50;
 const MIN_REALISTIC_TVL = 1000;
-
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  maximumFractionDigits: 1,
-  notation: 'compact',
-  style: 'currency',
-});
-
-const percentFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 0,
-  signDisplay: 'always',
-  style: 'percent',
-});
+const REVENUE_SCORE_FLOOR = 100_000;
+const REVENUE_SCORE_CEILING = 100_000_000;
+const GROWTH_SCORE_CAP = 50;
 
 const protocolHeatmapContent = {
-  detail:
-    'Protocol revenue, fee capture and TVL efficiency from DefiLlama’s free API.',
+  detail: 'Protocol revenue and growth from DefiLlama’s free API.',
   eyebrow: 'Protocol Heatmap',
   icon: BarChart3,
   id: 'protocol-heatmap',
   label: 'Protocol Heatmap',
-  metrics: ['Revenue', 'TVL', 'Growth'],
+  metrics: ['Revenue', 'Growth', 'TVL'],
   title: 'A dense terminal for crypto protocol fundamentals.',
 };
 
@@ -65,27 +61,25 @@ type ThemePalette = {
   tileColor: (rankOpacity: number) => string;
 };
 
-const formatCurrency = (value: number) => currencyFormatter.format(value);
-const formatGrowth = (value: number) => percentFormatter.format(value / 100);
-
-const clampScore = (value: number) => Math.max(0, Math.min(100, value));
+const formatCurrency = formatCompactUsd;
+const formatGrowth = formatSignedPercent;
 
 const hasRealisticTvl = (value: number) => value >= MIN_REALISTIC_TVL;
 
 const getProtocolBusinessScore = (protocol: TerminalProtocol) => {
-  const revenueGrowthScore = clampScore(50 + protocol.growth30d * 2);
-  const revenue30dScore = clampScore(
-    Math.log10(Math.max(protocol.revenue30d, 1)) * 18,
+  const revenueScaleScore =
+    normalizeLogRange(
+      protocol.revenue30d,
+      REVENUE_SCORE_FLOOR,
+      REVENUE_SCORE_CEILING,
+    ) * 100;
+  const growthScore = clamp(
+    50 + protocol.growth30d * (50 / GROWTH_SCORE_CAP),
+    0,
+    100,
   );
-  const revenueToTvlScore = hasRealisticTvl(protocol.tvl)
-    ? clampScore(protocol.revenueToTvl * 1000)
-    : 50;
 
-  return Math.round(
-    revenue30dScore * 0.42 +
-      revenueGrowthScore * 0.33 +
-      revenueToTvlScore * 0.25,
-  );
+  return Math.round(revenueScaleScore * 0.65 + growthScore * 0.35);
 };
 
 const getTileRankOpacity = (index: number, totalCount: number) => {
@@ -158,14 +152,6 @@ const getThemePalette = (isDarkMode: boolean): ThemePalette => {
   };
 };
 
-const escapeHtml = (value: string) =>
-  value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-
 type TreemapDataParams = {
   data?: {
     protocolId?: string;
@@ -176,6 +162,7 @@ type TreemapNodeData = NonNullable<TreemapDataParams['data']>;
 
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
+  const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [protocols, setProtocols] = useState<TerminalProtocol[]>([]);
   const { theme } = useThemePreference();
@@ -244,10 +231,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           roam: false,
           nodeClick: false,
           data: treemapProtocols.map((protocol, index) => {
-            const intensity = Math.max(
-              0.16,
-              Math.min(1, protocol.revenue30d / maxRevenue),
-            );
+            const intensity = Math.max(0.16, protocol.revenue30d / maxRevenue);
             const labelSize = getTileLabelSize(intensity);
 
             return {
@@ -393,6 +377,49 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       <p className="pointer-events-none absolute bottom-5 left-4 z-3 text-muted-foreground text-sm">
         Source: DefiLlama free API.
       </p>
+      <div className="absolute right-4 bottom-5 z-3">
+        <button
+          aria-expanded={isFormulaOpen}
+          aria-label="Business score formula"
+          className="grid size-7 place-items-center text-muted-foreground backdrop-blur-sm transition-colors hover:text-foreground"
+          onClick={() => setIsFormulaOpen((isOpen) => !isOpen)}
+          type="button"
+        >
+          <CircleHelp aria-hidden="true" size={15} strokeWidth={1.8} />
+        </button>
+        {isFormulaOpen ? (
+          <div className="absolute right-3 bottom-9 w-115 border border-foreground/15 bg-background/95 p-3 text-foreground text-xs shadow-none backdrop-blur">
+            <p className="font-anton text-sm uppercase">
+              Business score formula
+            </p>
+            <div className="mt-2 space-y-2 text-muted-foreground leading-relaxed">
+              <div className="flex items-center gap-2">
+                <span className="whitespace-nowrap font-mono">
+                  Business Score&nbsp;=
+                </span>
+                <span className="font-mono text-xs md:text-sm">
+                  0.65 ×{' '}
+                  <span className="font-semibold">
+                    Revenue<sub>30D</sub>
+                  </span>
+                  &nbsp;+&nbsp; 0.35 ×{' '}
+                  <span className="font-semibold">
+                    Growth<sub>30D</sub>
+                  </span>
+                </span>
+              </div>
+              <ul className="ml-5 list-disc space-y-1 text-xs md:text-sm">
+                <li>
+                  <b>Revenue:</b> log-scaled from $100K to $100M
+                </li>
+                <li>
+                  <b>Growth:</b> capped between –50% and +50%
+                </li>
+              </ul>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

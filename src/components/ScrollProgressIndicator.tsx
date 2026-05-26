@@ -1,4 +1,5 @@
 'use client';
+import { clamp01 } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
 
 const ScrollProgressIndicator = () => {
@@ -12,7 +13,7 @@ const ScrollProgressIndicator = () => {
         const scrollY = window.scrollY;
         const rawProgress =
           scrollableHeight > 0 ? scrollY / scrollableHeight : 0;
-        const scrollProgress = Math.min(Math.max(rawProgress, 0), 1);
+        const scrollProgress = clamp01(rawProgress);
 
         scrollBarRef.current.style.transform = `scaleY(${scrollProgress})`;
       }

@@ -1,4 +1,5 @@
 import { createStorageNamespace } from '@/lib/storage';
+import { toFiniteNumber } from '@/lib/utils';
 
 const LLAMA_API_BASE_URL = 'https://api.llama.fi';
 const PROTOCOL_REVENUE_NAMESPACE = createStorageNamespace(
@@ -65,9 +66,6 @@ const isCacheFresh = (savedAt: number, ttl: number) =>
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
-
-const toFiniteNumber = (value: unknown) =>
-  typeof value === 'number' && Number.isFinite(value) ? value : 0;
 
 const normalizePercent = (value: unknown) => {
   const numericValue = toFiniteNumber(value);

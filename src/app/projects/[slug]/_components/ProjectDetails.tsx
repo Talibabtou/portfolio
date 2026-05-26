@@ -65,7 +65,6 @@ const ProjectDetails = ({ project }: Props) => {
     { scope: containerRef },
   );
 
-  // blur info div and make it smaller on scroll
   useGSAP(
     () => {
       if (window.innerWidth < 992) return;
@@ -74,7 +73,6 @@ const ProjectDetails = ({ project }: Props) => {
         filter: 'blur(0.1875rem)',
         autoAlpha: 0,
         scale: 0.9,
-        // position: 'sticky',
         scrollTrigger: {
           trigger: '#info',
           start: 'bottom bottom',
@@ -88,7 +86,6 @@ const ProjectDetails = ({ project }: Props) => {
     { scope: containerRef },
   );
 
-  // parallax effect on images
   useGSAP(
     () => {
       gsap.utils
@@ -102,7 +99,6 @@ const ProjectDetails = ({ project }: Props) => {
               start: () => (i ? 'top bottom' : 'top 50%'),
               end: 'bottom top',
               scrub: true,
-              // invalidateOnRefresh: true, // to make it responsive
             },
           });
         });
@@ -124,7 +120,7 @@ const ProjectDetails = ({ project }: Props) => {
 
         <div className="top-0 flex min-h-[calc(100svh-6.25rem)]" id="info">
           <div className="relative w-full">
-            <div className="mx-auto mb-10 flex max-w-[39.6875rem] items-start gap-6">
+            <div className="mx-auto mb-10 flex max-w-158.75 items-start gap-6">
               <h1 className="fade-in-later overflow-hidden font-anton text-4xl leading-none opacity-0 md:text-6xl">
                 <span className="inline-block">{project.title}</span>
               </h1>
@@ -153,7 +149,7 @@ const ProjectDetails = ({ project }: Props) => {
               </div>
             </div>
 
-            <div className="mx-auto max-w-[39.6875rem] space-y-7 pb-20">
+            <div className="mx-auto max-w-158.75 space-y-7 pb-20">
               <div className="fade-in-later">
                 <p className="mb-3 font-anton text-muted-foreground">Year</p>
 

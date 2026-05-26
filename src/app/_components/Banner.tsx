@@ -8,7 +8,6 @@ import { useRef } from 'react';
 const Banner = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // move the content a little up on scroll
   useGSAP(
     () => {
       const tl = gsap.timeline({
@@ -33,7 +32,7 @@ const Banner = () => {
     <section className="relative overflow-hidden" id="banner">
       <ArrowAnimation />
       <div
-        className="flex h-svh min-h-[33.125rem] items-center justify-between px-4 max-md:flex-col max-md:pb-10"
+        className="flex h-svh min-h-132.5 items-center justify-between px-4 max-md:flex-col max-md:pb-10"
         ref={containerRef}
       >
         <div className="max-w-136 flex-col items-start justify-center pl-[7%] max-md:flex max-md:grow">

@@ -13,15 +13,10 @@ import {
   type LeaderboardTabId,
 } from '@/app/_components/demos/data/GitHubRadarDemo';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import { cn } from '@/lib/utils';
+import { cn, formatCompactNumber } from '@/lib/utils';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-
-const compactNumberFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 1,
-  notation: 'compact',
-});
 
 const leaderboardTabs: {
   description: string;
@@ -64,7 +59,7 @@ const getRepositorySignal = (
     return {
       icon: GitFork,
       label: 'forks',
-      value: compactNumberFormatter.format(repository.forks_count),
+      value: formatCompactNumber(repository.forks_count),
     };
   }
 
@@ -72,16 +67,14 @@ const getRepositorySignal = (
     return {
       icon: Flame,
       label: 'stars/day',
-      value: compactNumberFormatter.format(
-        getRepositoryStarsPerDay(repository),
-      ),
+      value: formatCompactNumber(getRepositoryStarsPerDay(repository)),
     };
   }
 
   return {
     icon: Star,
     label: 'stars',
-    value: compactNumberFormatter.format(repository.stargazers_count),
+    value: formatCompactNumber(repository.stargazers_count),
   };
 };
 

@@ -16,6 +16,11 @@ import {
 } from '@/app/_components/demos/data/WorldMapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { UI_TIMINGS } from '@/lib/constants';
+import {
+  escapeHtml,
+  formatShortDateTime,
+  getCssHslVariable,
+} from '@/lib/utils';
 import { Globe2, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -48,25 +53,14 @@ const worldMapContent = {
   title: 'A rotating map of global earthquakes from public geodata.',
 };
 
-const getThemeColor = (token: string, alpha?: number) => {
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue(token)
-    .trim();
-  const [hue, saturation, lightness] = value.split(' ');
-
-  return alpha
-    ? `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`
-    : `hsl(${hue}, ${saturation}, ${lightness})`;
-};
-
 const getGlobeTheme = () => {
   const isDarkMode = document.documentElement.classList.contains('dark');
 
   return {
-    dot: getThemeColor('--primary'),
+    dot: getCssHslVariable('--primary'),
     globe: isDarkMode ? 'hsl(0, 0%, 6%)' : 'hsl(0, 0%, 96%)',
     land: isDarkMode ? 'hsla(0, 0%, 76%, 0.6)' : 'hsla(0, 0%, 3%, 0.54)',
-    halo: getThemeColor('--primary'),
+    halo: getCssHslVariable('--primary'),
   };
 };
 
@@ -83,17 +77,9 @@ const getInitialGlobeTheme = () => {
   return getGlobeTheme();
 };
 
-const getEarthquakeDateLabel = (timestamp: number) => {
-  return new Intl.DateTimeFormat('en', {
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    month: 'short',
-  }).format(timestamp);
-};
-
 const getPointLabel = (point: object) => {
   const earthquake = point as EarthquakePulse;
+  const place = escapeHtml(earthquake.place);
 
   return `
     <div style="font-family: var(--font-roboto-flex), sans-serif; line-height: 1.15; min-width: 9rem;">
@@ -101,14 +87,14 @@ const getPointLabel = (point: object) => {
         M ${earthquake.magnitude.toFixed(1)} earthquake
       </div>
       <div class="world-map-tooltip-muted" style="margin-top: 0.35rem; font-size: 0.72rem;">
-        ${earthquake.place}
+        ${place}
       </div>
       <div style="margin-top: 0.65rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.72rem;">
         <span style="color: hsl(var(--primary)); font-family: var(--font-anton), sans-serif;">Depth ${earthquake.depth.toFixed(0)} km</span>
         <span class="world-map-tooltip-foreground">USGS</span>
       </div>
       <div class="world-map-tooltip-muted" style="margin-top: 0.5rem; font-size: 0.68rem;">
-        ${getEarthquakeDateLabel(earthquake.timestamp)}
+        ${formatShortDateTime(earthquake.timestamp)}
       </div>
     </div>
   `;

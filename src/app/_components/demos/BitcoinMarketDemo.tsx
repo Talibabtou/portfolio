@@ -6,13 +6,20 @@ import {
   fetchBitcoinMarketPoints,
   getBitcoinMarketCache,
   getClosestPoint,
-  MILLISECONDS_IN_DAY,
   preloadBitcoinMarketDemo,
   type BitcoinRange,
   type MarketPoint,
 } from '@/app/_components/demos/data/BitcoinMarketDemo';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import { cn } from '@/lib/utils';
+import { MILLISECONDS_IN_DAY } from '@/lib/constants';
+import {
+  cn,
+  formatCompactUsd,
+  formatPreciseSignedPercent,
+  formatShortDateTime,
+  formatUsd,
+  getCssHslVariable,
+} from '@/lib/utils';
 import { LineChart } from 'lucide-react';
 import {
   AreaSeries,
@@ -39,35 +46,6 @@ const MARKET_CHANGE_COLORS = {
   positive: 'text-[#0f8f4d] dark:text-[#4ade80]',
 };
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  maximumFractionDigits: 0,
-  style: 'currency',
-});
-
-const compactCurrencyFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  maximumFractionDigits: 1,
-  notation: 'compact',
-  style: 'currency',
-});
-
-const percentFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2,
-  signDisplay: 'always',
-  style: 'percent',
-});
-
-const readoutDateFormatter = new Intl.DateTimeFormat('en-US', {
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  month: 'short',
-});
-
-const formatPercent = (value: number) => percentFormatter.format(value / 100);
-
 const getChangePercent = (current?: number, previous?: number) => {
   if (!(current && previous)) return undefined;
   return ((current - previous) / previous) * 100;
@@ -78,31 +56,23 @@ const getChartTime = (timestamp: number) =>
 
 const getPointKey = (timestamp: number) => getChartTime(timestamp);
 
-const getThemeColor = (token: string, alpha?: number) => {
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue(token)
-    .trim();
-
-  return alpha ? `hsl(${value} / ${alpha})` : `hsl(${value})`;
-};
-
 const getChartTheme = () => {
-  const primary = getThemeColor('--primary');
-  const background = getThemeColor('--background');
-  const mutedForeground = getThemeColor('--muted-foreground');
+  const primary = getCssHslVariable('--primary');
+  const background = getCssHslVariable('--background');
+  const mutedForeground = getCssHslVariable('--muted-foreground');
 
   return {
     background,
     grid: {
-      horizontal: getThemeColor('--foreground', 0.08),
-      vertical: getThemeColor('--foreground', 0.05),
+      horizontal: getCssHslVariable('--foreground', 0.08),
+      vertical: getCssHslVariable('--foreground', 0.05),
     },
     mutedForeground,
     primary,
-    primaryFillBottom: getThemeColor('--primary', 0.02),
-    primaryFillTop: getThemeColor('--primary', 0.18),
-    scaleBorder: getThemeColor('--foreground', 0.1),
-    trackingLine: getThemeColor('--foreground', 0.18),
+    primaryFillBottom: getCssHslVariable('--primary', 0.02),
+    primaryFillTop: getCssHslVariable('--primary', 0.18),
+    scaleBorder: getCssHslVariable('--foreground', 0.1),
+    trackingLine: getCssHslVariable('--foreground', 0.18),
   };
 };
 
@@ -153,7 +123,7 @@ const getChartOptions = (): DeepPartial<ChartOptions> => {
       textColor: theme.mutedForeground,
     },
     localization: {
-      priceFormatter: (price: number) => currencyFormatter.format(price),
+      priceFormatter: formatUsd,
     },
     rightPriceScale: {
       borderColor: theme.scaleBorder,
@@ -302,7 +272,7 @@ const TradingViewBitcoinChart = ({
     if (latestPoint) {
       latestPriceLineRef.current = seriesRef.current.createPriceLine({
         axisLabelVisible: true,
-        color: getThemeColor('--primary'),
+        color: getCssHslVariable('--primary'),
         lineStyle: LineStyle.Dotted,
         lineVisible: true,
         lineWidth: 1,
@@ -407,7 +377,7 @@ const BitcoinMarketDemo = () => {
           </span>
           <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-2">
             <strong className="font-anton text-5xl leading-none md:text-7xl">
-              {latestPoint ? currencyFormatter.format(latestPoint.price) : '--'}
+              {latestPoint ? formatUsd(latestPoint.price) : '--'}
             </strong>
             {typeof changePercent === 'number' ? (
               <span
@@ -416,7 +386,7 @@ const BitcoinMarketDemo = () => {
                   [MARKET_CHANGE_COLORS.positive]: isPositiveChange,
                 })}
               >
-                {formatPercent(changePercent)} 24h
+                {formatPreciseSignedPercent(changePercent)} 24h
               </span>
             ) : null}
           </div>
@@ -472,7 +442,7 @@ const BitcoinMarketDemo = () => {
                 </span>
                 <p className="mt-0.5 font-anton text-base">
                   {displayedPoint
-                    ? readoutDateFormatter.format(displayedPoint.timestamp)
+                    ? formatShortDateTime(displayedPoint.timestamp)
                     : '--'}
                 </p>
               </div>
@@ -481,9 +451,7 @@ const BitcoinMarketDemo = () => {
                   Price
                 </span>
                 <p className="mt-0.5 font-anton text-base">
-                  {displayedPoint
-                    ? currencyFormatter.format(displayedPoint.price)
-                    : '--'}
+                  {displayedPoint ? formatUsd(displayedPoint.price) : '--'}
                 </p>
               </div>
               <div>
@@ -492,7 +460,7 @@ const BitcoinMarketDemo = () => {
                 </span>
                 <p className="mt-0.5 font-anton text-base">
                   {displayedPoint?.volume
-                    ? compactCurrencyFormatter.format(displayedPoint.volume)
+                    ? formatCompactUsd(displayedPoint.volume)
                     : '--'}
                 </p>
               </div>
@@ -502,7 +470,7 @@ const BitcoinMarketDemo = () => {
                 </span>
                 <p className="mt-0.5 font-anton text-base">
                   {displayedPoint?.marketCap
-                    ? compactCurrencyFormatter.format(displayedPoint.marketCap)
+                    ? formatCompactUsd(displayedPoint.marketCap)
                     : '--'}
                 </p>
               </div>

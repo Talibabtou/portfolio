@@ -1,4 +1,5 @@
 import { readStorageValue, writeStorageValue } from '@/lib/storage';
+import { getIsoDateDaysAgo, toFiniteNumber } from '@/lib/utils';
 
 export const preloadGlobeLibrary = () => import('react-globe.gl');
 
@@ -66,15 +67,11 @@ const WORLD_MAP_CACHE_TTL = 24 * 60 * 60 * 1000;
 const EARTHQUAKE_LOOKBACK_DAYS = 365;
 const EARTHQUAKE_LIMIT = 160;
 const MIN_EARTHQUAKE_MAGNITUDE = 4.5;
-const MILLISECONDS_IN_DAY = 86_400_000;
-
 const earthquakeRequest = new Map<string, Promise<CachedEarthquakes>>();
 const countriesRequest = new Map<string, Promise<CachedCountries>>();
 
 const getEarthquakeStartDate = () =>
-  new Date(Date.now() - EARTHQUAKE_LOOKBACK_DAYS * MILLISECONDS_IN_DAY)
-    .toISOString()
-    .slice(0, 10);
+  getIsoDateDaysAgo(EARTHQUAKE_LOOKBACK_DAYS);
 
 export const isEarthquakesFresh = (cache: CachedEarthquakes) =>
   Date.now() - cache.savedAt < WORLD_MAP_CACHE_TTL;
@@ -107,17 +104,13 @@ export const getCountriesCache = (options: { allowStale?: boolean } = {}) => {
 const setEarthquakesCache = (cache: CachedEarthquakes) => {
   try {
     writeStorageValue('local', WORLD_MAP_CACHE_KEY, cache);
-  } catch {
-    // The demo can still render from the live request when storage is full.
-  }
+  } catch {}
 };
 
 const setCountriesCache = (cache: CachedCountries) => {
   try {
     writeStorageValue('local', WORLD_MAP_COUNTRIES_CACHE_KEY, cache);
-  } catch {
-    // Country outlines are visual enhancement only; the demo can still run live.
-  }
+  } catch {}
 };
 
 const normalizeEarthquakes = (
@@ -128,13 +121,13 @@ const normalizeEarthquakes = (
       const [lng, lat, depth = 0] = feature.geometry.coordinates;
 
       return {
-        depth,
+        depth: toFiniteNumber(depth),
         id: feature.id,
-        lat,
-        lng,
-        magnitude: feature.properties.mag ?? 0,
+        lat: toFiniteNumber(lat),
+        lng: toFiniteNumber(lng),
+        magnitude: toFiniteNumber(feature.properties.mag),
         place: feature.properties.place ?? 'Unknown location',
-        timestamp: feature.properties.time ?? Date.now(),
+        timestamp: toFiniteNumber(feature.properties.time, Date.now()),
       } satisfies EarthquakePulse;
     })
     .filter((earthquake) => earthquake.magnitude > 0)

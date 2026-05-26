@@ -20,3 +20,5 @@ export const UI_TIMINGS = {
   demoTabTransitionMs: 300,
   demoTabVisibilityDelayMs: 340,
 } as const;
+
+export const MILLISECONDS_IN_DAY = 86_400_000;

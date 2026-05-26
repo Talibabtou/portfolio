@@ -67,9 +67,7 @@ const writeStorageState = (area: StorageArea, state: StorageState) => {
   try {
     storage.setItem(getStorageKey(area), JSON.stringify(state));
     window.dispatchEvent(new Event(getStorageChangeEvent(area)));
-  } catch {
-    // Storage-backed caching is opportunistic. Quota failures should not break UI flows.
-  }
+  } catch {}
 };
 
 export const readStorageValue = <Value>(

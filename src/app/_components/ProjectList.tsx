@@ -15,10 +15,8 @@ const ProjectList = () => {
     PROJECTS[0].slug,
   );
 
-  // Keep the project preview image aligned with the cursor in the list area.
   useGSAP(
     (_context, contextSafe) => {
-      // show image on hover
       if (window.innerWidth < 768) {
         setSelectedProject(null);
         return;
@@ -37,7 +35,6 @@ const ProjectList = () => {
         const imageRect = imageContainer.current.getBoundingClientRect();
         const offsetTop = e.clientY - containerRect.y;
 
-        // if cursor is outside the container, hide the image
         if (
           containerRect.y > e.clientY ||
           containerRect.bottom < e.clientY ||

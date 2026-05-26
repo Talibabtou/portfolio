@@ -1,3 +1,4 @@
+import { clamp } from '@/lib/utils';
 import { contours } from 'd3-contour';
 import { createNoise2D } from 'simplex-noise';
 
@@ -164,9 +165,6 @@ export const randomBetween = (min: number, max: number) =>
 
 const randomIntegerBetween = (min: number, max: number) =>
   Math.floor(randomBetween(min, max + 1));
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, value));
 
 const formatPoint = ([x, y]: Point) => `${x.toFixed(2)} ${y.toFixed(2)}`;
 
