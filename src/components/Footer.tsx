@@ -22,12 +22,9 @@ const Footer = () => {
 
     const loadRepoStats = async () => {
       try {
-        const statsResponse = await fetch(
-          'https://api.github.com/repos/Talibabtou/portfolio',
-          {
-            signal: abortController.signal,
-          },
-        );
+        const statsResponse = await fetch('/api/github/repo-stats', {
+          signal: abortController.signal,
+        });
 
         if (!statsResponse.ok) {
           return;

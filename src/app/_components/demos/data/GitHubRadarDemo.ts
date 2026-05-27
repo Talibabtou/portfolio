@@ -26,6 +26,13 @@ type GitHubSearchResponse = {
   total_count: number;
 };
 
+type NextFetchInit = RequestInit & {
+  next?: {
+    revalidate?: number;
+    tags?: string[];
+  };
+};
+
 export type CachedGitHubLeaderboard = {
   items: GitHubRepository[];
   savedAt: number;
@@ -34,8 +41,10 @@ export type CachedGitHubLeaderboard = {
 
 const GITHUB_SEARCH_REPOSITORIES_URL =
   'https://api.github.com/search/repositories';
+const GITHUB_RADAR_API_PATH = '/api/demos/github-radar';
 const GITHUB_LEADERBOARD_CACHE_KEY = 'demos.github-radar.leaderboards';
 const GITHUB_LEADERBOARD_CACHE_TTL = 60 * 60 * 1000;
+const GITHUB_LEADERBOARD_SERVER_REVALIDATE = 60 * 60;
 
 export const DEFAULT_TAB: LeaderboardTabId = 'rising';
 export const RISING_CANDIDATE_COUNT = 50;
@@ -127,22 +136,46 @@ export const fetchGitHubLeaderboard = (tabId: LeaderboardTabId) => {
   const pendingRequest = githubLeaderboardRequests.get(tabId);
   if (pendingRequest) return pendingRequest;
 
-  const searchUrl = new URL(GITHUB_SEARCH_REPOSITORIES_URL);
-  searchUrl.search = getGitHubSearchParams(tabId).toString();
+  const isBrowser = typeof window !== 'undefined';
+  const searchUrl = new URL(
+    isBrowser ? GITHUB_RADAR_API_PATH : GITHUB_SEARCH_REPOSITORIES_URL,
+    isBrowser ? window.location.origin : undefined,
+  );
 
-  const request = fetch(searchUrl, {
+  if (isBrowser) {
+    searchUrl.searchParams.set('tab', tabId);
+  } else {
+    searchUrl.search = getGitHubSearchParams(tabId).toString();
+  }
+
+  const fetchOptions: NextFetchInit = {
     headers: {
       Accept: 'application/vnd.github+json',
     },
-  })
+    next: isBrowser
+      ? undefined
+      : {
+          revalidate: GITHUB_LEADERBOARD_SERVER_REVALIDATE,
+          tags: [`demo:github-radar:${tabId}`],
+        },
+  };
+
+  const request = fetch(searchUrl, fetchOptions)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`GitHub returned ${response.status}`);
       }
 
-      return response.json() as Promise<GitHubSearchResponse>;
+      return response.json() as Promise<
+        GitHubSearchResponse | CachedGitHubLeaderboard
+      >;
     })
     .then((data) => {
+      if ('savedAt' in data) {
+        setGitHubLeaderboardCache(tabId, data);
+        return data;
+      }
+
       const leaderboard = {
         items: data.items,
         savedAt: Date.now(),

@@ -130,7 +130,7 @@ const DemoLab = () => {
                   'max-lg:min-h-26 max-lg:w-full',
                   {
                     'flex-6 bg-background': isActive,
-                    'flex-[0.45] cursor-pointer bg-background-light hover:bg-background':
+                    'flex-[0.45] bg-background-light hover:bg-background':
                       !isActive,
                   },
                 )}

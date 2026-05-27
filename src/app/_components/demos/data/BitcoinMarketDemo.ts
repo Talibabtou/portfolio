@@ -21,6 +21,13 @@ type CachedMarketPoints = {
   savedAt: number;
 };
 
+type NextFetchInit = RequestInit & {
+  next?: {
+    revalidate?: number;
+    tags?: string[];
+  };
+};
+
 export const BITCOIN_RANGES: { days: BitcoinRange; label: string }[] = [
   { days: '1', label: '1D' },
   { days: '7', label: '7D' },
@@ -29,9 +36,11 @@ export const BITCOIN_RANGES: { days: BitcoinRange; label: string }[] = [
 
 const COINGECKO_MARKET_CHART_URL =
   'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart';
+const BITCOIN_MARKET_API_PATH = '/api/demos/bitcoin-market';
 
 const BITCOIN_MARKET_CACHE_KEY = 'demos.bitcoin-market-chart';
 const BITCOIN_MARKET_CACHE_TTL = 5 * 60 * 1000;
+const BITCOIN_MARKET_SERVER_REVALIDATE = 5 * 60;
 
 export const DEFAULT_BITCOIN_RANGE: BitcoinRange = '30';
 
@@ -86,20 +95,36 @@ export const fetchBitcoinMarketPoints = (
     return Promise.resolve(cachedPoints);
   }
 
-  const marketChartUrl = new URL(COINGECKO_MARKET_CHART_URL);
+  const isBrowser = typeof window !== 'undefined';
+  const marketChartUrl = new URL(
+    isBrowser ? BITCOIN_MARKET_API_PATH : COINGECKO_MARKET_CHART_URL,
+    isBrowser ? window.location.origin : undefined,
+  );
   marketChartUrl.searchParams.set('vs_currency', 'usd');
   marketChartUrl.searchParams.set('days', range);
 
-  return fetch(marketChartUrl, { signal: options.signal })
+  const fetchOptions: NextFetchInit = {
+    signal: options.signal,
+    next: isBrowser
+      ? undefined
+      : {
+          revalidate: BITCOIN_MARKET_SERVER_REVALIDATE,
+          tags: [`demo:bitcoin-market:${range}`],
+        },
+  };
+
+  return fetch(marketChartUrl, fetchOptions)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`CoinGecko returned ${response.status}`);
       }
 
-      return response.json() as Promise<MarketChartResponse>;
+      return response.json() as Promise<MarketChartResponse | MarketPoint[]>;
     })
     .then((data) => {
-      const normalizedPoints = normalizeMarketChart(data);
+      const normalizedPoints = Array.isArray(data)
+        ? data
+        : normalizeMarketChart(data);
       setBitcoinMarketCache(range, normalizedPoints);
 
       return normalizedPoints;

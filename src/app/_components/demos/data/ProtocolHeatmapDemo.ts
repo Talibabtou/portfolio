@@ -301,6 +301,28 @@ export const fetchProtocolRevenueSnapshot = async () => {
   const pendingRequest = overviewRequests.get(requestKey);
   if (pendingRequest) return pendingRequest;
 
+  if (typeof window !== 'undefined') {
+    const request = fetch('/api/demos/protocol-heatmap')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Protocol heatmap API returned ${response.status}`);
+        }
+
+        return response.json() as Promise<CachedProtocolRevenueSnapshot>;
+      })
+      .then((snapshot) => {
+        setCachedOverview(snapshot);
+        return snapshot;
+      })
+      .finally(() => {
+        overviewRequests.delete(requestKey);
+      });
+
+    overviewRequests.set(requestKey, request);
+
+    return request;
+  }
+
   const request = Promise.all([
     fetchJson<LlamaOverviewResponse | LlamaOverviewProtocol[]>(
       '/overview/fees?dataType=dailyRevenue',
