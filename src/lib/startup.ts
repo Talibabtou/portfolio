@@ -9,7 +9,7 @@ const preloadDemoData = () => {
       module.preloadBitcoinMarketDemo(),
     ),
     import('@/app/_components/demos/data/ProtocolHeatmapDemo').then((module) =>
-      module.preloadProtocolRevenueTerminal(),
+      module.preloadProtocolHeatmapDemo(),
     ),
     import('@/app/_components/demos/data/GitHubRadarDemo').then((module) =>
       module.preloadGitHubRadarDemo(),

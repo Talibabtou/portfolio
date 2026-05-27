@@ -4,12 +4,11 @@ import { toFiniteNumber } from '@/lib/utils';
 const LLAMA_API_BASE_URL = 'https://api.llama.fi';
 const PROTOCOL_REVENUE_NAMESPACE = createStorageNamespace(
   'local',
-  'demos.protocol-heatmap.v4',
+  'demos.protocol-heatmap.v5',
 );
 const PROTOCOL_REVENUE_CACHE_TTL = 60 * 60 * 1000;
 const PROTOCOL_DIRECTORY_CACHE_TTL = 24 * 60 * 60 * 1000;
-const DEFAULT_PROTOCOL_LIMIT = 18;
-const MIN_REALISTIC_TVL = 1000;
+const DEFAULT_PROTOCOL_LIMIT = 50;
 let protocolDirectorySnapshot: LlamaProtocolDirectoryItem[] | null = null;
 
 type LlamaOverviewProtocol = {
@@ -39,11 +38,11 @@ type LlamaProtocolDirectoryItem = {
 };
 
 type CachedProtocolRevenueSnapshot = {
-  protocols: TerminalProtocol[];
+  protocols: HeatmapProtocol[];
   savedAt: number;
 };
 
-export type TerminalProtocol = {
+export type HeatmapProtocol = {
   category: string;
   detailSlug: string;
   growth30d: number;
@@ -51,7 +50,6 @@ export type TerminalProtocol = {
   name: string;
   primaryChain: string;
   revenue30d: number;
-  revenueToTvl: number;
   slug: string;
   tvl: number;
 };
@@ -115,7 +113,7 @@ const isValidProtocolIdentifier = (value: unknown): value is string => {
   );
 };
 
-const isTerminalProtocol = (value: unknown): value is TerminalProtocol => {
+const isHeatmapProtocol = (value: unknown): value is HeatmapProtocol => {
   if (!isObjectRecord(value)) return false;
 
   return (
@@ -139,7 +137,7 @@ const getCachedOverview = (allowStale = false) => {
   }
 
   if (cache.protocols.length === 0) return undefined;
-  if (!cache.protocols.every(isTerminalProtocol)) {
+  if (!cache.protocols.every(isHeatmapProtocol)) {
     PROTOCOL_REVENUE_NAMESPACE.remove('snapshot');
     return undefined;
   }
@@ -248,7 +246,7 @@ const resolveDirectoryProtocol = (
 const normalizeProtocol = (
   overviewProtocol: LlamaOverviewProtocol,
   directoryLookup: Map<string, LlamaProtocolDirectoryItem>,
-): TerminalProtocol | undefined => {
+): HeatmapProtocol | undefined => {
   const lookupProtocol = resolveDirectoryProtocol(directoryLookup, [
     overviewProtocol.parentProtocol,
     overviewProtocol.module,
@@ -275,7 +273,6 @@ const normalizeProtocol = (
   if (revenue30d <= 0) return undefined;
 
   const tvl = toFiniteNumber(lookupProtocol?.tvl);
-  const hasRealisticTvl = tvl >= MIN_REALISTIC_TVL;
   const growth30d =
     normalizePercent(overviewProtocol.change_1m) ||
     computeGrowth(revenue30d, getProtocolPreviousRevenue30d(overviewProtocol));
@@ -291,7 +288,6 @@ const normalizeProtocol = (
       overviewProtocol.chains?.[0] ??
       'Multi-chain',
     revenue30d,
-    revenueToTvl: hasRealisticTvl ? revenue30d / tvl : 0,
     slug,
     tvl,
   };
@@ -317,7 +313,7 @@ export const fetchProtocolRevenueSnapshot = async () => {
         .map((overviewProtocol) =>
           normalizeProtocol(overviewProtocol, directoryLookup),
         )
-        .filter((protocol): protocol is TerminalProtocol => Boolean(protocol))
+        .filter((protocol): protocol is HeatmapProtocol => Boolean(protocol))
         .sort((firstProtocol, secondProtocol) => {
           return secondProtocol.revenue30d - firstProtocol.revenue30d;
         })
@@ -345,7 +341,7 @@ export const fetchProtocolRevenueSnapshot = async () => {
   return request;
 };
 
-export const preloadProtocolRevenueTerminal = async () => {
+export const preloadProtocolHeatmapDemo = async () => {
   if (typeof window === 'undefined') return;
 
   await fetchProtocolRevenueSnapshot();

@@ -6,8 +6,8 @@ import type {
 } from '@/app/_components/demos/types';
 import {
   fetchProtocolRevenueSnapshot,
-  preloadProtocolRevenueTerminal,
-  type TerminalProtocol,
+  preloadProtocolHeatmapDemo,
+  type HeatmapProtocol,
 } from '@/app/_components/demos/data/ProtocolHeatmapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { THEME_VALUES, UI_TIMINGS } from '@/lib/constants';
@@ -35,30 +35,30 @@ echarts.use([TreemapChart, TooltipComponent, CanvasRenderer]);
 
 const TREEMAP_PROTOCOL_COUNT = 50;
 const MIN_REALISTIC_TVL = 1000;
+const MIN_LABEL_AREA_SHARE = 0.008;
 const REVENUE_SCORE_FLOOR = 100_000;
 const REVENUE_SCORE_CEILING = 100_000_000;
 const GROWTH_SCORE_CAP = 50;
 
 const protocolHeatmapContent = {
   detail: 'Protocol revenue and growth from DefiLlama’s free API.',
-  eyebrow: 'Protocol Heatmap',
+  eyebrow: 'Crypto Protocol Heatmap',
   icon: BarChart3,
   id: 'protocol-heatmap',
-  label: 'Protocol Heatmap',
+  label: 'Crypto Protocol Heatmap',
   metrics: ['Revenue', 'Growth', 'TVL'],
-  title: 'A dense terminal for crypto protocol fundamentals.',
+  title: 'A dense treemap for crypto protocol fundamentals.',
 };
 
 type ThemePalette = {
   primary: string;
-  primarySoft: string;
-  tileBase: string;
+  tileGap: string;
   textMuted: string;
   textPrimary: string;
   tooltipBackground: string;
   tooltipBorder: string;
-  tileBorder: string;
   tileColor: (rankOpacity: number) => string;
+  tileHoverColor: (rankOpacity: number) => string;
 };
 
 const formatCurrency = formatCompactUsd;
@@ -66,7 +66,7 @@ const formatGrowth = formatSignedPercent;
 
 const hasRealisticTvl = (value: number) => value >= MIN_REALISTIC_TVL;
 
-const getProtocolBusinessScore = (protocol: TerminalProtocol) => {
+const getProtocolBusinessScore = (protocol: HeatmapProtocol) => {
   const revenueScaleScore =
     normalizeLogRange(
       protocol.revenue30d,
@@ -92,33 +92,33 @@ const mixRgb = (
   from: [number, number, number],
   to: [number, number, number],
   amount: number,
+  alpha = 1,
 ) => {
   const [fromRed, fromGreen, fromBlue] = from;
   const [toRed, toGreen, toBlue] = to;
 
-  return `rgb(${Math.round(fromRed + (toRed - fromRed) * amount)} ${Math.round(
-    fromGreen + (toGreen - fromGreen) * amount,
-  )} ${Math.round(fromBlue + (toBlue - fromBlue) * amount)})`;
+  return `rgba(${Math.round(
+    fromRed + (toRed - fromRed) * amount,
+  )}, ${Math.round(fromGreen + (toGreen - fromGreen) * amount)}, ${Math.round(
+    fromBlue + (toBlue - fromBlue) * amount,
+  )}, ${alpha})`;
 };
 
-const getTileLabelSize = (intensity: number) => {
-  if (intensity > 0.72) {
+const getTileLabelStyle = (areaShare: number) => {
+  if (areaShare < MIN_LABEL_AREA_SHARE) {
     return {
-      fontSize: 52,
-      lineHeight: 54,
+      fontSize: 0,
+      lineHeight: 0,
+      show: false,
     };
   }
 
-  if (intensity > 0.32) {
-    return {
-      fontSize: 40,
-      lineHeight: 43,
-    };
-  }
+  const fontSize = Math.round(clamp(10 + Math.sqrt(areaShare) * 92, 12, 54));
 
   return {
-    fontSize: 14,
-    lineHeight: 16,
+    fontSize,
+    lineHeight: Math.round(fontSize * 1.04),
+    show: true,
   };
 };
 
@@ -126,29 +126,41 @@ const getThemePalette = (isDarkMode: boolean): ThemePalette => {
   if (isDarkMode) {
     return {
       primary: 'hsl(196 100% 78%)',
-      primarySoft: 'hsl(196 100% 78% / 0.16)',
-      tileBase: 'hsl(0 0% 9% / 0.92)',
+      tileGap: 'hsl(0 0% 9%)',
       textMuted: 'hsl(0 0% 71% / 0.78)',
       textPrimary: 'hsl(0 0% 100%)',
-      tileBorder: 'hsl(0 0% 100% / 0.2)',
       tooltipBackground: 'hsl(0 0% 9% / 0.98)',
       tooltipBorder: 'hsl(196 100% 78% / 0.36)',
-      tileColor: (rankProgress) =>
-        mixRgb([143, 237, 255], [23, 23, 23], 1 - rankProgress),
+      tileColor: (rankProgress) => {
+        const alpha = 0.18 + rankProgress * 0.7;
+
+        return mixRgb([143, 237, 255], [23, 23, 23], 1 - rankProgress, alpha);
+      },
+      tileHoverColor: (rankProgress) => {
+        const fade = 1 - rankProgress * 0.38;
+
+        return mixRgb([69, 207, 255], [12, 52, 70], fade, 0.98);
+      },
     };
   }
 
   return {
     primary: 'hsl(24 100% 56%)',
-    primarySoft: 'hsl(24 100% 56% / 0.14)',
-    tileBase: 'hsl(42 78% 96% / 0.98)',
+    tileGap: 'hsl(42 78% 96%)',
     textMuted: 'hsl(24 18% 32% / 0.82)',
     textPrimary: 'hsl(24 38% 8%)',
-    tileBorder: 'hsl(24 38% 8% / 0.2)',
     tooltipBackground: 'hsl(42 78% 97% / 0.99)',
     tooltipBorder: 'hsl(24 100% 56% / 0.32)',
-    tileColor: (rankProgress) =>
-      mixRgb([255, 118, 31], [253, 247, 237], 1 - rankProgress),
+    tileColor: (rankProgress) => {
+      const alpha = 0.18 + rankProgress * 0.62;
+
+      return mixRgb([255, 118, 31], [255, 118, 31], 0, alpha);
+    },
+    tileHoverColor: (rankProgress) => {
+      const fade = 1 - rankProgress * 0.26;
+
+      return mixRgb([255, 118, 31], [168, 62, 12], fade, 0.96);
+    },
   };
 };
 
@@ -159,12 +171,42 @@ type TreemapDataParams = {
 };
 
 type TreemapNodeData = NonNullable<TreemapDataParams['data']>;
+type TooltipPositionSize = {
+  contentSize: [number, number];
+  viewSize: [number, number];
+};
+
+const getTooltipPosition = (
+  point: [number, number],
+  _params: unknown,
+  _element: unknown,
+  _rect: unknown,
+  size: TooltipPositionSize,
+) => {
+  const offset = 14;
+  const edgePadding = 12;
+  const [viewWidth, viewHeight] = size.viewSize;
+  const measuredWidth = size.contentSize[0];
+  const measuredHeight = size.contentSize[1];
+  const contentWidth = measuredWidth > 0 ? measuredWidth : 224;
+  const contentHeight = measuredHeight > 0 ? measuredHeight : 132;
+  const shouldPlaceLeft = point[0] > viewWidth / 2;
+  const x = shouldPlaceLeft
+    ? point[0] - contentWidth - offset
+    : point[0] + offset;
+  const y = point[1] - contentHeight / 2;
+
+  return [
+    clamp(x, edgePadding, viewWidth - contentWidth - edgePadding),
+    clamp(y, edgePadding, viewHeight - contentHeight - edgePadding),
+  ];
+};
 
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [protocols, setProtocols] = useState<TerminalProtocol[]>([]);
+  const [protocols, setProtocols] = useState<HeatmapProtocol[]>([]);
   const { theme } = useThemePreference();
   const isDarkMode = theme === THEME_VALUES.dark;
   const palette = useMemo(() => getThemePalette(isDarkMode), [isDarkMode]);
@@ -212,8 +254,8 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   );
 
   const chartOption = useMemo<EChartsOption>(() => {
-    const maxRevenue = Math.max(
-      ...treemapProtocols.map((protocol) => protocol.revenue30d),
+    const totalRevenue = Math.max(
+      treemapProtocols.reduce((sum, protocol) => sum + protocol.revenue30d, 0),
       1,
     );
 
@@ -221,7 +263,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       animation: false,
       animationDuration: 0,
       animationDurationUpdate: 0,
-      backgroundColor: 'transparent',
+      backgroundColor: palette.tileGap,
       series: [
         {
           animation: false,
@@ -231,27 +273,35 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           roam: false,
           nodeClick: false,
           data: treemapProtocols.map((protocol, index) => {
-            const intensity = Math.max(0.16, protocol.revenue30d / maxRevenue);
-            const labelSize = getTileLabelSize(intensity);
+            const labelStyle = getTileLabelStyle(
+              protocol.revenue30d / totalRevenue,
+            );
 
             return {
               id: protocol.id,
+              emphasis: {
+                itemStyle: {
+                  color: palette.tileHoverColor(
+                    getTileRankOpacity(index, treemapProtocols.length),
+                  ),
+                },
+              },
               itemStyle: {
-                borderColor: palette.tileBorder,
-                borderWidth: 1,
+                borderColor: 'transparent',
+                borderWidth: 0,
                 color: palette.tileColor(
                   getTileRankOpacity(index, treemapProtocols.length),
                 ),
-                gapWidth: 5,
               },
               label: {
                 color: palette.textPrimary,
                 fontFamily: 'Impact, Anton, sans-serif',
-                fontSize: labelSize.fontSize,
+                fontSize: labelStyle.fontSize,
                 fontWeight: 900,
-                lineHeight: labelSize.lineHeight,
+                lineHeight: labelStyle.lineHeight,
                 overflow: 'truncate',
                 padding: 0,
+                show: labelStyle.show,
               },
               name: protocol.name,
               protocolId: protocol.id,
@@ -260,9 +310,8 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           }),
           emphasis: {
             itemStyle: {
-              color: palette.primarySoft,
-              borderColor: palette.primary,
-              borderWidth: 1.5,
+              borderColor: 'transparent',
+              borderWidth: 0,
               shadowBlur: 0,
             },
             label: {
@@ -270,8 +319,10 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             },
           },
           itemStyle: {
-            color: palette.tileBase,
+            color: 'transparent',
             borderJoin: 'round',
+            borderWidth: 0,
+            gapWidth: 5,
           },
           label: {
             color: palette.textPrimary,
@@ -289,18 +340,30 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             show: true,
           },
           leafDepth: 1,
+          levels: [
+            {
+              itemStyle: {
+                borderColor: 'transparent',
+                borderWidth: 0,
+                gapWidth: 5,
+              },
+            },
+          ],
           sort: 'desc',
+          squareRatio: 1.5,
           type: 'treemap',
           visibleMin: 1,
         },
       ],
       tooltip: {
-        appendToBody: true,
+        appendToBody: false,
         backgroundColor: palette.tooltipBackground,
         borderColor: palette.tooltipBorder,
-        borderWidth: 1,
+        borderWidth: 0,
         className: 'protocol-heatmap-tooltip',
-        extraCssText: 'box-shadow:none;border-radius:0;padding:12px 14px;',
+        confine: true,
+        extraCssText:
+          'box-shadow:none;border-radius:0;padding:12px 14px;width:14rem;',
         formatter: (params: TooltipComponentFormatterCallbackParams) => {
           if (Array.isArray(params)) return '';
 
@@ -339,6 +402,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           color: palette.textPrimary,
           fontFamily: 'var(--font-roboto-flex)',
         },
+        position: getTooltipPosition,
         trigger: 'item',
       },
     };
@@ -369,7 +433,12 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             notMerge
             option={chartOption}
             opts={{ renderer: 'canvas' }}
-            style={{ height: '100%', minHeight: '26rem', width: '100%' }}
+            style={{
+              backgroundColor: 'transparent',
+              height: '100%',
+              minHeight: '26rem',
+              width: '100%',
+            }}
           />
         </div>
       )}
@@ -427,5 +496,5 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
 export const protocolHeatmapDemo = {
   ...protocolHeatmapContent,
   Component: ProtocolHeatmapDemo,
-  preload: preloadProtocolRevenueTerminal,
+  preload: preloadProtocolHeatmapDemo,
 } satisfies DemoTrack;
