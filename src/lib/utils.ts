@@ -124,3 +124,20 @@ export const getCssHslVariable = (token: string, alpha?: number) => {
 
   return alpha === undefined ? `hsl(${value})` : `hsl(${value} / ${alpha})`;
 };
+
+export const getLegacyCssHslVariable = (token: string, alpha?: number) => {
+  if (typeof document === 'undefined') return '';
+
+  const [hue, saturation, lightness] = getComputedStyle(
+    document.documentElement,
+  )
+    .getPropertyValue(token)
+    .trim()
+    .split(/\s+/);
+
+  if (!(hue && saturation && lightness)) return '';
+
+  return alpha === undefined
+    ? `hsl(${hue}, ${saturation}, ${lightness})`
+    : `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`;
+};

@@ -19,7 +19,7 @@ import { UI_TIMINGS } from '@/lib/constants';
 import {
   escapeHtml,
   formatShortDateTime,
-  getCssHslVariable,
+  getLegacyCssHslVariable,
 } from '@/lib/utils';
 import { Globe2, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -57,10 +57,10 @@ const getGlobeTheme = () => {
   const isDarkMode = document.documentElement.classList.contains('dark');
 
   return {
-    dot: getCssHslVariable('--primary'),
+    dot: getLegacyCssHslVariable('--primary'),
     globe: isDarkMode ? 'hsl(0, 0%, 6%)' : 'hsl(0, 0%, 96%)',
     land: isDarkMode ? 'hsla(0, 0%, 76%, 0.6)' : 'hsla(0, 0%, 3%, 0.54)',
-    halo: getCssHslVariable('--primary'),
+    halo: getLegacyCssHslVariable('--primary'),
   };
 };
 
