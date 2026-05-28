@@ -295,9 +295,7 @@ const WalletFlowDemo = () => {
         }),
       );
     } catch {
-      setError(
-        'Wallet data unavailable. Check the address or the Helius server key.',
-      );
+      setError('Wallet data unavailable, try again later.');
       setSnapshot(undefined);
     } finally {
       setIsLoading(false);
