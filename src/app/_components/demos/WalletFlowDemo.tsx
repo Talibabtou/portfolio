@@ -534,18 +534,18 @@ const WalletFlowDemo = () => {
             <div className="grid flex-1 place-items-center px-6 text-center">
               <div className="max-w-92">
                 <p className="font-anton text-4xl leading-none">
-                  Inspect a wallet without connecting it.
+                  Inspect any Solana wallet.
                 </p>
                 <p className="mt-4 text-muted-foreground">
                   Enter a public Solana address to display priced token balances
-                  and allocation weight.
+                  and allocation weight, and a list of recent transactions.
                 </p>
                 <button
                   className="mt-6 border border-foreground/10 px-4 py-2 font-anton text-sm uppercase transition-colors hover:bg-foreground hover:text-background"
                   onClick={handleSampleClick}
                   type="button"
                 >
-                  Analyze sample wallet
+                  Analyze example wallet
                 </button>
               </div>
             </div>
