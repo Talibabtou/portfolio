@@ -12,12 +12,14 @@ import {
   isEarthquakesFresh,
   preloadWorldMapDemo,
   type CountryFeature,
+  type CachedEarthquakes,
   type EarthquakePulse,
 } from '@/app/_components/demos/data/WorldMapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { UI_TIMINGS } from '@/lib/constants';
 import {
   escapeHtml,
+  formatMinutesAgo,
   formatShortDateTime,
   getLegacyCssHslVariable,
 } from '@/lib/utils';
@@ -311,6 +313,7 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [earthquakes, setEarthquakes] = useState<EarthquakePulse[]>([]);
+  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
   const { hasMounted, isVisible } = useDebouncedActivation(isActive, {
     delayMs: UI_TIMINGS.demoTabVisibilityDelayMs,
     preferIdleMount: true,
@@ -321,6 +324,7 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
     if (cachedEarthquakes) {
       queueMicrotask(() => {
         setEarthquakes(cachedEarthquakes.earthquakes);
+        setSnapshotSavedAt(cachedEarthquakes.savedAt);
         setError(undefined);
         setIsLoading(!isEarthquakesFresh(cachedEarthquakes));
       });
@@ -329,10 +333,11 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
     let ignoreRequest = false;
 
     fetchEarthquakes()
-      .then((earthquakeCache) => {
+      .then((earthquakeCache: CachedEarthquakes) => {
         if (ignoreRequest) return;
 
         setEarthquakes(earthquakeCache.earthquakes);
+        setSnapshotSavedAt(earthquakeCache.savedAt);
         setError(undefined);
       })
       .catch(() => {
@@ -341,6 +346,7 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
         setError('USGS earthquake data unavailable. Try again in a moment.');
         if (!cachedEarthquakes) {
           setEarthquakes([]);
+          setSnapshotSavedAt(undefined);
         }
       })
       .finally(() => {
@@ -365,7 +371,8 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
         />
       ) : null}
       <p className="pointer-events-none absolute bottom-5 left-4 z-1 text-muted-foreground text-sm">
-        Source: USGS Earthquake Catalog.
+        Source: USGS Earthquake Catalog
+        {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
     </div>
   );

@@ -16,7 +16,7 @@ export type MarketPoint = {
   volume?: number;
 };
 
-type CachedMarketPoints = {
+export type CachedMarketPoints = {
   points: MarketPoint[];
   savedAt: number;
 };
@@ -52,7 +52,7 @@ const normalizeMarketChart = (data: MarketChartResponse): MarketPoint[] =>
     volume: toFiniteNumber(data.total_volumes?.[index]?.[1], undefined),
   }));
 
-export const getBitcoinMarketCache = (range: BitcoinRange) => {
+export const getBitcoinMarketSnapshot = (range: BitcoinRange) => {
   const marketCache =
     readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
       'session',
@@ -63,12 +63,18 @@ export const getBitcoinMarketCache = (range: BitcoinRange) => {
 
   const isFresh = Date.now() - rangeCache.savedAt < BITCOIN_MARKET_CACHE_TTL;
 
-  return isFresh && rangeCache.points.length > 0
-    ? rangeCache.points
-    : undefined;
+  return isFresh && rangeCache.points.length > 0 ? rangeCache : undefined;
 };
 
+export const getBitcoinMarketCache = (range: BitcoinRange) =>
+  getBitcoinMarketSnapshot(range)?.points;
+
 const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
+  const cache = {
+    points,
+    savedAt: Date.now(),
+  } satisfies CachedMarketPoints;
+
   try {
     const marketCache =
       readStorageValue<Partial<Record<BitcoinRange, CachedMarketPoints>>>(
@@ -78,21 +84,20 @@ const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
 
     writeStorageValue('session', BITCOIN_MARKET_CACHE_KEY, {
       ...marketCache,
-      [range]: {
-        points,
-        savedAt: Date.now(),
-      } satisfies CachedMarketPoints,
+      [range]: cache,
     });
   } catch {}
+
+  return cache;
 };
 
-export const fetchBitcoinMarketPoints = (
+export const fetchBitcoinMarketSnapshot = (
   range: BitcoinRange,
   options: { signal?: AbortSignal } = {},
 ) => {
-  const cachedPoints = getBitcoinMarketCache(range);
-  if (cachedPoints) {
-    return Promise.resolve(cachedPoints);
+  const cachedSnapshot = getBitcoinMarketSnapshot(range);
+  if (cachedSnapshot) {
+    return Promise.resolve(cachedSnapshot);
   }
 
   const isBrowser = typeof window !== 'undefined';
@@ -119,17 +124,26 @@ export const fetchBitcoinMarketPoints = (
         throw new Error(`CoinGecko returned ${response.status}`);
       }
 
-      return response.json() as Promise<MarketChartResponse | MarketPoint[]>;
+      return response.json() as Promise<
+        MarketChartResponse | CachedMarketPoints
+      >;
     })
     .then((data) => {
-      const normalizedPoints = Array.isArray(data)
-        ? data
-        : normalizeMarketChart(data);
-      setBitcoinMarketCache(range, normalizedPoints);
+      if ('savedAt' in data) {
+        return setBitcoinMarketCache(range, data.points);
+      }
 
-      return normalizedPoints;
+      return setBitcoinMarketCache(range, normalizeMarketChart(data));
     });
 };
+
+export const fetchBitcoinMarketPoints = (
+  range: BitcoinRange,
+  options: { signal?: AbortSignal } = {},
+) =>
+  fetchBitcoinMarketSnapshot(range, options).then(
+    (snapshot) => snapshot.points,
+  );
 
 export const preloadBitcoinMarketDemo = async () => {
   if (typeof window === 'undefined') return;

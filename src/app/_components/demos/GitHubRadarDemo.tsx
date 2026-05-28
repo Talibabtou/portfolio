@@ -13,7 +13,7 @@ import {
   type LeaderboardTabId,
 } from '@/app/_components/demos/data/GitHubRadarDemo';
 import type { DemoTrack } from '@/app/_components/demos/types';
-import { cn, formatCompactNumber } from '@/lib/utils';
+import { cn, formatCompactNumber, formatMinutesAgo } from '@/lib/utils';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
@@ -96,6 +96,7 @@ const GitHubRadarDemo = () => {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [repositories, setRepositories] = useState<GitHubRepository[]>([]);
+  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
 
   const activeTabMeta =
     leaderboardTabs.find((tab) => tab.id === activeTab) ?? leaderboardTabs[0];
@@ -114,6 +115,7 @@ const GitHubRadarDemo = () => {
     if (cachedLeaderboard) {
       queueMicrotask(() => {
         setRepositories(cachedLeaderboard.items);
+        setSnapshotSavedAt(cachedLeaderboard.savedAt);
         setError(undefined);
         setIsLoading(!isGitHubLeaderboardFresh(cachedLeaderboard));
       });
@@ -126,6 +128,7 @@ const GitHubRadarDemo = () => {
         if (ignoreRequest) return;
 
         setRepositories(leaderboard.items);
+        setSnapshotSavedAt(leaderboard.savedAt);
         setError(undefined);
       })
       .catch(() => {
@@ -134,6 +137,7 @@ const GitHubRadarDemo = () => {
         setError('GitHub Search API unavailable. Try again in a moment.');
         if (!cachedLeaderboard) {
           setRepositories([]);
+          setSnapshotSavedAt(undefined);
         }
       })
       .finally(() => {
@@ -156,6 +160,7 @@ const GitHubRadarDemo = () => {
     });
     if (cachedLeaderboard) {
       setRepositories(cachedLeaderboard.items);
+      setSnapshotSavedAt(cachedLeaderboard.savedAt);
       setIsLoading(!isGitHubLeaderboardFresh(cachedLeaderboard));
       return;
     }
@@ -290,7 +295,8 @@ const GitHubRadarDemo = () => {
       </div>
 
       <p className="mt-3 text-muted-foreground text-sm">
-        Source: GitHub public Search API.
+        Source: GitHub public Search API
+        {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
     </div>
   );

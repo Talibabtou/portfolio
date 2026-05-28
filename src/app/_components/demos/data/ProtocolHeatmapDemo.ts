@@ -37,7 +37,7 @@ type LlamaProtocolDirectoryItem = {
   tvl?: number;
 };
 
-type CachedProtocolRevenueSnapshot = {
+export type CachedProtocolRevenueSnapshot = {
   protocols: HeatmapProtocol[];
   savedAt: number;
 };

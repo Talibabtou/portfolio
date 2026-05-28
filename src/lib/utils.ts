@@ -112,6 +112,12 @@ export const formatPreciseSignedPercent = (percent: number) =>
 export const formatShortDateTime = (timestamp: number | Date) =>
   shortDateTimeFormatter.format(timestamp);
 
+export const formatMinutesAgo = (timestamp: number, now = Date.now()) => {
+  const elapsedMinutes = Math.max(0, Math.floor((now - timestamp) / 60_000));
+
+  return `${elapsedMinutes} minute${elapsedMinutes === 1 ? '' : 's'} ago`;
+};
+
 export const getIsoDateDaysAgo = (daysAgo: number, now = Date.now()) =>
   new Date(now - daysAgo * MILLISECONDS_IN_DAY).toISOString().slice(0, 10);
 

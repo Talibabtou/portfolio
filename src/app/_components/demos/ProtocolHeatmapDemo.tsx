@@ -7,6 +7,7 @@ import type {
 import {
   fetchProtocolRevenueSnapshot,
   preloadProtocolHeatmapDemo,
+  type CachedProtocolRevenueSnapshot,
   type HeatmapProtocol,
 } from '@/app/_components/demos/data/ProtocolHeatmapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
@@ -16,6 +17,7 @@ import {
   clamp,
   escapeHtml,
   formatCompactUsd,
+  formatMinutesAgo,
   formatSignedPercent,
   normalizeLogRange,
 } from '@/lib/utils';
@@ -207,6 +209,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [protocols, setProtocols] = useState<HeatmapProtocol[]>([]);
+  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
   const { theme } = useThemePreference();
   const isDarkMode = theme === THEME_VALUES.dark;
   const palette = useMemo(() => getThemePalette(isDarkMode), [isDarkMode]);
@@ -218,13 +221,15 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
     let ignoreRequest = false;
 
     fetchProtocolRevenueSnapshot()
-      .then((snapshot) => {
+      .then((snapshot: CachedProtocolRevenueSnapshot) => {
         if (ignoreRequest) return;
         setProtocols(snapshot.protocols);
+        setSnapshotSavedAt(snapshot.savedAt);
       })
       .catch(() => {
         if (ignoreRequest) return;
         setError('DefiLlama revenue data unavailable. Try again in a moment.');
+        setSnapshotSavedAt(undefined);
       })
       .finally(() => {
         if (!ignoreRequest) {
@@ -444,7 +449,8 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
       )}
 
       <p className="pointer-events-none absolute bottom-5 left-4 z-3 text-muted-foreground text-sm">
-        Source: DefiLlama free API.
+        Source: DefiLlama free API
+        {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
       <div className="absolute right-4 bottom-5 z-3">
         <button

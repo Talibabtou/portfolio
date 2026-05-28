@@ -8,7 +8,7 @@ import { worldMapDemo } from '@/app/_components/demos/WorldMapDemo';
 export const DEMO_TRACKS: DemoTrack[] = [
   bitcoinMarketDemo,
   protocolHeatmapDemo,
-  worldMapDemo,
-  githubRadarDemo,
   walletFlowDemo,
+  githubRadarDemo,
+  worldMapDemo,
 ];

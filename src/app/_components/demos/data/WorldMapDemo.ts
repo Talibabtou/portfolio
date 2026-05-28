@@ -13,7 +13,7 @@ export type EarthquakePulse = {
   timestamp: number;
 };
 
-type CachedEarthquakes = {
+export type CachedEarthquakes = {
   earthquakes: EarthquakePulse[];
   savedAt: number;
 };

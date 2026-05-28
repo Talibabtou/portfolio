@@ -3,11 +3,12 @@
 import {
   BITCOIN_RANGES,
   DEFAULT_BITCOIN_RANGE,
-  fetchBitcoinMarketPoints,
-  getBitcoinMarketCache,
+  fetchBitcoinMarketSnapshot,
+  getBitcoinMarketSnapshot,
   getClosestPoint,
   preloadBitcoinMarketDemo,
   type BitcoinRange,
+  type CachedMarketPoints,
   type MarketPoint,
 } from '@/app/_components/demos/data/BitcoinMarketDemo';
 import type { DemoTrack } from '@/app/_components/demos/types';
@@ -15,6 +16,7 @@ import { MILLISECONDS_IN_DAY } from '@/lib/constants';
 import {
   cn,
   formatCompactUsd,
+  formatMinutesAgo,
   formatPreciseSignedPercent,
   formatShortDateTime,
   formatUsd,
@@ -302,12 +304,14 @@ const BitcoinMarketDemo = () => {
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [points, setPoints] = useState<MarketPoint[]>([]);
+  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
 
   useEffect(() => {
-    const cachedPoints = getBitcoinMarketCache(activeRange);
-    if (cachedPoints) {
+    const cachedSnapshot = getBitcoinMarketSnapshot(activeRange);
+    if (cachedSnapshot) {
       queueMicrotask(() => {
-        setPoints(cachedPoints);
+        setPoints(cachedSnapshot.points);
+        setSnapshotSavedAt(cachedSnapshot.savedAt);
         setError(undefined);
         setIsLoading(false);
       });
@@ -316,15 +320,17 @@ const BitcoinMarketDemo = () => {
 
     const controller = new AbortController();
 
-    fetchBitcoinMarketPoints(activeRange, { signal: controller.signal })
-      .then((normalizedPoints) => {
-        setPoints(normalizedPoints);
+    fetchBitcoinMarketSnapshot(activeRange, { signal: controller.signal })
+      .then((snapshot: CachedMarketPoints) => {
+        setPoints(snapshot.points);
+        setSnapshotSavedAt(snapshot.savedAt);
       })
       .catch((fetchError: Error) => {
         if (fetchError.name === 'AbortError') return;
 
         setError('CoinGecko public API unavailable. Try again in a moment.');
         setPoints([]);
+        setSnapshotSavedAt(undefined);
       })
       .finally(() => {
         if (!controller.signal.aborted) {
@@ -357,10 +363,11 @@ const BitcoinMarketDemo = () => {
     setActivePoint(undefined);
     setActiveRange(range);
     setError(undefined);
-    const cachedPoints = getBitcoinMarketCache(range);
+    const cachedSnapshot = getBitcoinMarketSnapshot(range);
 
-    if (cachedPoints) {
-      setPoints(cachedPoints);
+    if (cachedSnapshot) {
+      setPoints(cachedSnapshot.points);
+      setSnapshotSavedAt(cachedSnapshot.savedAt);
       setIsLoading(false);
       return;
     }
@@ -480,7 +487,8 @@ const BitcoinMarketDemo = () => {
       </div>
 
       <p className="mt-3 text-muted-foreground text-sm">
-        Source: CoinGecko public API.
+        Source: CoinGecko public API
+        {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
     </div>
   );

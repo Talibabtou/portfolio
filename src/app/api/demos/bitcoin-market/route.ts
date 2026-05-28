@@ -1,6 +1,6 @@
 import {
   DEFAULT_BITCOIN_RANGE,
-  fetchBitcoinMarketPoints,
+  fetchBitcoinMarketSnapshot,
   type BitcoinRange,
 } from '@/app/_components/demos/data/BitcoinMarketDemo';
 
@@ -12,9 +12,9 @@ const isBitcoinRange = (value: string | null): value is BitcoinRange =>
 export const GET = async (request: Request) => {
   const url = new URL(request.url);
   const range = url.searchParams.get('days');
-  const points = await fetchBitcoinMarketPoints(
+  const snapshot = await fetchBitcoinMarketSnapshot(
     isBitcoinRange(range) ? range : DEFAULT_BITCOIN_RANGE,
   );
 
-  return Response.json(points);
+  return Response.json(snapshot);
 };
