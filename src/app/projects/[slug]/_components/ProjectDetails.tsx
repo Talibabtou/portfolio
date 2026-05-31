@@ -4,6 +4,7 @@ import TransitionLink from '@/components/TransitionLink';
 import { gsap, useGSAP } from '@/lib/gsap';
 import type { IProject } from '@/types';
 import { ArrowLeft, ExternalLink, GitBranch } from 'lucide-react';
+import Image from 'next/image';
 import { useRef } from 'react';
 
 interface Props {
@@ -203,14 +204,16 @@ const ProjectDetails = ({ project }: Props) => {
           {project.images.map((image) => (
             <div
               key={image}
-              className="group relative aspect-750/400 w-full bg-background-light"
-              style={{
-                backgroundImage: `url(${image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center 50%',
-                backgroundRepeat: 'no-repeat',
-              }}
+              className="group relative w-full overflow-hidden bg-background-light"
             >
+              <Image
+                alt={`${project.title} screenshot`}
+                className="h-auto w-full"
+                height={800}
+                sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
+                src={image}
+                width={1200}
+              />
               <a
                 href={image}
                 target="_blank"

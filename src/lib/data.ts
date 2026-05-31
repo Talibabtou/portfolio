@@ -274,19 +274,46 @@ export const PROJECTS: IProject[] = [
   {
     title: '42 Common Core',
     slug: '42-common-core',
-    year: 2025,
+    liveUrl: 'https://42lyon.fr/',
+    sourceCode: 'https://github.com/Talibabtou/42-common-core',
+    year: 2023,
+    summary:
+      'A selective peer-to-peer engineering curriculum where progress depends on shipping real projects, defending technical choices and learning autonomously without traditional classes.',
     description: [
-      'Intensive peer-to-peer software engineering curriculum focused on autonomy, rigor and low-level foundations.',
+      'The 42 Common Core is an intensive software engineering curriculum built around project-based learning, peer review and autonomy. Instead of lectures, students progress by solving increasingly complex problems, defending their implementation choices and reviewing other students’ work.',
+      'The program covers low-level programming, algorithms, Unix systems, networking, graphics, C++, containers and full-stack foundations. It trained me to debug rigorously, read documentation directly and build reliable software under constraints.',
     ],
     role: [
-      'Completed projects covering algorithms, data structures, C, C++, system programming, networking, graphics and Docker. This foundation supports precise frontend engineering and deeper full-stack growth.',
+      'Completed the curriculum as a student at 42 Lyon, working through individual and team projects in C, C++, Unix, networking, graphics and web development.',
+      'The experience shaped my engineering habits: explicit ownership, careful memory and error handling, peer review, clean abstractions and persistence when facing unfamiliar systems.',
     ],
-    techStack: ['C', 'C++', 'Algorithms', 'Networking', 'Docker'],
-    thumbnail: '/projects/thumbnail/mti-electronics.webp',
-    longThumbnail: '/projects/long/mti-electronics.webp',
+    context: [
+      '42 is a self-directed engineering school where students learn by building projects and passing peer evaluations.',
+      'The Common Core is designed to create strong fundamentals before specialization, with a heavy focus on autonomy, problem solving and technical rigor.',
+    ],
+    problem: [
+      'The challenge was not only learning syntax or frameworks, but becoming able to approach unknown technical problems without relying on a teacher or predefined solution.',
+      'Most projects required translating vague specifications into working software while handling edge cases, testing, code quality and oral defense.',
+    ],
+    contributions: [
+      'Built low-level C projects involving parsing, memory management, process control, shell behavior, networking and graphics.',
+      'Completed C++ modules focused on object-oriented design, type safety, resource management and standard library usage.',
+      'Worked on team projects involving real-time communication, Dockerized services and full-stack product flows.',
+    ],
+    decisions: [
+      'Prioritized explicit error handling, readable control flow and defensive programming because many 42 projects are evaluated through edge-case-heavy test suites.',
+      'Used peer feedback as a quality loop: code was not considered finished until it could be explained clearly and reviewed by other students.',
+    ],
+    results: [
+      'Built a strong low-level foundation that now supports frontend and product engineering work with better debugging, performance awareness and architectural discipline.',
+      'Gained comfort moving between systems programming, web interfaces, containers and API-driven applications.',
+    ],
+    techStack: ['C', 'C++', 'Unix', 'Algorithms', 'Networking', 'Docker'],
+    thumbnail: '/projects/common-core/42-cluster.png',
+    longThumbnail: '/projects/common-core/42-cluster.png',
     images: [
-      '/projects/images/mti-electronics-1.webp',
-      '/projects/images/mti-electronics-2.webp',
+      '/projects/common-core/42.jpg',
+      '/projects/common-core/42-values.png',
     ],
   },
 ];
