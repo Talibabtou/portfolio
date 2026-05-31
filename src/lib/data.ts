@@ -293,11 +293,11 @@ export const PROJECTS: IProject[] = [
     thumbnail:
       'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.tiff',
     images: [
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.gif',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/pong.gif',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/tournament.gif',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/profile.gif',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/navigation.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.mp4',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/pong.mp4',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/tournament.mp4',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/profile.mp4',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/navigation.mp4',
     ],
   },
   {

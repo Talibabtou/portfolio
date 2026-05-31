@@ -4,9 +4,15 @@ import ScrollToTopButton from '@/components/ScrollToTopButton';
 import TransitionLink from '@/components/TransitionLink';
 import { gsap, useGSAP } from '@/lib/gsap';
 import type { IProject } from '@/types';
-import { ArrowLeft, ExternalLink, GitBranch } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  GitBranch,
+} from 'lucide-react';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 interface Props {
   project: IProject;
@@ -42,6 +48,168 @@ const getProjectCaseStudySections = (project: IProject) =>
   ].filter((section): section is ProjectCaseStudySection =>
     Boolean(section.items && section.items.length > 0),
   );
+
+const getMediaLabel = (src: string) => {
+  const filename = src.split('/').pop()?.split('.')[0] ?? 'Media';
+
+  return filename
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+const isVideoMedia = (src: string) => {
+  return src.endsWith('.mp4') || src.endsWith('.webm');
+};
+
+type ProjectMediaGalleryProps = {
+  project: IProject;
+};
+
+const ProjectMediaGallery = ({ project }: ProjectMediaGalleryProps) => {
+  const shouldUseCarousel =
+    project.slug === 'ft-transcendence' && project.images.length > 1;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeImage = project.images[activeIndex];
+  const mediaLabels = useMemo(
+    () => project.images.map((image) => getMediaLabel(image)),
+    [project.images],
+  );
+
+  const showPreviousImage = () => {
+    setActiveIndex((currentIndex) =>
+      currentIndex === 0 ? project.images.length - 1 : currentIndex - 1,
+    );
+  };
+
+  const showNextImage = () => {
+    setActiveIndex((currentIndex) =>
+      currentIndex === project.images.length - 1 ? 0 : currentIndex + 1,
+    );
+  };
+
+  if (!shouldUseCarousel) {
+    return (
+      <div
+        className="fade-in-later relative mx-auto flex max-w-200 flex-col gap-2"
+        id="images"
+      >
+        {project.images.map((image) => (
+          <div
+            key={image}
+            className="project-media-frame group relative w-full overflow-hidden bg-background-light"
+          >
+            <Image
+              alt={`${project.title} screenshot`}
+              className="h-auto w-full"
+              height={800}
+              sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
+              src={image}
+              width={1200}
+            />
+            <a
+              href={image}
+              target="_blank"
+              className="absolute top-4 right-4 inline-flex size-12 items-center justify-center bg-background/70 text-foreground opacity-0 transition-all hover:bg-primary hover:text-primary-foreground group-hover:opacity-100"
+              rel="noopener"
+            >
+              <ExternalLink />
+            </a>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-in-later mx-auto max-w-200" id="images">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="font-anton text-muted-foreground uppercase">
+            {mediaLabels[activeIndex]}
+          </p>
+          <p className="mt-1 text-muted-foreground text-sm">
+            {activeIndex + 1} / {project.images.length}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            aria-label="Previous media"
+            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            onClick={showPreviousImage}
+            type="button"
+          >
+            <ChevronLeft aria-hidden="true" className="size-5" />
+          </button>
+          <button
+            aria-label="Next media"
+            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            onClick={showNextImage}
+            type="button"
+          >
+            <ChevronRight aria-hidden="true" className="size-5" />
+          </button>
+          <a
+            aria-label="Open current media"
+            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            href={activeImage}
+            rel="noopener"
+            target="_blank"
+          >
+            <ExternalLink aria-hidden="true" className="size-5" />
+          </a>
+        </div>
+      </div>
+
+      <div className="project-media-frame group relative w-full overflow-hidden bg-background-light">
+        {isVideoMedia(activeImage) ? (
+          <video
+            autoPlay
+            className="h-auto w-full"
+            controls
+            key={activeImage}
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            src={activeImage}
+          >
+            <track kind="captions" />
+          </video>
+        ) : (
+          <Image
+            alt={`${project.title} ${mediaLabels[activeIndex]}`}
+            className="h-auto w-full"
+            height={800}
+            key={activeImage}
+            loading="lazy"
+            sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
+            src={activeImage}
+            unoptimized={activeImage.endsWith('.gif')}
+            width={1200}
+          />
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {project.images.map((image, index) => (
+          <button
+            aria-label={`Show ${mediaLabels[index]}`}
+            className={[
+              'h-1.5 flex-1 basis-10 bg-background-light transition-colors',
+              index === activeIndex ? 'bg-primary' : 'hover:bg-foreground/35',
+            ].join(' ')}
+            key={image}
+            onClick={() => setActiveIndex(index)}
+            type="button"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const ProjectDetails = ({ project }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,7 +259,7 @@ const ProjectDetails = ({ project }: Props) => {
   useGSAP(
     () => {
       gsap.utils
-        .toArray<HTMLDivElement>('#images > div')
+        .toArray<HTMLDivElement>('#images .project-media-frame')
         .forEach((imageDiv, i) => {
           gsap.to(imageDiv, {
             backgroundPosition: `center 0%`,
@@ -198,34 +366,7 @@ const ProjectDetails = ({ project }: Props) => {
           </div>
         </div>
 
-        <div
-          className="fade-in-later relative mx-auto flex max-w-200 flex-col gap-2"
-          id="images"
-        >
-          {project.images.map((image) => (
-            <div
-              key={image}
-              className="group relative w-full overflow-hidden bg-background-light"
-            >
-              <Image
-                alt={`${project.title} screenshot`}
-                className="h-auto w-full"
-                height={800}
-                sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
-                src={image}
-                width={1200}
-              />
-              <a
-                href={image}
-                target="_blank"
-                className="absolute top-4 right-4 inline-flex size-12 items-center justify-center bg-background/70 text-foreground opacity-0 transition-all hover:bg-primary hover:text-primary-foreground group-hover:opacity-100"
-                rel="noopener"
-              >
-                <ExternalLink />
-              </a>
-            </div>
-          ))}
-        </div>
+        <ProjectMediaGallery project={project} />
 
         {hasCaseStudy && (
           <div className="fade-in-later mx-auto mt-section max-w-200">
