@@ -10,8 +10,6 @@ type StackCategory = {
   competencies: StackItem[];
 };
 
-const PROJECT_MEDIA_BASE = '/media/projects';
-
 export const GENERAL_INFO = {
   name: 'Guillaume Dumas',
   email: 'talibabtou@gmail.com',
@@ -30,6 +28,51 @@ export const SOCIAL_LINKS = [
   { name: 'github', url: 'https://github.com/Talibabtou' },
   { name: 'linkedin', url: GENERAL_INFO.linkedinProfile },
   { name: 'cv', url: GENERAL_INFO.cvUrl },
+];
+
+export const MY_EXPERIENCE = [
+  {
+    title: 'Consultant',
+    company: 'Jupiter',
+    duration: 'Early 2026',
+    logo: '/experience/jupiter.svg',
+  },
+  {
+    title: 'Internship',
+    company: 'Adrena',
+    duration: 'Late 2025',
+    logo: '/experience/adrena.svg',
+  },
+  {
+    title: 'Founder & Developer',
+    company: 'Versus',
+    duration: '2024 - 2025',
+    logo: '/experience/versus.png',
+  },
+  {
+    title: 'Common Core Graduate',
+    company: '42 Lyon',
+    duration: 'Late 2023 - Mid 2025',
+    logo: '/experience/42.png',
+  },
+  {
+    title: 'Founder',
+    company: 'Magicake',
+    duration: '2023 - 2025',
+    logo: '/experience/magicake.png',
+  },
+  {
+    title: 'Board Member',
+    company: 'Doge Capital',
+    duration: '2021 - 2024',
+    logo: '/experience/doge-capital.png',
+  },
+  {
+    title: 'Leatherwork Artisan',
+    company: 'Hermes',
+    duration: '2017 - 2021',
+    logo: '/experience/hermes.svg',
+  },
 ];
 
 export const MY_STACK: Record<string, StackCategory> = {
@@ -187,6 +230,8 @@ export const MY_STACK: Record<string, StackCategory> = {
   },
 };
 
+const PROJECT_MEDIA_BASE = '/media/projects';
+
 export const PROJECTS: IProject[] = [
   {
     title: 'Jupiter Prediction Market',
@@ -213,21 +258,58 @@ export const PROJECTS: IProject[] = [
     title: 'Adrena',
     slug: 'adrena',
     liveUrl: 'https://adrena.xyz/',
+    sourceCode: 'https://github.com/AdrenaFoundation',
     year: 2025,
+    summary:
+      'My DeFi internship inside Adrena, a Solana trading product where I shipped around 30 merged PRs across trading screens, staking pages, campaign UI, swaps and smaller API work.',
     description: [
-      'Open-source internship contributions for a DeFi trading product. The work covered UI improvements, reusable components, product screens, dashboards and leaderboard experiences.',
+      'Adrena is a Solana trading app for spot and perpetual markets. I joined through an internship format, but the work felt like real product work quickly: I had reports to share with other developers, code reviews to pass and screens that actual traders would use.',
+      'Most of my time went into the user-facing product: trading UI, chart work, token selector, staking leaderboard, ALP page, Jupiter swap integration and the first anniversary campaign.',
     ],
     role: [
-      'Delivered frontend improvements connected to backend data through API-driven features, with emphasis on data-heavy interface elements and trading product usability.',
+      'I worked mainly on frontend UX and shipped roughly 30 merged PRs, ranging from chores to full page reworks.',
+      'I also touched a bit of the API layer when the frontend needed cleaner data or a better shape for a screen.',
     ],
-    techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
-    thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/property-pro.jpg`,
+    context: [
+      'This was my first experience inside a DeFi product team where the interface has to make money-related actions feel clear without hiding the risk behind a pretty screen.',
+      'The product mixes trading, staking, swaps, leaderboard mechanics and campaign pages, so the frontend had to stay coherent across very different flows.',
+    ],
+    problem: [
+      'The hardest part for me was the visible part: Tailwind details, mobile views, responsive states and tiny flickers that make a trading interface feel unfinished.',
+      'I care a lot about this kind of polish. A chart that jumps, a token selector that feels cramped on mobile or a staking card that shifts during load can make the whole product feel less serious than the engineering behind it.',
+    ],
+    contributions: [
+      'Worked on the trading interface, including chart-related UI and the token selector.',
+      'Reworked product pages around staking, the leaderboard and ALP.',
+      'Integrated Jupiter swap flows into the product experience.',
+      'Built UI for Adrena’s first anniversary campaign and handled smaller chores around the repo.',
+      'Adjusted API-facing pieces when a screen needed cleaner data to behave properly.',
+    ],
+    decisions: [
+      'I treated mobile as a real target, not a smaller desktop. The work often came down to spacing, ordering, loading states and removing the little jumps that users notice before they can explain them.',
+      'I kept reporting clearly to the team because the internship had a structured rhythm, but I was still trusted with product screens that mattered.',
+    ],
+    results: [
+      'Around 30 of my PRs were merged during the internship.',
+      'I learned that this is the kind of team setup where I do my best work: enough trust to own details, enough review to raise the level, and a product where frontend choices directly affect user confidence.',
+    ],
+    techStack: [
+      'TypeScript',
+      'React',
+      'Tailwind CSS',
+      'Web3.js',
+      'APIs',
+      'Dashboards',
+      'DeFi',
+    ],
+    thumbnail: `${PROJECT_MEDIA_BASE}/adrena/adrena.png`,
     thumbnailHeight: 400,
     thumbnailWidth: 600,
     images: [
-      `${PROJECT_MEDIA_BASE}/images/property-pro-1.png`,
-      `${PROJECT_MEDIA_BASE}/images/property-pro-2.png`,
-      `${PROJECT_MEDIA_BASE}/images/property-pro-3.png`,
+      `${PROJECT_MEDIA_BASE}/adrena/trading-screen.png`,
+      `${PROJECT_MEDIA_BASE}/adrena/mutagen.png`,
+      `${PROJECT_MEDIA_BASE}/adrena/monitor.png`,
+      `${PROJECT_MEDIA_BASE}/adrena/staking-monitor.png`,
     ],
   },
   {
@@ -242,7 +324,7 @@ export const PROJECTS: IProject[] = [
       'We built it as a multi-service TypeScript system with a Next.js frontend, Fastify backend, PostgreSQL with Drizzle, Twitch scraper, Solana oracle and jackpot worker running in parallel.',
     ],
     role: [
-      'I worked on the product with Frensurfer over roughly two months, half time, while owning the oracle, the Twitch scraper and a lot of the repo coordination work across services.',
+      'I worked on the product with Frensurfer over roughly 4 months, half time, while owning the oracle, the Twitch scraper and a lot of the repo coordination work across services.',
       'My part sat close to the parts users never see but immediately feel when they break: phase detection, timing between services, payout logic, refunds, Solana transaction handling and keeping the repo runnable while the product kept moving.',
     ],
     context: [
@@ -393,50 +475,5 @@ export const PROJECTS: IProject[] = [
       `${PROJECT_MEDIA_BASE}/common-core/42.jpg`,
       `${PROJECT_MEDIA_BASE}/common-core/42-values.png`,
     ],
-  },
-];
-
-export const MY_EXPERIENCE = [
-  {
-    title: 'Consultant',
-    company: 'Jupiter',
-    duration: 'Early 2026',
-    logo: '/experience/jupiter.svg',
-  },
-  {
-    title: 'Internship',
-    company: 'Adrena',
-    duration: 'Late 2025',
-    logo: '/experience/adrena.svg',
-  },
-  {
-    title: 'Founder & Developer',
-    company: 'Versus',
-    duration: '2024 - 2025',
-    logo: '/experience/versus.png',
-  },
-  {
-    title: 'Common Core Graduate',
-    company: '42 Lyon',
-    duration: 'Late 2023 - Mid 2025',
-    logo: '/experience/42.png',
-  },
-  {
-    title: 'Founder',
-    company: 'Magicake',
-    duration: '2023 - 2025',
-    logo: '/experience/magicake.png',
-  },
-  {
-    title: 'Board Member',
-    company: 'Doge Capital',
-    duration: '2021 - 2024',
-    logo: '/experience/doge-capital.png',
-  },
-  {
-    title: 'Leatherwork Artisan',
-    company: 'Hermes',
-    duration: '2017 - 2021',
-    logo: '/experience/hermes.svg',
   },
 ];
