@@ -12,7 +12,7 @@ import {
   GitBranch,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface Props {
   project: IProject;
@@ -63,39 +63,64 @@ const isVideoMedia = (src: string) => {
   return src.endsWith('.mp4') || src.endsWith('.webm');
 };
 
+const carouselControlClassName =
+  'inline-flex h-11 w-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+
 type ProjectMediaGalleryProps = {
   project: IProject;
 };
 
 const ProjectMediaGallery = ({ project }: ProjectMediaGalleryProps) => {
-  const shouldUseCarousel =
-    project.slug === 'ft-transcendence' && project.images.length > 1;
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeImage = project.images[activeIndex];
-  const mediaLabels = useMemo(
-    () => project.images.map((image) => getMediaLabel(image)),
+  const videoMedia = useMemo(
+    () => project.images.filter(isVideoMedia),
     [project.images],
   );
+  const imageMedia = useMemo(
+    () => project.images.filter((image) => !isVideoMedia(image)),
+    [project.images],
+  );
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeVideo = videoMedia[activeIndex] ?? videoMedia[0];
+  const activeVideoRef = useRef<HTMLVideoElement>(null);
+  const videoLabels = useMemo(
+    () => videoMedia.map((video) => getMediaLabel(video)),
+    [videoMedia],
+  );
 
-  const showPreviousImage = () => {
+  useEffect(() => {
+    const video = activeVideoRef.current;
+
+    if (!(activeVideo && video)) return;
+
+    video.currentTime = 0;
+    void video.play().catch(() => {
+      // Browsers can still block autoplay in some user settings.
+    });
+
+    return () => {
+      video.pause();
+    };
+  }, [activeVideo]);
+
+  const showPreviousVideo = () => {
     setActiveIndex((currentIndex) =>
-      currentIndex === 0 ? project.images.length - 1 : currentIndex - 1,
+      currentIndex === 0 ? videoMedia.length - 1 : currentIndex - 1,
     );
   };
 
-  const showNextImage = () => {
+  const showNextVideo = () => {
     setActiveIndex((currentIndex) =>
-      currentIndex === project.images.length - 1 ? 0 : currentIndex + 1,
+      currentIndex === videoMedia.length - 1 ? 0 : currentIndex + 1,
     );
   };
 
-  if (!shouldUseCarousel) {
+  if (videoMedia.length === 0) {
     return (
       <div
         className="fade-in-later relative mx-auto flex max-w-200 flex-col gap-2"
         id="images"
       >
-        {project.images.map((image) => (
+        {imageMedia.map((image) => (
           <div
             key={image}
             className="project-media-frame group relative w-full overflow-hidden bg-background-light"
@@ -123,90 +148,125 @@ const ProjectMediaGallery = ({ project }: ProjectMediaGalleryProps) => {
   }
 
   return (
-    <div className="fade-in-later mx-auto max-w-200" id="images">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="font-anton text-muted-foreground uppercase">
-            {mediaLabels[activeIndex]}
-          </p>
-          <p className="mt-1 text-muted-foreground text-sm">
-            {activeIndex + 1} / {project.images.length}
-          </p>
+    <div
+      className="fade-in-later mx-auto flex max-w-200 flex-col gap-2"
+      id="images"
+    >
+      <div className="mb-2">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="font-anton text-muted-foreground uppercase">
+              {videoLabels[activeIndex]}
+            </p>
+            <p className="mt-1 text-muted-foreground text-sm">
+              {activeIndex + 1} / {videoMedia.length}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {videoMedia.length > 1 ? (
+              <>
+                <button
+                  aria-label="Previous video"
+                  className={carouselControlClassName}
+                  onClick={showPreviousVideo}
+                  type="button"
+                >
+                  <ChevronLeft
+                    aria-hidden="true"
+                    className="pointer-events-none size-5"
+                  />
+                </button>
+                <button
+                  aria-label="Next video"
+                  className={carouselControlClassName}
+                  onClick={showNextVideo}
+                  type="button"
+                >
+                  <ChevronRight
+                    aria-hidden="true"
+                    className="pointer-events-none size-5"
+                  />
+                </button>
+              </>
+            ) : null}
+            <a
+              aria-label="Open current video"
+              className={carouselControlClassName}
+              href={activeVideo}
+              rel="noopener"
+              target="_blank"
+            >
+              <ExternalLink
+                aria-hidden="true"
+                className="pointer-events-none size-5"
+              />
+            </a>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            aria-label="Previous media"
-            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
-            onClick={showPreviousImage}
-            type="button"
-          >
-            <ChevronLeft aria-hidden="true" className="size-5" />
-          </button>
-          <button
-            aria-label="Next media"
-            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
-            onClick={showNextImage}
-            type="button"
-          >
-            <ChevronRight aria-hidden="true" className="size-5" />
-          </button>
-          <a
-            aria-label="Open current media"
-            className="inline-flex size-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
-            href={activeImage}
-            rel="noopener"
-            target="_blank"
-          >
-            <ExternalLink aria-hidden="true" className="size-5" />
-          </a>
-        </div>
-      </div>
-
-      <div className="project-media-frame group relative w-full overflow-hidden bg-background-light">
-        {isVideoMedia(activeImage) ? (
+        <div className="project-media-frame group relative w-full overflow-hidden bg-background-light">
           <video
             autoPlay
             className="h-auto w-full"
             controls
-            key={activeImage}
+            key={activeVideo}
             loop
             muted
             playsInline
             preload="metadata"
-            src={activeImage}
+            ref={activeVideoRef}
+            src={activeVideo}
           >
             <track kind="captions" />
           </video>
-        ) : (
-          <Image
-            alt={`${project.title} ${mediaLabels[activeIndex]}`}
-            className="h-auto w-full"
-            height={800}
-            key={activeImage}
-            loading="lazy"
-            sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
-            src={activeImage}
-            unoptimized={activeImage.endsWith('.gif')}
-            width={1200}
-          />
-        )}
+        </div>
+
+        {videoMedia.length > 1 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {videoMedia.map((video, index) => (
+              <button
+                aria-label={`Show ${videoLabels[index]}`}
+                className={[
+                  'h-1.5 flex-1 basis-10 bg-background-light transition-colors',
+                  index === activeIndex
+                    ? 'bg-primary'
+                    : 'hover:bg-foreground/35',
+                ].join(' ')}
+                key={video}
+                onClick={() => setActiveIndex(index)}
+                type="button"
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {project.images.map((image, index) => (
-          <button
-            aria-label={`Show ${mediaLabels[index]}`}
-            className={[
-              'h-1.5 flex-1 basis-10 bg-background-light transition-colors',
-              index === activeIndex ? 'bg-primary' : 'hover:bg-foreground/35',
-            ].join(' ')}
-            key={image}
-            onClick={() => setActiveIndex(index)}
-            type="button"
+      {imageMedia.map((image) => (
+        <div
+          key={image}
+          className="project-media-frame group relative w-full overflow-hidden bg-background-light"
+        >
+          <Image
+            alt={`${project.title} ${getMediaLabel(image)}`}
+            className="h-auto w-full"
+            height={800}
+            loading="lazy"
+            sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
+            src={image}
+            unoptimized={image.endsWith('.gif')}
+            width={1200}
           />
-        ))}
-      </div>
+          <a
+            href={image}
+            target="_blank"
+            className="absolute top-4 right-4 inline-flex size-12 items-center justify-center bg-background/70 text-foreground opacity-0 transition-all hover:bg-primary hover:text-primary-foreground group-hover:opacity-100"
+            rel="noopener"
+          >
+            <ExternalLink />
+          </a>
+        </div>
+      ))}
     </div>
   );
 };
