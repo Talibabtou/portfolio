@@ -117,6 +117,7 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           className={cn('mb-6 aspect-[3/2] w-full object-cover object-top')}
           key={project.slug}
           loading="lazy"
+          unoptimized={project.thumbnail.endsWith('.tiff')}
         />
       )}
       <div className="flex gap-2 md:gap-5">

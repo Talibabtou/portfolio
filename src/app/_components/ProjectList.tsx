@@ -149,6 +149,7 @@ const ProjectList = () => {
                     },
                   )}
                   key={project.slug}
+                  unoptimized={project.thumbnail.endsWith('.tiff')}
                 />
               ))}
             </div>

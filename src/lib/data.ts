@@ -10,6 +10,8 @@ type StackCategory = {
   competencies: StackItem[];
 };
 
+const PROJECT_MEDIA_BASE = '/media/projects';
+
 export const GENERAL_INFO = {
   name: 'Guillaume Dumas',
   email: 'talibabtou@gmail.com',
@@ -198,11 +200,11 @@ export const PROJECTS: IProject[] = [
       'Contributed frontend features in a fast-moving product context involving market data, wallet interactions and release quality. Improved screen clarity and implementation maintainability across user-facing flows.',
     ],
     techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
-    thumbnail: '/projects/thumbnail/consulting-finance.jpg',
+    thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/consulting-finance.jpg`,
     images: [
-      '/projects/images/consulting-finance-1.png',
-      '/projects/images/consulting-finance-2.png',
-      '/projects/images/consulting-finance-3.png',
+      `${PROJECT_MEDIA_BASE}/images/consulting-finance-1.png`,
+      `${PROJECT_MEDIA_BASE}/images/consulting-finance-2.png`,
+      `${PROJECT_MEDIA_BASE}/images/consulting-finance-3.png`,
     ],
   },
   {
@@ -217,11 +219,11 @@ export const PROJECTS: IProject[] = [
       'Delivered frontend improvements connected to backend data through API-driven features, with emphasis on data-heavy interface elements and trading product usability.',
     ],
     techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
-    thumbnail: '/projects/thumbnail/property-pro.jpg',
+    thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/property-pro.jpg`,
     images: [
-      '/projects/images/property-pro-1.png',
-      '/projects/images/property-pro-2.png',
-      '/projects/images/property-pro-3.png',
+      `${PROJECT_MEDIA_BASE}/images/property-pro-1.png`,
+      `${PROJECT_MEDIA_BASE}/images/property-pro-2.png`,
+      `${PROJECT_MEDIA_BASE}/images/property-pro-3.png`,
     ],
   },
   {
@@ -236,11 +238,11 @@ export const PROJECTS: IProject[] = [
       'Founder and developer. Owned product thinking across UX, roadmap and go-to-market strategy while building the technical foundation with TypeScript, React, Python and Rust/Solana.',
     ],
     techStack: ['TypeScript', 'React', 'Python', 'Rust', 'Solana'],
-    thumbnail: '/projects/thumbnail/resume-roaster.jpg',
+    thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/resume-roaster.jpg`,
     images: [
-      '/projects/images/resume-roaster-1.png',
-      '/projects/images/resume-roaster-2.png',
-      '/projects/images/resume-roaster-3.png',
+      `${PROJECT_MEDIA_BASE}/images/resume-roaster-1.png`,
+      `${PROJECT_MEDIA_BASE}/images/resume-roaster-2.png`,
+      `${PROJECT_MEDIA_BASE}/images/resume-roaster-3.png`,
     ],
   },
   {
@@ -290,14 +292,13 @@ export const PROJECTS: IProject[] = [
       'Prometheus',
       'Grafana',
     ],
-    thumbnail:
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.tiff',
+    thumbnail: `${PROJECT_MEDIA_BASE}/ft_transcendence/home-screen.png`,
     images: [
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.mp4',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/pong.mp4',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/tournament.mp4',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/profile.mp4',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/navigation.mp4',
+      `${PROJECT_MEDIA_BASE}/ft_transcendence/home-screen.mp4`,
+      `${PROJECT_MEDIA_BASE}/ft_transcendence/pong.mp4`,
+      `${PROJECT_MEDIA_BASE}/ft_transcendence/tournament.mp4`,
+      `${PROJECT_MEDIA_BASE}/ft_transcendence/profile.mp4`,
+      `${PROJECT_MEDIA_BASE}/ft_transcendence/navigation.mp4`,
     ],
   },
   {
@@ -338,11 +339,10 @@ export const PROJECTS: IProject[] = [
       'I also got used to moving between systems programming, web interfaces, containers and API-driven apps without treating them as separate worlds.',
     ],
     techStack: ['C', 'C++', 'Unix', 'Algorithms', 'Networking', 'Docker'],
-    thumbnail:
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42-cluster.png',
+    thumbnail: `${PROJECT_MEDIA_BASE}/common-core/42-cluster.png`,
     images: [
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42.jpg',
-      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42-values.png',
+      `${PROJECT_MEDIA_BASE}/common-core/42.jpg`,
+      `${PROJECT_MEDIA_BASE}/common-core/42-values.png`,
     ],
   },
 ];

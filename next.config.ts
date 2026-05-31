@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next';
 
+const mediaBase = process.env.MEDIA_BASE?.replace(/\/$/, '');
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -7,14 +9,20 @@ const nextConfig: NextConfig = {
         hostname: 'avatars.githubusercontent.com',
         protocol: 'https',
       },
-      {
-        hostname: 'rmfq7e6jij1yz4id.public.blob.vercel-storage.com',
-        protocol: 'https',
-      },
     ],
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  async rewrites() {
+    if (!mediaBase) return [];
+
+    return [
+      {
+        source: '/media/:path*',
+        destination: `${mediaBase}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
