@@ -16,6 +16,7 @@ interface Props {
 const SectionTitle = ({ icon, title, className, classNames }: Props) => {
   return (
     <div
+      data-section-anchor
       className={cn(
         'mb-10 flex items-center gap-4',
         className,

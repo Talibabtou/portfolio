@@ -7,15 +7,17 @@ import {
 } from '@/lib/theme-preference';
 import { cn } from '@/lib/utils';
 import { Moon, MoveUpRight, Sun } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { ThemePreference } from '@/types';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const COLORS = [
   'bg-yellow-500 text-black',
   'bg-blue-500 text-white',
   'bg-teal-500 text-black',
   'bg-indigo-500 text-white',
+  'bg-pink-500 text-black',
+  'bg-lime-500 text-black',
 ];
 
 const MENU_LINKS = [
@@ -32,10 +34,33 @@ const MENU_LINKS = [
     url: '/#my-experience',
   },
   {
+    name: 'Stack',
+    url: '/#my-stack',
+  },
+  {
     name: 'Projects',
     url: '/#selected-projects',
   },
+  {
+    name: 'Demos',
+    url: '/#demo-lab',
+  },
 ];
+
+const PENDING_SECTION_KEY = 'portfolio:pending-section';
+const SECTION_SCROLL_OFFSET = 32;
+
+const getLayoutTop = (element: HTMLElement) => {
+  let top = 0;
+  let currentElement: HTMLElement | null = element;
+
+  while (currentElement) {
+    top += currentElement.offsetTop;
+    currentElement = currentElement.offsetParent as HTMLElement | null;
+  }
+
+  return top;
+};
 
 type NavbarProps = {
   initialTheme: ThemePreference;
@@ -46,15 +71,69 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
   const { theme } = useThemePreference(initialTheme);
   const isDarkMode = theme === THEME_VALUES.dark;
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     document.documentElement.classList.toggle(THEME_CLASS, isDarkMode);
   }, [isDarkMode]);
 
+  const scrollToSection = useCallback((sectionId: string) => {
+    const targetSection = document.getElementById(sectionId);
+    if (!targetSection) return;
+    const scrollTarget =
+      targetSection.querySelector<HTMLElement>('[data-section-anchor]') ??
+      targetSection;
+
+    const targetTop = getLayoutTop(scrollTarget) - SECTION_SCROLL_OFFSET;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: 'smooth',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    const pendingSectionId = sessionStorage.getItem(PENDING_SECTION_KEY);
+    if (!pendingSectionId) return;
+
+    sessionStorage.removeItem(PENDING_SECTION_KEY);
+    requestAnimationFrame(() => {
+      scrollToSection(pendingSectionId);
+    });
+  }, [pathname, scrollToSection]);
+
   const toggleTheme = () => {
     writeThemePreference({
       theme: isDarkMode ? THEME_VALUES.light : THEME_VALUES.dark,
     });
+  };
+
+  const navigateToMenuLink = (url: string) => {
+    setIsMenuOpen(false);
+
+    if (url === '/') {
+      router.push('/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const sectionId = url.startsWith('/#') ? url.slice(2) : '';
+
+    if (!sectionId) {
+      router.push(url);
+      return;
+    }
+
+    if (pathname !== '/') {
+      sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
+      router.push(url);
+      return;
+    }
+
+    window.history.pushState(null, '', url);
+    scrollToSection(sectionId);
   };
 
   return (
@@ -122,75 +201,70 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
 
       <div
         className={cn(
-          'fixed top-0 right-0 z-3 h-dvh w-[clamp(20rem,20vw,26rem)] max-w-[calc(100vw-3rem)] translate-x-full transform gap-y-14 overflow-hidden transition-transform duration-700',
-          'flex flex-col py-10 lg:justify-center',
+          'fixed top-0 right-0 z-3 h-dvh w-[clamp(20rem,20vw,26rem)] max-w-[calc(100vw-3rem)] translate-x-full transform overflow-hidden transition-transform duration-700',
+          'flex flex-col justify-between gap-y-14 py-10',
           { 'translate-x-0': isMenuOpen },
         )}
       >
         <div
           className={cn(
-            'fixed inset-0 z-[-1] translate-x-1/2 scale-150 rounded-[50%] bg-background-light delay-150 duration-700',
+            'fixed inset-0 z-[-1] translate-x-1/2 scale-150 rounded-[50%] bg-background-light delay-150 duration-700 dark:bg-background',
             {
               'translate-x-0': isMenuOpen,
             },
           )}
         ></div>
 
-        <div className="mx-8 flex w-full max-w-75 grow sm:mx-auto md:items-center">
-          <div className="flex w-full gap-10 max-lg:flex-col lg:justify-between">
-            <div className="max-lg:order-2">
-              <p className="mb-5 text-muted-foreground md:mb-8">SOCIAL</p>
-              <ul className="space-y-3">
-                {SOCIAL_LINKS.map((link) => (
-                  <li key={link.name}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-lg capitalize hover:underline"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="">
-              <p className="mb-5 text-muted-foreground md:mb-8">MENU</p>
-              <ul className="space-y-3">
-                {MENU_LINKS.map((link, idx) => (
-                  <li key={link.name}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        router.push(link.url);
-                        setIsMenuOpen(false);
-                      }}
-                      className="group flex items-center gap-3 text-xl"
-                    >
-                      <span
-                        className={cn(
-                          'flex size-3.5 items-center justify-center rounded-full bg-white/20 transition-all group-hover:scale-[200%]',
-                          COLORS[idx],
-                        )}
-                      >
-                        <MoveUpRight
-                          size={8}
-                          className="scale-0 transition-all group-hover:scale-100"
-                        />
-                      </span>
-                      {link.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+        <div className="mx-8 w-full max-w-75 pt-12 sm:mx-auto">
+          <p className="mb-5 text-muted-foreground md:mb-8">MENU</p>
+          <ul className="space-y-3">
+            {MENU_LINKS.map((link, idx) => (
+              <li key={link.name}>
+                <button
+                  type="button"
+                  onClick={() => navigateToMenuLink(link.url)}
+                  className="group flex items-center gap-3 text-xl"
+                >
+                  <span
+                    className={cn(
+                      'flex size-3.5 items-center justify-center rounded-full bg-white/20 transition-all group-hover:scale-[200%]',
+                      COLORS[idx],
+                    )}
+                  >
+                    <MoveUpRight
+                      size={8}
+                      className="scale-0 transition-all group-hover:scale-100"
+                    />
+                  </span>
+                  {link.name}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="mx-8 w-full max-w-75 sm:mx-auto">
-          <p className="mb-4 text-muted-foreground">GET IN TOUCH</p>
-          <a href={`mailto:${GENERAL_INFO.email}`}>{GENERAL_INFO.email}</a>
+        <div className="mx-8 w-full max-w-75 space-y-8 sm:mx-auto">
+          <div>
+            <p className="mb-5 text-muted-foreground md:mb-8">SOCIAL</p>
+            <ul className="space-y-3">
+              {SOCIAL_LINKS.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-lg capitalize hover:underline"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="mb-4 text-muted-foreground">GET IN TOUCH</p>
+            <a href={`mailto:${GENERAL_INFO.email}`}>{GENERAL_INFO.email}</a>
+          </div>
         </div>
       </div>
     </>

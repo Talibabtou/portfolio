@@ -29,7 +29,10 @@ const AboutMe = () => {
   return (
     <section className="py-section" id="about-me" ref={sectionRef}>
       <div className="container">
-        <h2 className="slide-up-and-fade mb-20 font-thin text-4xl md:text-6xl">
+        <h2
+          className="slide-up-and-fade mb-20 font-thin text-4xl md:text-6xl"
+          data-section-anchor
+        >
           I care about interfaces that feel clear, fast and reliable when the
           product gets complex.
         </h2>
