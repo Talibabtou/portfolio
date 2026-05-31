@@ -290,13 +290,14 @@ export const PROJECTS: IProject[] = [
       'Prometheus',
       'Grafana',
     ],
-    thumbnail: '/projects/ft_transcendence/home-screen.tiff',
+    thumbnail:
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.tiff',
     images: [
-      '/projects/ft_transcendence/home-screen.gif',
-      '/projects/ft_transcendence/pong.gif',
-      '/projects/ft_transcendence/tournament.gif',
-      '/projects/ft_transcendence/profile.gif',
-      '/projects/ft_transcendence/navigation.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/home-screen.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/pong.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/tournament.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/profile.gif',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/ft_transcendence/navigation.gif',
     ],
   },
   {
@@ -337,10 +338,11 @@ export const PROJECTS: IProject[] = [
       'I also got used to moving between systems programming, web interfaces, containers and API-driven apps without treating them as separate worlds.',
     ],
     techStack: ['C', 'C++', 'Unix', 'Algorithms', 'Networking', 'Docker'],
-    thumbnail: '/projects/common-core/42-cluster.png',
+    thumbnail:
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42-cluster.png',
     images: [
-      '/projects/common-core/42.jpg',
-      '/projects/common-core/42-values.png',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42.jpg',
+      'https://rmfq7e6jij1yz4id.public.blob.vercel-storage.com/projects/common-core/42-values.png',
     ],
   },
 ];

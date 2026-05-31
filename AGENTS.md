@@ -28,11 +28,12 @@ Setup, scripts, CI, and project tree: **`README.md`**.
 
 ## Rules
 
-- Scoped changes only; don't edit unrelated local work.
-- Never touch `.vercel/`, `.env*`; don't commit secrets.
-- Do not invent employers, metrics, or URLs. Remote images: hosts in `next.config.ts` only.
-- Do not commit, push, or open PRs unless the user asks.
+- Scoped changes only; don't edit unrelated local work
+- Never touch `.vercel/`, `.env*`; don't commit secrets
+- Do not invent employers, metrics, or URLs. Remote images: hosts in `next.config.ts` only
+- Do not commit, push, or open PRs unless the user asks
 - `pnpm` for scripts; `rg` for search. Reuse a running dev server if present, or let the user manage it
+- Never execute actions that can modify env & env.local files
 
 **Demos:** `preload` heavy deps; respect `isActive` (pause timers/animations); smallest change in large demo files unless refactor requested; keep logic in `demos/`, not `DemoLab.tsx`.
 
