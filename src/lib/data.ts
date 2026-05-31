@@ -290,12 +290,13 @@ export const PROJECTS: IProject[] = [
       'Prometheus',
       'Grafana',
     ],
-    thumbnail: '/projects/ft_transcendence/home-screen.gif',
+    thumbnail: '/projects/ft_transcendence/home-screen.tiff',
     images: [
-      '/projects/ft_transcendence/navigation.gif',
+      '/projects/ft_transcendence/home-screen.gif',
       '/projects/ft_transcendence/pong.gif',
-      '/projects/ft_transcendence/profile.gif',
       '/projects/ft_transcendence/tournament.gif',
+      '/projects/ft_transcendence/profile.gif',
+      '/projects/ft_transcendence/navigation.gif',
     ],
   },
   {
