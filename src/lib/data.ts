@@ -201,6 +201,8 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
     thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/consulting-finance.jpg`,
+    thumbnailHeight: 400,
+    thumbnailWidth: 600,
     images: [
       `${PROJECT_MEDIA_BASE}/images/consulting-finance-1.png`,
       `${PROJECT_MEDIA_BASE}/images/consulting-finance-2.png`,
@@ -220,6 +222,8 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
     thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/property-pro.jpg`,
+    thumbnailHeight: 400,
+    thumbnailWidth: 600,
     images: [
       `${PROJECT_MEDIA_BASE}/images/property-pro-1.png`,
       `${PROJECT_MEDIA_BASE}/images/property-pro-2.png`,
@@ -239,6 +243,8 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'Python', 'Rust', 'Solana'],
     thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/resume-roaster.jpg`,
+    thumbnailHeight: 400,
+    thumbnailWidth: 600,
     images: [
       `${PROJECT_MEDIA_BASE}/images/resume-roaster-1.png`,
       `${PROJECT_MEDIA_BASE}/images/resume-roaster-2.png`,
@@ -293,6 +299,8 @@ export const PROJECTS: IProject[] = [
       'Grafana',
     ],
     thumbnail: `${PROJECT_MEDIA_BASE}/ft_transcendence/home-screen.png`,
+    thumbnailHeight: 884,
+    thumbnailWidth: 844,
     images: [
       `${PROJECT_MEDIA_BASE}/ft_transcendence/home-screen.mp4`,
       `${PROJECT_MEDIA_BASE}/ft_transcendence/pong.mp4`,
@@ -340,6 +348,8 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['C', 'C++', 'Unix', 'Algorithms', 'Networking', 'Docker'],
     thumbnail: `${PROJECT_MEDIA_BASE}/common-core/42-cluster.png`,
+    thumbnailHeight: 681,
+    thumbnailWidth: 1024,
     images: [
       `${PROJECT_MEDIA_BASE}/common-core/42.jpg`,
       `${PROJECT_MEDIA_BASE}/common-core/42-values.png`,

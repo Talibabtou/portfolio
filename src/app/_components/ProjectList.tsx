@@ -3,7 +3,6 @@ import Project from '@/app/_components/Project';
 import SectionTitle from '@/components/SectionTitle';
 import { PROJECTS } from '@/lib/data';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
@@ -13,6 +12,9 @@ const ProjectList = () => {
   const imageContainer = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(
     PROJECTS[0].slug,
+  );
+  const selectedProjectData = PROJECTS.find(
+    (project) => project.slug === selectedProject,
   );
 
   useGSAP(
@@ -131,27 +133,20 @@ const ProjectList = () => {
         <SectionTitle title="SELECTED PROJECTS" />
 
         <div className="group/projects relative" ref={containerRef}>
-          {selectedProject !== null && (
+          {selectedProjectData && (
             <div
-              className="pointer-events-none absolute top-0 right-0 z-1 aspect-[3/2] w-64 overflow-hidden opacity-0 max-md:hidden xl:w-100"
+              className="pointer-events-none absolute top-0 right-0 z-1 w-64 overflow-hidden opacity-0 max-md:hidden xl:w-100"
               ref={imageContainer}
             >
-              {PROJECTS.map((project) => (
-                <Image
-                  src={project.thumbnail}
-                  alt="Project"
-                  width="600"
-                  height="400"
-                  className={cn(
-                    'absolute inset-0 h-full w-full object-cover transition-all duration-500',
-                    {
-                      'opacity-0': project.slug !== selectedProject,
-                    },
-                  )}
-                  key={project.slug}
-                  unoptimized={project.thumbnail.endsWith('.tiff')}
-                />
-              ))}
+              <Image
+                src={selectedProjectData.thumbnail}
+                alt={`${selectedProjectData.title} preview`}
+                width={selectedProjectData.thumbnailWidth ?? 600}
+                height={selectedProjectData.thumbnailHeight ?? 400}
+                className="h-auto w-full transition-opacity duration-500"
+                key={selectedProjectData.slug}
+                loading="eager"
+              />
             </div>
           )}
 

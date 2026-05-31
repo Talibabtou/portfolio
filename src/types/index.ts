@@ -31,6 +31,8 @@ export interface IProject {
   results?: string[];
   techStack: string[];
   thumbnail: string;
+  thumbnailHeight?: number;
+  thumbnailWidth?: number;
   images: string[];
   slug: string;
   liveUrl?: string;

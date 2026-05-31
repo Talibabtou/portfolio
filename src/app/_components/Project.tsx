@@ -111,13 +111,12 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
       {selectedProject === null && (
         <Image
           src={project.thumbnail}
-          alt="Project"
-          width="300"
-          height="200"
-          className={cn('mb-6 aspect-[3/2] w-full object-cover object-top')}
+          alt={`${project.title} preview`}
+          width={project.thumbnailWidth ?? 600}
+          height={project.thumbnailHeight ?? 400}
+          className={cn('mb-6 h-auto w-full')}
           key={project.slug}
-          loading="lazy"
-          unoptimized={project.thumbnail.endsWith('.tiff')}
+          loading={index === 0 ? 'eager' : 'lazy'}
         />
       )}
       <div className="flex gap-2 md:gap-5">
