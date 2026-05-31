@@ -199,7 +199,6 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
     thumbnail: '/projects/thumbnail/consulting-finance.jpg',
-    longThumbnail: '/projects/long/consulting-finance.jpg',
     images: [
       '/projects/images/consulting-finance-1.png',
       '/projects/images/consulting-finance-2.png',
@@ -219,7 +218,6 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'APIs', 'Dashboards', 'DeFi'],
     thumbnail: '/projects/thumbnail/property-pro.jpg',
-    longThumbnail: '/projects/long/property-pro.jpg',
     images: [
       '/projects/images/property-pro-1.png',
       '/projects/images/property-pro-2.png',
@@ -239,7 +237,6 @@ export const PROJECTS: IProject[] = [
     ],
     techStack: ['TypeScript', 'React', 'Python', 'Rust', 'Solana'],
     thumbnail: '/projects/thumbnail/resume-roaster.jpg',
-    longThumbnail: '/projects/long/resume-roaster.jpg',
     images: [
       '/projects/images/resume-roaster-1.png',
       '/projects/images/resume-roaster-2.png',
@@ -249,26 +246,56 @@ export const PROJECTS: IProject[] = [
   {
     title: 'ft_transcendence',
     slug: 'ft-transcendence',
+    sourceCode: 'https://github.com/Talibabtou/ft_transcendence',
+    liveUrl: 'https://canva.link/fns0f2xr90f6vx9',
     year: 2025,
+    summary:
+      'My 42 Lyon capstone: a Dockerized real-time Pong platform with a custom TypeScript SPA, Fastify services, WebSocket gameplay, tournaments, user profiles and monitoring.',
     description: [
-      '42 Lyon capstone project: a full-stack real-time web game with single-player, multiplayer and tournament flows.',
+      'For the last 42 Common Core project, my team built a full-stack Pong platform instead of a small game demo. It has single-player, multiplayer, round-robin tournaments, profiles, stats, friends and settings.',
+      'The frontend was the part I spent the most time on: a native TypeScript SPA with React-like components, client-side routing and explicit state updates. No React, no Vue, no framework safety net.',
     ],
     role: [
-      'Built a custom React-like frontend architecture, real-time UX and WebSocket-driven game flows as part of the 42 Common Core curriculum.',
+      'I built and wired most of the frontend structure, real-time screens and gameplay flows as part of a three-person team.',
+      'My work sat where the browser meets the backend: routing, UI state, notifications, WebSocket updates and Pong interactions connected to services for auth, users, friends and game data.',
+    ],
+    context: [
+      'ft_transcendence is the final web project in the 42 Common Core. The assignment expects a real multiplayer web app, with accounts and social flows, not just a canvas with a paddle.',
+      'Frontend frameworks were forbidden, which made the project much more useful for me. I had to build the pieces I usually get from React and understand why they exist.',
+    ],
+    problem: [
+      'The hard part was keeping the game responsive while the rest of the product still behaved like a normal app: accounts, profiles, friends, settings, stats and tournament screens all had to fit around the match flow.',
+      'Because we couldn’t use React or a similar framework, I had to make lifecycle, rendering, state changes and routing explicit in TypeScript. That exposed every shortcut.',
+    ],
+    contributions: [
+      'Built a native TypeScript single-page app with component classes, lifecycle methods and reusable UI pieces.',
+      'Connected game and social flows through WebSocket updates, route-level UI states and notifications that users could actually act on.',
+      'Helped ship Pong across single-player, multiplayer and tournament modes, including an algorithmic AI opponent.',
+    ],
+    decisions: [
+      'We split backend responsibilities into services for authentication, users, friends, game data and gateway concerns.',
+      'We used Docker Compose with Fastify, SQLite, Prometheus, Grafana and OpenTelemetry so the whole platform could run the same way on each machine.',
+      'On the frontend, I copied the useful parts of modern component architecture in plain TypeScript: predictable rendering, explicit state updates and route-owned UI.',
+    ],
+    results: [
+      'We delivered a complete real-time game platform with account management, social features, match flows, tournament support and monitoring.',
+      'I came out of it much more comfortable with WebSocket UX, Dockerized services and the frontend mechanics that frameworks normally hide.',
     ],
     techStack: [
       'TypeScript',
       'Node.js',
+      'Fastify',
       'WebSockets',
-      'Real-time UX',
-      'Frontend architecture',
+      'Docker',
+      'Prometheus',
+      'Grafana',
     ],
-    thumbnail: '/projects/thumbnail/devLinks.jpg',
-    longThumbnail: '/projects/long/devLinks.jpg',
+    thumbnail: '/projects/ft_transcendence/home-screen.gif',
     images: [
-      '/projects/images/devLinks-1.png',
-      '/projects/images/devLinks-2.png',
-      '/projects/images/devLinks-3.png',
+      '/projects/ft_transcendence/navigation.gif',
+      '/projects/ft_transcendence/pong.gif',
+      '/projects/ft_transcendence/profile.gif',
+      '/projects/ft_transcendence/tournament.gif',
     ],
   },
   {
@@ -276,41 +303,40 @@ export const PROJECTS: IProject[] = [
     slug: '42-common-core',
     liveUrl: 'https://42lyon.fr/',
     sourceCode: 'https://github.com/Talibabtou/42-common-core',
-    year: 2023,
+    year: 2024,
     summary:
-      'A selective peer-to-peer engineering curriculum where progress depends on shipping real projects, defending technical choices and learning autonomously without traditional classes.',
+      'The peer-to-peer engineering curriculum where I learned to build, debug, defend my choices and keep going without lectures or ready-made answers.',
     description: [
-      'The 42 Common Core is an intensive software engineering curriculum built around project-based learning, peer review and autonomy. Instead of lectures, students progress by solving increasingly complex problems, defending their implementation choices and reviewing other students’ work.',
-      'The program covers low-level programming, algorithms, Unix systems, networking, graphics, C++, containers and full-stack foundations. It trained me to debug rigorously, read documentation directly and build reliable software under constraints.',
+      '42’s Common Core is project-based and peer-reviewed. There are no traditional classes, so I had to learn by reading docs, breaking things, asking better questions and defending my code in front of other students.',
+      'I worked through low-level programming, algorithms, Unix systems, networking, graphics, C++, containers and web foundations. That mix changed how I debug: I’m much less afraid of going below the UI layer when something behaves strangely.',
     ],
     role: [
-      'Completed the curriculum as a student at 42 Lyon, working through individual and team projects in C, C++, Unix, networking, graphics and web development.',
-      'The experience shaped my engineering habits: explicit ownership, careful memory and error handling, peer review, clean abstractions and persistence when facing unfamiliar systems.',
+      'I completed the curriculum at 42 Lyon through individual and team projects in C, C++, Unix, networking, graphics and web development.',
+      'It shaped the habits I still bring to product work: owning the problem, handling errors directly, reading other people’s code and explaining tradeoffs without hiding behind buzzwords.',
     ],
     context: [
-      '42 is a self-directed engineering school where students learn by building projects and passing peer evaluations.',
-      'The Common Core is designed to create strong fundamentals before specialization, with a heavy focus on autonomy, problem solving and technical rigor.',
+      '42 is a self-directed engineering school where students move forward by shipping projects and passing peer evaluations.',
+      'The Common Core comes before specialization. For me, it was the period where I built the base I now use for frontend, Web3 and product engineering work.',
     ],
     problem: [
-      'The challenge was not only learning syntax or frameworks, but becoming able to approach unknown technical problems without relying on a teacher or predefined solution.',
-      'Most projects required translating vague specifications into working software while handling edge cases, testing, code quality and oral defense.',
+      'The challenge wasn’t only learning syntax. It was learning how to approach an unfamiliar technical problem when nobody gives you the recipe.',
+      'Most projects started with a dense subject PDF and ended with a defense. In between, I had to turn vague requirements into working software, handle edge cases and explain why my implementation made sense.',
     ],
     contributions: [
-      'Built low-level C projects involving parsing, memory management, process control, shell behavior, networking and graphics.',
-      'Completed C++ modules focused on object-oriented design, type safety, resource management and standard library usage.',
-      'Worked on team projects involving real-time communication, Dockerized services and full-stack product flows.',
+      'Built C projects around parsing, memory management, process control, shell behavior, networking and graphics.',
+      'Completed C++ modules covering object-oriented design, type safety, resource management and standard library usage.',
+      'Worked on team projects with real-time communication, Dockerized services and full-stack product flows.',
     ],
     decisions: [
-      'Prioritized explicit error handling, readable control flow and defensive programming because many 42 projects are evaluated through edge-case-heavy test suites.',
-      'Used peer feedback as a quality loop: code was not considered finished until it could be explained clearly and reviewed by other students.',
+      'I learned to prefer explicit error handling, readable control flow and defensive code because 42 evaluations tend to punish happy-path thinking.',
+      'Peer review became part of the work, not a ceremony after it. If I couldn’t explain a choice clearly, the code usually needed another pass.',
     ],
     results: [
-      'Built a strong low-level foundation that now supports frontend and product engineering work with better debugging, performance awareness and architectural discipline.',
-      'Gained comfort moving between systems programming, web interfaces, containers and API-driven applications.',
+      'I built the low-level base that now helps me write better frontend and product code, especially when debugging performance, state or API behavior.',
+      'I also got used to moving between systems programming, web interfaces, containers and API-driven apps without treating them as separate worlds.',
     ],
     techStack: ['C', 'C++', 'Unix', 'Algorithms', 'Networking', 'Docker'],
     thumbnail: '/projects/common-core/42-cluster.png',
-    longThumbnail: '/projects/common-core/42-cluster.png',
     images: [
       '/projects/common-core/42.jpg',
       '/projects/common-core/42-values.png',

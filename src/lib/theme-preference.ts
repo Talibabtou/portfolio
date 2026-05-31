@@ -35,6 +35,26 @@ const getThemePreferenceSnapshot = (theme?: ThemePreference) => {
     : DEFAULT_THEME_PREFERENCE;
 };
 
+const writeCookieFallback = (theme: ThemePreference) => {
+  // biome-ignore lint/suspicious/noDocumentCookie: fallback for browsers without the Cookie Store API.
+  document.cookie = `${THEME_COOKIE_NAME}=${theme}; path=/; max-age=31536000; samesite=lax`;
+};
+
+const writeThemeCookie = async (theme: ThemePreference) => {
+  if ('cookieStore' in window) {
+    await window.cookieStore.set({
+      name: THEME_COOKIE_NAME,
+      value: theme,
+      path: '/',
+      expires: Date.now() + 31_536_000_000,
+      sameSite: 'lax',
+    });
+    return;
+  }
+
+  writeCookieFallback(theme);
+};
+
 export const readThemePreference = (): UserPreferences => {
   if (typeof window === 'undefined') return DEFAULT_THEME_PREFERENCE;
 
@@ -51,9 +71,9 @@ export const writeThemePreference = (preferences: Partial<UserPreferences>) => {
     ...preferences,
   };
 
-  document.cookie = `${THEME_COOKIE_NAME}=${nextPreferences.theme}; path=/; max-age=31536000; samesite=lax`;
-
-  window.dispatchEvent(new Event(BROWSER_EVENTS.themePreferenceChange));
+  void writeThemeCookie(nextPreferences.theme).finally(() => {
+    window.dispatchEvent(new Event(BROWSER_EVENTS.themePreferenceChange));
+  });
 };
 
 const subscribeToThemePreference = (onStoreChange: () => void) => {

@@ -133,15 +133,15 @@ const ProjectList = () => {
         <div className="group/projects relative" ref={containerRef}>
           {selectedProject !== null && (
             <div
-              className="pointer-events-none absolute top-0 right-0 z-1 aspect-3/4 w-50 overflow-hidden opacity-0 max-md:hidden xl:w-87.5"
+              className="pointer-events-none absolute top-0 right-0 z-1 aspect-[3/2] w-64 overflow-hidden opacity-0 max-md:hidden xl:w-100"
               ref={imageContainer}
             >
               {PROJECTS.map((project) => (
                 <Image
                   src={project.thumbnail}
                   alt="Project"
-                  width="400"
-                  height="500"
+                  width="600"
+                  height="400"
                   className={cn(
                     'absolute inset-0 h-full w-full object-cover transition-all duration-500',
                     {

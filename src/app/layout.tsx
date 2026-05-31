@@ -11,7 +11,6 @@ import Navbar from '@/components/Navbar';
 import PageTransitionOverlay from '@/components/PageTransitionOverlay';
 import Preloader from '@/components/Preloader';
 import ScrollProgressIndicator from '@/components/ScrollProgressIndicator';
-import ScrollToTopButton from '@/components/ScrollToTopButton';
 import TopographicBackground from '@/components/TopographicBackground';
 import { THEME_CLASS, THEME_COOKIE_NAME, THEME_VALUES } from '@/lib/constants';
 import './globals.css';
@@ -61,7 +60,6 @@ export default async function RootLayout({
           <main>{children}</main>
           <Footer />
           <StickyEmail />
-          <ScrollToTopButton />
         </div>
 
         <CustomCursor />

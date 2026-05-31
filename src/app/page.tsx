@@ -4,6 +4,7 @@ import DemoLab from '@/app/_components/DemoLab';
 import Experiences from '@/app/_components/Experiences';
 import Skills from '@/app/_components/Skills';
 import ProjectList from '@/app/_components/ProjectList';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Skills />
       <ProjectList />
       <DemoLab />
+      <ScrollToTopButton trigger={{ type: 'element', id: 'banner' }} />
     </div>
   );
 }

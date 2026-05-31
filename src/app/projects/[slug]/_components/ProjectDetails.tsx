@@ -1,5 +1,6 @@
 'use client';
 import ArrowAnimation from '@/components/ArrowAnimation';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import TransitionLink from '@/components/TransitionLink';
 import { gsap, useGSAP } from '@/lib/gsap';
 import type { IProject } from '@/types';
@@ -263,6 +264,7 @@ const ProjectDetails = ({ project }: Props) => {
           </div>
         )}
       </div>
+      <ScrollToTopButton trigger={{ type: 'scroll', threshold: 480 }} />
     </section>
   );
 };

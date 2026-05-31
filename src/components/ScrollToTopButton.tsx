@@ -5,35 +5,53 @@ import { cn } from '@/lib/utils';
 import { ChevronUp } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const BANNER_ID = 'banner';
 const TOP_SCROLL_THRESHOLD = 8;
 
-const ScrollToTopButton = () => {
+type ScrollToTopTrigger =
+  | {
+      type: 'element';
+      id: string;
+    }
+  | {
+      type: 'scroll';
+      threshold: number;
+    };
+
+type ScrollToTopButtonProps = {
+  trigger: ScrollToTopTrigger;
+};
+
+const ScrollToTopButton = ({ trigger }: ScrollToTopButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const wasPastBannerRef = useRef(false);
+  const wasPastElementRef = useRef(false);
 
   const updateVisibility = useCallback(() => {
-    const banner = document.getElementById(BANNER_ID);
-    if (!banner) {
-      wasPastBannerRef.current = false;
-      setIsVisible(false);
-      return;
-    }
-
     const scrollY = window.scrollY;
 
+    if (trigger.type === 'scroll') {
+      setIsVisible(scrollY > trigger.threshold);
+      return;
+    }
+
     if (scrollY <= TOP_SCROLL_THRESHOLD) {
-      wasPastBannerRef.current = false;
+      wasPastElementRef.current = false;
       setIsVisible(false);
       return;
     }
 
-    if (banner.getBoundingClientRect().bottom <= 0) {
-      wasPastBannerRef.current = true;
+    const element = document.getElementById(trigger.id);
+    if (!element) {
+      wasPastElementRef.current = false;
+      setIsVisible(false);
+      return;
     }
 
-    setIsVisible(wasPastBannerRef.current);
-  }, []);
+    if (element.getBoundingClientRect().bottom <= 0) {
+      wasPastElementRef.current = true;
+    }
+
+    setIsVisible(wasPastElementRef.current);
+  }, [trigger]);
 
   useEffect(() => {
     const onScroll = () => updateVisibility();
