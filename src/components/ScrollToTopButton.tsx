@@ -74,7 +74,7 @@ const ScrollToTopButton = ({ trigger }: ScrollToTopButtonProps) => {
   return (
     <div
       className={cn(
-        'fixed right-5 bottom-6 z-4 transition-opacity duration-300 md:right-8',
+        'fixed right-5 bottom-6 z-1 transition-opacity duration-300 md:right-8',
         isVisible ? 'opacity-100' : 'pointer-events-none opacity-0',
       )}
     >
