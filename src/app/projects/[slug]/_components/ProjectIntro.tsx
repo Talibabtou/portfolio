@@ -57,7 +57,7 @@ const ProjectIntro = ({ project }: ProjectIntroProps) => {
             </div>
             <div className="fade-in-later">
               <p className="mb-3 font-anton text-muted-foreground">
-                Tech & Technique
+                Tech Stack
               </p>
 
               <div className="text-lg">{project.techStack.join(', ')}</div>

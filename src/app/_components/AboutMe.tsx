@@ -43,15 +43,15 @@ const AboutMe = () => {
 
         <div className="mx-auto mt-9 grid max-w-235 items-center gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
-            <p className="slide-up-and-fade text-5xl">I&apos;m Guillaume.</p>
+            <p className="slide-up-and-fade text-5xl">I&apos;m Guillaume,</p>
             <div className="mt-8 max-w-97.5 text-lg text-muted-foreground">
               <p className="slide-up-and-fade">
-                I&apos;m a frontend developer from France, focused on Web3 and
-                fintech products: trading market screens, dashboards, wallet
-                flows & API-connected interfaces.
+                A frontend developer from France, focused on Web3 and fintech
+                products: trading market screens, dashboards, wallet flows &
+                API-connected interfaces.
               </p>
               <p className="slide-up-and-fade mt-3">
-                Before code, I worked as a leather artisan at Hermes.
+                Before code, I made leather goods at Hermes.
                 <br />
                 42 Lyon gave me the engineering base; craft gave me patience,
                 precision and a high bar for finished work.

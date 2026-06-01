@@ -210,6 +210,45 @@
     margin-top: 0.5rem;
     padding-left: 1.25rem;
   }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    html,
+    body {
+      background: white;
+      color: black;
+    }
+
+    body:has(.cv-page) .custom-cursor,
+    body:has(.cv-page) .preloader,
+    body:has(.cv-page) .scroll-progress-indicator,
+    body:has(.cv-page) .topographic-background,
+    body:has(.cv-page) .custom-cursor-scope > :not(main) {
+      display: none;
+    }
+
+    body:has(.cv-page) main {
+      display: block;
+    }
+
+    body:has(.cv-page) .cv-page {
+      padding: 0;
+      background: white;
+    }
+
+    body:has(.cv-page) .cv-print-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      max-width: none;
+      background: white;
+      color: black;
+      box-shadow: none;
+    }
+  }
 }
 
 @keyframes portrait-border-wave {

@@ -10,12 +10,22 @@ type StackCategory = {
   competencies: StackItem[];
 };
 
+type CvExperience = {
+  company: string;
+  location?: string;
+  period: string;
+  role: string;
+  summary: string;
+  bullets: string[];
+  stack?: string[];
+};
+
 export const GENERAL_INFO = {
   name: 'Guillaume Dumas',
   email: 'talibabtou@gmail.com',
   phone: '+33 6 28 40 15 84',
   location: 'Grenoble, France',
-  cvUrl: '/cv/guillaume-dumas-cv.pdf',
+  cvUrl: '/cv',
   githubRepo: 'https://github.com/Talibabtou/portfolio',
   linkedinProfile: 'https://www.linkedin.com/in/talibabtou',
 
@@ -31,15 +41,246 @@ export const SOCIAL_LINKS = [
   { name: 'cv', url: GENERAL_INFO.cvUrl },
 ];
 
+export const CV_CONTENT = {
+  headline: 'Frontend developer focused on product interfaces',
+  subheadline:
+    'Frontend developer with a craft background, now building precise product UI across finance, SaaS-style tools and real-time web apps.',
+  photo: {
+    src: '/cv/gdumas.jpg',
+    alt: 'Guillaume Dumas in a computer lab',
+  },
+  intro: [
+    'I build interfaces where state, data and user trust matter: dashboards, trading screens, internal tools and API-connected workflows.',
+    'Before software, I made leather goods at Hermes, including Kelly bags. That craft background still shapes how I work: I care about alignment, loading states, mobile layouts and details users only notice when they feel wrong.',
+  ],
+  targetRoles: [
+    'Frontend Engineer',
+    'Product Engineer',
+    'Frontend Developer',
+    'Full-stack oriented frontend role',
+  ],
+  focus: [
+    {
+      label: 'Interface work',
+      value: 'Dashboards, trading screens, internal tools and data flows.',
+    },
+    {
+      label: 'Product sense',
+      value: 'I think about timing, empty states, mobile behavior and trust.',
+    },
+    {
+      label: 'Engineering range',
+      value: 'React, TypeScript, APIs, backend data shapes and Docker.',
+    },
+    {
+      label: 'Work style',
+      value: 'Careful with existing patterns, reviews and real users.',
+    },
+  ],
+  experience: [
+    {
+      company: 'Jupiter',
+      location: 'Remote',
+      period: 'Early 2026',
+      role: 'Frontend Consultant',
+      summary:
+        'Worked on Jupiter Predict, a live product inside a large React and TypeScript codebase with strong product review habits.',
+      bullets: [
+        'Reworked the activity tab, For You tab, live option and leaderboard.',
+        'Changed charting behavior so markets felt active while staying readable.',
+        'Worked on a cross-asset payment flow and fixed UI issues across desktop and mobile.',
+        'Coordinated with a small Predict team while working inside Jupiter’s internal frontend system.',
+      ],
+      stack: ['TypeScript', 'React', 'Tailwind CSS', 'Solana', 'Charts'],
+    },
+    {
+      company: 'Adrena',
+      location: 'Remote',
+      period: 'Late 2025',
+      role: 'Frontend Intern',
+      summary:
+        'Joined a trading product team and shipped roughly 30 merged PRs across trading, staking, campaign UI, swaps and small API work.',
+      bullets: [
+        'Worked on trading UI, chart-related screens, token selector, staking leaderboard and ALP page.',
+        'Integrated Jupiter swap flows and built UI for the first anniversary campaign.',
+        'Spent a lot of time on mobile layouts, Tailwind details and tiny flickers that make a trading product feel unfinished.',
+      ],
+      stack: ['TypeScript', 'React', 'Tailwind CSS', 'Web3.js', 'APIs'],
+    },
+    {
+      company: 'Versus',
+      location: 'Remote',
+      period: '2024 - 2025',
+      role: 'Founder & Developer',
+      summary:
+        'Built a real-time betting product with Frensurfer around live AI fighting matches; it reached public testing with 100+ testers and around 150 SOL in total volume.',
+      bullets: [
+        'Owned the oracle, Twitch scraper and a lot of cross-service repo work.',
+        'Kept the frontend, backend, scraper, oracle and jackpot worker aligned during live mainnet testing.',
+        'Worked through timing bugs, invalid matches, refunds, payout paths and payment operations.',
+      ],
+      stack: [
+        'TypeScript',
+        'Next.js',
+        'Fastify',
+        'PostgreSQL',
+        'Solana',
+        'SSE',
+      ],
+    },
+    {
+      company: '42 Lyon',
+      location: 'Lyon, France',
+      period: 'Late 2023 - Mid 2025',
+      role: 'Common Core Graduate',
+      summary:
+        'Completed the peer-reviewed 42 Common Core through low-level, systems and web projects.',
+      bullets: [
+        'Built projects in C, C++, Unix, networking, graphics, Docker and web development.',
+        'Finished ft_transcendence, a real-time Pong platform with accounts, social flows, tournaments, WebSockets and a custom TypeScript SPA.',
+      ],
+      stack: ['C', 'C++', 'Unix', 'Docker', 'TypeScript', 'WebSockets'],
+    },
+    {
+      company: 'Hermes',
+      location: 'France',
+      period: '2017 - 2021',
+      role: 'Leather Artisan',
+      summary:
+        'Worked in leather craft before moving into software; the job taught me patience, precision and care for finished work.',
+      bullets: [
+        'Built the habit of checking details before they become visible defects.',
+        'Brought that same standard into frontend work, especially around spacing, motion and product polish.',
+      ],
+    },
+    {
+      company: 'Magicake / Doge Capital',
+      period: '2021 - 2024',
+      role: 'Founder, Board Member',
+      summary:
+        'Built product, community and strategy experience around digital products, online communities and crypto-native users.',
+      bullets: [
+        'Handled communication, community operations, business development and strategic decisions.',
+        'Learned how online communities think, what they trust and where product promises break down.',
+      ],
+    },
+  ] satisfies CvExperience[],
+  previousCareer: [
+    {
+      company: 'Tali',
+      location: 'Barcelona, Spain',
+      period: '2022 - 2023',
+      role: 'Independent Leatherwork Consultant',
+      summary:
+        'Joined a creative studio and worked on operational product lists and made-to-measure luxury goods.',
+      bullets: [
+        'Kept the same craft standard while working in a smaller, more flexible studio context.',
+      ],
+    },
+    {
+      company: 'Hermes',
+      location: 'France',
+      period: '2017 - 2021',
+      role: 'Leather Artisan',
+      summary:
+        'Worked in high-end manufacturing with strong expectations around precision, repeatability and finish quality.',
+      bullets: [
+        'Assembled over one hundred Kelly bags.',
+        'Supported tooling and team workflows on the workshop side.',
+      ],
+    },
+    {
+      company: 'EDA',
+      location: 'France',
+      period: '2014 - 2016',
+      role: 'Alternating Student, Technical Office',
+      summary:
+        'Worked on estimates, manufacturing and installation drawings, safety reports and customer communication.',
+      bullets: [
+        'Built an early habit of turning technical constraints into documents other people could use.',
+      ],
+    },
+  ] satisfies CvExperience[],
+  education: [
+    {
+      school: '42 Lyon',
+      period: 'Late 2023 - Mid 2025',
+      title: 'Common Core',
+      details:
+        'Peer-to-peer software engineering curriculum focused on projects, code review and technical defense.',
+    },
+    {
+      school: 'GRETA Lyon',
+      period: '2018',
+      title: 'CAP Leatherworker',
+      details: 'Professional leatherwork training.',
+    },
+    {
+      school: 'ISCO Grenoble',
+      period: '2016',
+      title: 'Bachelor-level Technical Building Management',
+      details: 'Technical building management and office work training.',
+    },
+    {
+      school: 'Lycee Champollion',
+      period: '2012',
+      title: 'Scientific Baccalaureate',
+      details: 'Scientific high school diploma.',
+    },
+  ],
+  sectorPositioning: [
+    {
+      label: 'Specialized Products',
+      details:
+        'Trading screens, prediction markets, dashboards, wallet-aware flows and products where users need clear feedback.',
+    },
+    {
+      label: 'Fintech / Banking / SaaS',
+      details:
+        'Data-heavy interfaces, API-connected dashboards, user workflows and screens where trust depends on clear states.',
+    },
+    {
+      label: 'Product Teams',
+      details:
+        'Founder mindset, frontend quality, business understanding and the ability to turn user needs into usable interfaces.',
+    },
+  ],
+  stack: [
+    'TypeScript',
+    'React',
+    'Next.js',
+    'Tailwind CSS',
+    'Node.js',
+    'Fastify',
+    'PostgreSQL',
+    'Docker',
+    'Solana',
+    'Web3.js',
+    'C',
+    'C++',
+  ],
+  softSkills: [
+    'Product sense',
+    'Ownership',
+    'Communication',
+    'Leadership',
+    'Autonomy',
+    'Adaptability',
+    'Business insight',
+    'Community building',
+  ],
+  languages: ['French native', 'English fluent'],
+};
+
 export const MY_EXPERIENCE = [
   {
-    title: 'Consultant',
+    title: 'Frontend Consultant',
     company: 'Jupiter',
     duration: 'Early 2026',
     logo: '/experience/jupiter.svg',
   },
   {
-    title: 'Internship',
+    title: 'Frontend Intern',
     company: 'Adrena',
     duration: 'Late 2025',
     logo: '/experience/adrena.svg',
@@ -69,7 +310,7 @@ export const MY_EXPERIENCE = [
     logo: '/experience/doge-capital.png',
   },
   {
-    title: 'Leatherwork Artisan',
+    title: 'Leather Artisan',
     company: 'Hermes',
     duration: '2017 - 2021',
     logo: '/experience/hermes.svg',
@@ -242,7 +483,7 @@ export const PROJECTS: IProject[] = [
     summary:
       'Frontend consulting work on Jupiter Predict, the prediction-market product inside Jupiter. For someone just out of school, working inside one of Solana’s top product teams was a real step up: bigger codebase, sharper reviews and users who notice every unclear state.',
     description: [
-      'Jupiter Predict brings Polymarket and other chains prediction markets into Solana.',
+      'Jupiter Predict brings prediction markets from Polymarket and other venues into a Solana-native trading flow.',
       'My work sat on the frontend side of the Predict team. I was changing pieces of a live trading product, inside a codebase that already had its own internal patterns, components and expectations.',
     ],
     role: [
@@ -255,7 +496,7 @@ export const PROJECTS: IProject[] = [
       'Predict also has a harder UX problem than a normal content page: the user needs to understand a market, read a chart, act with a wallet and trust what happens after the click.',
     ],
     problem: [
-      'The most challenging wasn’t code. I often had to coordinate with other team members because I wasn’t allowed to change the API myself, which meant waiting for data changes or adjusting the frontend around shapes I didn’t fully control.',
+      'The hardest part wasn’t code. I often had to coordinate with other team members because I wasn’t allowed to change the API myself, which meant waiting for data changes or adjusting the frontend around shapes I didn’t fully control.',
       'The second hard part was invisible: making the same product feel clean on desktop and mobile while the screens were dense, animated, market-driven and already built on a large internal frontend system.',
     ],
     contributions: [
@@ -263,7 +504,7 @@ export const PROJECTS: IProject[] = [
       'Built the leaderboard used by Predict.',
       'Added the live option and worked through smaller product UI/UX fixes across the site.',
       'Changed the charting approach so charts felt more alive while staying readable for trading decisions.',
-      'Worked on bet with any crypto integration and touched most Predict pages through desktop and mobile fixes.',
+      'Worked on Pay with any crypto integration and touched most Predict pages through desktop and mobile fixes.',
     ],
     decisions: [
       'I leaned into Jupiter’s existing internal framework instead of trying to bring my own habits into the codebase. A lot was already built, so the work was about fitting into their system and making changes that survived review.',
@@ -271,7 +512,7 @@ export const PROJECTS: IProject[] = [
     ],
     results: [
       'Most of my work shipped after review rounds with the team.',
-      'This project proved me the thing I wanted to remember: I can work inside a top Solana product team, not only around one from the outside.',
+      'This project gave me the proof I wanted: I can work inside a top Solana product team, not only around one from the outside.',
       'It also taught me how different international teams can feel compared with French work culture, especially around hierarchy, feedback and how much ownership you’re expected to take without being asked twice.',
     ],
     techStack: [
@@ -307,7 +548,7 @@ export const PROJECTS: IProject[] = [
     ],
     role: [
       'I worked mainly on frontend UX and shipped roughly 30 merged PRs, ranging from chores to full page reworks.',
-      'I also touched the API layer when the frontend needed cleaner data or a better shape for a screen, being careful to keep it perfectly optimized.',
+      'I also touched the API layer when a screen needed cleaner data or a better shape, and I kept those changes small because the product was already live.',
     ],
     context: [
       'This was my first experience inside a DeFi product team where the interface has to make money-related actions feel clear without hiding the risk behind a pretty screen.',
@@ -439,7 +680,7 @@ export const PROJECTS: IProject[] = [
     ],
     contributions: [
       'Built a native TypeScript single-page app with component classes, lifecycle methods and reusable UI pieces.',
-      'Worked on the web canvas game layer, including paddle collisions, ball behavior, AI player,match and gameplay states.',
+      'Worked on the web canvas game layer, including match dimensions, ball behavior, paddle hitboxes, collisions, AI player and gameplay states.',
       'Connected game and social flows through WebSocket updates, route-level UI states and toast notifications that users could actually act on.',
       'Helped ship Pong across single-player, multiplayer and tournament modes, including an algorithmic AI opponent.',
     ],

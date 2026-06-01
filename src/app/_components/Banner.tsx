@@ -41,21 +41,25 @@ const Banner = () => {
             <br /> <span className="ml-4">DEVELOPER</span>
           </h1>
           <p className="slide-up-and-fade mt-6 text-lg text-muted-foreground">
-            Hi, I&apos;m{' '}
-            <span className="font-medium text-foreground">Talibabtou</span>. I
-            build sharp frontend interfaces for Web3, fintech and data-heavy
-            products.
+            I&apos;m{' '}
+            <span className="font-medium text-foreground">Guillaume</span>, also
+            known as Talibabtou. I build frontend interfaces for Web3 and
+            fintech products.
           </p>
-          <Button
-            as="link"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={GENERAL_INFO.linkedinProfile}
-            variant="primary"
-            className="slide-up-and-fade mt-9"
-          >
-            View LinkedIn
-          </Button>
+          <div className="slide-up-and-fade mt-9 flex flex-wrap gap-3">
+            <Button
+              as="link"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={GENERAL_INFO.linkedinProfile}
+              variant="primary"
+            >
+              View LinkedIn
+            </Button>
+            <Button as="link" href={GENERAL_INFO.cvUrl} variant="secondary">
+              View CV
+            </Button>
+          </div>
 
           <div className="mt-3 flex items-center gap-2">
             <span className="text-muted-foreground text-sm">

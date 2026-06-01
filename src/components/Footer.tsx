@@ -48,7 +48,9 @@ const Footer = () => {
   return (
     <footer className="pt-section pb-5 text-center" id="contact">
       <div className="container">
-        <p className="text-lg">Building a Web3 or fintech product?</p>
+        <p className="text-lg">
+          Need a frontend for a Web3 or fintech product?
+        </p>
         <a
           href={`mailto:${GENERAL_INFO.email}?subject=${encodeURIComponent(
             GENERAL_INFO.emailSubject,
@@ -88,7 +90,7 @@ const Footer = () => {
         </a>
 
         <p className="mt-6 text-muted-foreground text-sm">
-          Design adapted and content revised by Guillaume Dumas.
+          Built and written by Guillaume Dumas.
         </p>
       </div>
     </footer>
