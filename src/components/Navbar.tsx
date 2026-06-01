@@ -5,11 +5,17 @@ import {
   useThemePreference,
   writeThemePreference,
 } from '@/lib/theme-preference';
+import {
+  getHomeHashUrl,
+  getSectionIdFromHomeHash,
+  PENDING_SECTION_KEY,
+  scrollToSection,
+} from '@/lib/section-navigation';
 import { cn } from '@/lib/utils';
 import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import type { ThemePreference } from '@/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const COLORS = [
   'bg-yellow-500 text-black',
@@ -47,21 +53,6 @@ const MENU_LINKS = [
   },
 ];
 
-const PENDING_SECTION_KEY = 'portfolio:pending-section';
-const SECTION_SCROLL_OFFSET = 32;
-
-const getLayoutTop = (element: HTMLElement) => {
-  let top = 0;
-  let currentElement: HTMLElement | null = element;
-
-  while (currentElement) {
-    top += currentElement.offsetTop;
-    currentElement = currentElement.offsetParent as HTMLElement | null;
-  }
-
-  return top;
-};
-
 type NavbarProps = {
   initialTheme: ThemePreference;
 };
@@ -77,21 +68,6 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
     document.documentElement.classList.toggle(THEME_CLASS, isDarkMode);
   }, [isDarkMode]);
 
-  const scrollToSection = useCallback((sectionId: string) => {
-    const targetSection = document.getElementById(sectionId);
-    if (!targetSection) return;
-    const scrollTarget =
-      targetSection.querySelector<HTMLElement>('[data-section-anchor]') ??
-      targetSection;
-
-    const targetTop = getLayoutTop(scrollTarget) - SECTION_SCROLL_OFFSET;
-
-    window.scrollTo({
-      top: Math.max(0, targetTop),
-      behavior: 'smooth',
-    });
-  }, []);
-
   useEffect(() => {
     if (pathname !== '/') return;
 
@@ -99,10 +75,13 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
     if (!pendingSectionId) return;
 
     sessionStorage.removeItem(PENDING_SECTION_KEY);
-    requestAnimationFrame(() => {
-      scrollToSection(pendingSectionId);
+    const frame = requestAnimationFrame(() => {
+      scrollToSection(pendingSectionId, 'auto');
+      window.history.replaceState(null, '', getHomeHashUrl(pendingSectionId));
     });
-  }, [pathname, scrollToSection]);
+
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
 
   const toggleTheme = () => {
     writeThemePreference({
@@ -119,7 +98,7 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
       return;
     }
 
-    const sectionId = url.startsWith('/#') ? url.slice(2) : '';
+    const sectionId = getSectionIdFromHomeHash(url);
 
     if (!sectionId) {
       router.push(url);
@@ -128,11 +107,11 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
 
     if (pathname !== '/') {
       sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
-      router.push(url);
+      router.push('/');
       return;
     }
 
-    window.history.pushState(null, '', url);
+    window.history.pushState(null, '', getHomeHashUrl(sectionId));
     scrollToSection(sectionId);
   };
 

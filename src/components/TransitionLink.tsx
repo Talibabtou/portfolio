@@ -4,8 +4,14 @@ import {
   PAGE_TRANSITION_INNER_SELECTOR,
   PAGE_TRANSITION_SELECTOR,
 } from '@/lib/page-transition';
+import {
+  getHomeHashUrl,
+  getSectionIdFromHomeHash,
+  PENDING_SECTION_KEY,
+  scrollToSection,
+} from '@/lib/section-navigation';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { ComponentProps, MouseEvent } from 'react';
 
 interface Props extends ComponentProps<typeof Link> {
@@ -20,6 +26,7 @@ const TransitionLink = ({
   ...rest
 }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { contextSafe } = useGSAP(() => {});
 
   const handleLinkClick = contextSafe((e: MouseEvent<HTMLAnchorElement>) => {
@@ -53,7 +60,22 @@ const TransitionLink = ({
         if (back) {
           router.back();
         } else if (href) {
-          router.push(href.toString());
+          const url = href.toString();
+          const sectionId = getSectionIdFromHomeHash(url);
+
+          if (sectionId && pathname !== '/') {
+            sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
+            router.push('/');
+            return;
+          }
+
+          if (sectionId && pathname === '/') {
+            window.history.pushState(null, '', getHomeHashUrl(sectionId));
+            scrollToSection(sectionId);
+            return;
+          }
+
+          router.push(url);
         }
       });
   });

@@ -11,8 +11,7 @@ const ProjectIntro = ({ project }: ProjectIntroProps) => {
   return (
     <>
       <TransitionLink
-        back
-        href="/"
+        href="/#selected-projects"
         className="group mb-16 inline-flex h-12 items-center gap-2"
       >
         <ArrowLeft className="transition-all duration-300 group-hover:-translate-x-1 group-hover:text-primary" />
