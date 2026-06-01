@@ -235,24 +235,62 @@ const PROJECT_MEDIA_BASE = '/media/projects';
 
 export const PROJECTS: IProject[] = [
   {
-    title: 'Jupiter Prediction Market',
+    title: 'Jupiter Predict',
     slug: 'jupiter-prediction-market',
-    liveUrl: 'https://jup.ag/',
+    liveUrl: 'https://jup.ag/prediction',
     year: 2026,
+    summary:
+      'Frontend consulting work on Jupiter Predict, the prediction-market product inside Jupiter. For someone just out of school, working inside one of Solana’s top product teams was a real step up: bigger codebase, sharper reviews and users who notice every unclear state.',
     description: [
-      "Consultant frontend work on Jupiter's prediction market interface in the Solana ecosystem. The work focused on product clarity, interaction consistency and production-ready frontend implementation for market and wallet-aware flows.",
+      'Jupiter Predict brings Polymarket and other chains prediction markets into Solana.',
+      'My work sat on the frontend side of the Predict team. I was changing pieces of a live trading product, inside a codebase that already had its own internal patterns, components and expectations.',
     ],
     role: [
-      'Contributed frontend features in a fast-moving product context involving market data, wallet interactions and release quality. Improved screen clarity and implementation maintainability across user-facing flows.',
+      'I worked with the Predict team as a frontend-focused consultant in a group of four.',
+      'Most of my shipped work came through small product fixes and larger UI passes: activity tab rework, For You tab, live option, leaderboard creation, charting changes, Pay with any crypto integration and a series of desktop/mobile cleanup tasks across the product.',
+      'I also prepared profile changes near the end of the work period, but those didn’t get accepted before my mission ended, so I’m not counting them as shipped work.',
     ],
-    techStack: ['TypeScript', 'React', 'Solana', 'Wallet UX', 'Market data'],
-    thumbnail: `${PROJECT_MEDIA_BASE}/thumbnail/consulting-finance.jpg`,
+    context: [
+      'Jupiter is one of the products that defines Solana UX for a lot of users. Joining that environment right after school mattered because the bar was no longer academic or personal-project level.',
+      'Predict also has a harder UX problem than a normal content page: the user needs to understand a market, read a chart, act with a wallet and trust what happens after the click.',
+    ],
+    problem: [
+      'The most challenging wasn’t code. I often had to coordinate with other team members because I wasn’t allowed to change the API myself, which meant waiting for data changes or adjusting the frontend around shapes I didn’t fully control.',
+      'The second hard part was invisible: making the same product feel clean on desktop and mobile while the screens were dense, animated, market-driven and already built on a large internal frontend system.',
+    ],
+    contributions: [
+      'Reworked the activity tab and worked on the For You experience.',
+      'Built the leaderboard used by Predict.',
+      'Added the live option and worked through smaller product UI/UX fixes across the site.',
+      'Changed the charting approach so charts felt more alive while staying readable for trading decisions.',
+      'Worked on bet with any crypto integration and touched most Predict pages through desktop and mobile fixes.',
+    ],
+    decisions: [
+      'I leaned into Jupiter’s existing internal framework instead of trying to bring my own habits into the codebase. A lot was already built, so the work was about fitting into their system and making changes that survived review.',
+      'On charts, I cared about more than rendering data. The goal was to make the chart feel active and pleasant without losing clarity, because prediction markets get confusing fast when the visual hierarchy is weak.',
+    ],
+    results: [
+      'Most of my work shipped after review rounds with the team.',
+      'This project proved me the thing I wanted to remember: I can work inside a top Solana product team, not only around one from the outside.',
+      'It also taught me how different international teams can feel compared with French work culture, especially around hierarchy, feedback and how much ownership you’re expected to take without being asked twice.',
+    ],
+    techStack: [
+      'TypeScript',
+      'React',
+      'Tailwind CSS',
+      'Solana',
+      'Wallet UX',
+      'Market data',
+      'Charts',
+    ],
+    thumbnail: `${PROJECT_MEDIA_BASE}/jupiter/chart.png`,
     thumbnailHeight: 400,
     thumbnailWidth: 600,
     images: [
-      `${PROJECT_MEDIA_BASE}/images/consulting-finance-1.png`,
-      `${PROJECT_MEDIA_BASE}/images/consulting-finance-2.png`,
-      `${PROJECT_MEDIA_BASE}/images/consulting-finance-3.png`,
+      `${PROJECT_MEDIA_BASE}/jupiter/home-page.png`,
+      `${PROJECT_MEDIA_BASE}/jupiter/for-you-tab.png`,
+      `${PROJECT_MEDIA_BASE}/jupiter/market-page.png`,
+      `${PROJECT_MEDIA_BASE}/jupiter/leaderboard.png`,
     ],
   },
   {
@@ -264,12 +302,12 @@ export const PROJECTS: IProject[] = [
     summary:
       'My DeFi internship inside Adrena, a Solana trading product where I shipped around 30 merged PRs across trading screens, staking pages, campaign UI, swaps and smaller API work.',
     description: [
-      'Adrena is a Solana trading app for spot and perpetual markets. I joined through an internship format, but the work felt like real product work quickly: I had reports to share with other developers, code reviews to pass and screens that actual traders would use.',
+      'Adrena is a Solana trading app for spot and perpetual markets. I joined through an internship format, but the work felt like real product work quickly: I had daily reports to share with other developers, code reviews to pass and screens that actual traders would use.',
       'Most of my time went into the user-facing product: trading UI, chart work, token selector, staking leaderboard, ALP page, Jupiter swap integration and the first anniversary campaign.',
     ],
     role: [
       'I worked mainly on frontend UX and shipped roughly 30 merged PRs, ranging from chores to full page reworks.',
-      'I also touched a bit of the API layer when the frontend needed cleaner data or a better shape for a screen.',
+      'I also touched the API layer when the frontend needed cleaner data or a better shape for a screen, being careful to keep it perfectly optimized.',
     ],
     context: [
       'This was my first experience inside a DeFi product team where the interface has to make money-related actions feel clear without hiding the risk behind a pretty screen.',
@@ -288,7 +326,7 @@ export const PROJECTS: IProject[] = [
     ],
     decisions: [
       'I treated mobile as a real target, not a smaller desktop. The work often came down to spacing, ordering, loading states and removing the little jumps that users notice before they can explain them.',
-      'I kept reporting clearly to the team because the internship had a structured rhythm, but I was still trusted with product screens that mattered.',
+      'I kept reporting clearly to the team because the internship had a structured rhythm, but I was still trusted by the rest of the team with product screens that mattered.',
     ],
     results: [
       'Around 30 of my PRs were merged during the internship.',
@@ -300,6 +338,7 @@ export const PROJECTS: IProject[] = [
       'Tailwind CSS',
       'Web3.js',
       'APIs',
+      'Solana',
       'Dashboards',
       'DeFi',
     ],
@@ -321,7 +360,7 @@ export const PROJECTS: IProject[] = [
     summary:
       'A Solana betting product I built with Frensurfer around live AI fighting matches. It reached public testing, handled 100+ testers and around 150 SOL in total volume before we paused it because we couldn’t maintain it properly.',
     description: [
-      'Versus started as a product bet and a technical bet at the same time: could we turn SaltyBet-style AI fighter matches into a live Solana betting experience that felt fast enough for real users?',
+      'Versus started as a product bet and a technical bet at the same time: could we turn SaltyBet AI fighter matches into a live Solana betting experience that felt fast enough for real users?',
       'We built it as a multi-service TypeScript system with a Next.js frontend, Fastify backend, PostgreSQL with Drizzle, Twitch scraper, Solana oracle and jackpot worker running in parallel.',
     ],
     role: [
@@ -329,7 +368,7 @@ export const PROJECTS: IProject[] = [
       'My part sat close to the parts users never see but immediately feel when they break: phase detection, timing between services, payout logic, refunds, Solana transaction handling and keeping the repo runnable while the product kept moving.',
     ],
     context: [
-      'The product follows SaltyBet-style AI fighting matches: red fighter versus blue fighter, betting opens, bets lock, the match runs, then the result drives payouts.',
+      'The product follows SaltyBet AI fighting matches: red fighter versus blue fighter, betting opens, bets lock, the match runs, then the result drives payouts.',
       'We ran it on Solana mainnet during public testing. There was no custom smart contract layer in this version; the oracle managed a private wallet and coordinated the money flow from detected match state.',
     ],
     problem: [
@@ -340,16 +379,16 @@ export const PROJECTS: IProject[] = [
       'Built the Twitch scraper that listens for match phases and sends structured updates to the backend instead of relying on manual admin actions.',
       'Owned the Solana oracle flow around phase changes, private wallet operations, transaction fetching, payout computation, refunds, referral deductions and transfer execution.',
       'Handled a lot of the monorepo work: keeping the frontend, backend, scraper, oracle and jackpot services aligned enough to test and deploy together.',
-      'Worked through mainnet edge cases during public testing, including late state changes, invalid matches and payout paths where the product couldn’t afford vague behavior.',
+      'Worked through mainnet edge cases during public testing, including late state changes, invalid matches, refunds and payout paths where the product couldn’t afford vague behavior.',
     ],
     decisions: [
-      'I used Server-Sent Events instead of a heavier socket layer because the frontend mostly needs one-way live state: phase changes, match data, volume updates and global stats.',
-      'I split the system into frontend, backend, scraper, oracle and jackpot packages so each service could fail, restart and deploy with a narrower responsibility.',
+      'We used Server-Sent Events instead of a heavier socket layer because the frontend mostly needs one-way live state: phase changes, match data, volume updates and global stats.',
+      'We split the system into frontend, backend, scraper, oracle and jackpot packages so each service could fail, restart and deploy with a narrower responsibility.',
       'The oracle treated invalid matches as a normal branch, not an exception. If only one side had bets, or if a match couldn’t settle cleanly, the system needed a refund path instead of pretending every fight was usable.',
       'We stopped the public test even though the product worked, because maintaining five live services plus a mainnet money flow deserved more time than we could give it.',
     ],
     results: [
-      'Versus handled 100+ public testers and roughly 150 SOL of total betting volume before we took it down.',
+      'Versus handled 100+ public testers and roughly 100 SOL of total betting volume before we took it down.',
       'It’s the project that best shows how I think under product pressure: I can care about the betting screen, but I’m also watching the service boundary, the timing bug, the failed payout and the user who just wants to know where their SOL went.',
     ],
     techStack: [
@@ -387,7 +426,7 @@ export const PROJECTS: IProject[] = [
     ],
     role: [
       'I built and wired most of the frontend structure, real-time screens and gameplay flows as part of a three-person team.',
-      'My work sat where the browser meets the backend: routing, UI state, notifications, WebSocket updates and Pong interactions connected to services for auth, users, friends and game data.',
+      'My work sat where the browser meets the backend and the game itself: routing, UI state, notifications, WebSocket updates, canvas rendering and Pong interactions connected to services for auth, users, friends and game data.',
     ],
     context: [
       'ft_transcendence is the final web project in the 42 Common Core. The assignment expects a real multiplayer web app, with accounts and social flows, not just a canvas with a paddle.',
@@ -395,11 +434,13 @@ export const PROJECTS: IProject[] = [
     ],
     problem: [
       'The hard part was keeping the game responsive while the rest of the product still behaved like a normal app: accounts, profiles, friends, settings, stats and tournament screens all had to fit around the match flow.',
+      'We also had to build the actual Pong game in the browser: canvas dimensions, ball movement, paddle hitboxes, collision behavior and the small details that decide whether a match feels fair or broken.',
       'Because we couldn’t use React or a similar framework, I had to make lifecycle, rendering, state changes and routing explicit in TypeScript. That exposed every shortcut.',
     ],
     contributions: [
       'Built a native TypeScript single-page app with component classes, lifecycle methods and reusable UI pieces.',
-      'Connected game and social flows through WebSocket updates, route-level UI states and notifications that users could actually act on.',
+      'Worked on the web canvas game layer, including paddle collisions, ball behavior, AI player,match and gameplay states.',
+      'Connected game and social flows through WebSocket updates, route-level UI states and toast notifications that users could actually act on.',
       'Helped ship Pong across single-player, multiplayer and tournament modes, including an algorithmic AI opponent.',
     ],
     decisions: [
@@ -419,6 +460,7 @@ export const PROJECTS: IProject[] = [
       'Docker',
       'Prometheus',
       'Grafana',
+      'Gaming',
     ],
     thumbnail: `${PROJECT_MEDIA_BASE}/ft_transcendence/home-screen.png`,
     thumbnailHeight: 884,
