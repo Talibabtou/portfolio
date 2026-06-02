@@ -42,40 +42,16 @@ export const SOCIAL_LINKS = [
 ];
 
 export const CV_CONTENT = {
-  headline: 'Frontend developer focused on product interfaces',
+  headline: 'Frontend / Product Developer',
   subheadline:
-    'Frontend developer with a craft background, now building precise product UI across finance, SaaS-style tools and real-time web apps.',
+    'React, TypeScript, APIs and real-time web apps, with enough backend awareness to understand the whole flow.',
   photo: {
     src: '/cv/gdumas.jpg',
     alt: 'Guillaume Dumas in a computer lab',
   },
   intro: [
-    'I build interfaces where state, data and user trust matter: dashboards, trading screens, internal tools and API-connected workflows.',
-    'Before software, I made leather goods at Hermes, including Kelly bags. That craft background still shapes how I work: I care about alignment, loading states, mobile layouts and details users only notice when they feel wrong.',
-  ],
-  targetRoles: [
-    'Frontend Engineer',
-    'Product Engineer',
-    'Frontend Developer',
-    'Full-stack oriented frontend role',
-  ],
-  focus: [
-    {
-      label: 'Interface work',
-      value: 'Dashboards, trading screens, internal tools and data flows.',
-    },
-    {
-      label: 'Product sense',
-      value: 'I think about timing, empty states, mobile behavior and trust.',
-    },
-    {
-      label: 'Engineering range',
-      value: 'React, TypeScript, APIs, backend data shapes and Docker.',
-    },
-    {
-      label: 'Work style',
-      value: 'Careful with existing patterns, reviews and real users.',
-    },
+    'Frontend developer from Grenoble, trained at 42 Lyon after a first career in high-end leather craft. I like work where the UI has to make real data understandable: dashboards, trading screens, internal tools and API-connected flows.',
+    'I care about mobile behavior, loading states and the small defects users feel before they can name them.',
   ],
   experience: [
     {
@@ -84,12 +60,10 @@ export const CV_CONTENT = {
       period: 'Early 2026',
       role: 'Frontend Consultant',
       summary:
-        'Worked on Jupiter Predict, a live product inside a large React and TypeScript codebase with strong product review habits.',
+        'Frontend work on Jupiter Predict, a live market product inside a large React and TypeScript codebase.',
       bullets: [
-        'Reworked the activity tab, For You tab, live option and leaderboard.',
-        'Changed charting behavior so markets felt active while staying readable.',
-        'Worked on a cross-asset payment flow and fixed UI issues across desktop and mobile.',
-        'Coordinated with a small Predict team while working inside Jupiter’s internal frontend system.',
+        'Reworked activity, For You, live option and leaderboard screens.',
+        'Improved chart behavior, payment UI and desktop/mobile states.',
       ],
       stack: ['TypeScript', 'React', 'Tailwind CSS', 'Solana', 'Charts'],
     },
@@ -99,11 +73,10 @@ export const CV_CONTENT = {
       period: 'Late 2025',
       role: 'Frontend Intern',
       summary:
-        'Joined a trading product team and shipped roughly 30 merged PRs across trading, staking, campaign UI, swaps and small API work.',
+        'Joined a trading product team and shipped roughly 30 merged PRs across UI, swaps and small API work.',
       bullets: [
-        'Worked on trading UI, chart-related screens, token selector, staking leaderboard and ALP page.',
-        'Integrated Jupiter swap flows and built UI for the first anniversary campaign.',
-        'Spent a lot of time on mobile layouts, Tailwind details and tiny flickers that make a trading product feel unfinished.',
+        'Reworked trading UI, token selector, staking leaderboard and ALP screens.',
+        'Integrated Jupiter swaps, campaign UI and mobile layout fixes.',
       ],
       stack: ['TypeScript', 'React', 'Tailwind CSS', 'Web3.js', 'APIs'],
     },
@@ -113,11 +86,10 @@ export const CV_CONTENT = {
       period: '2024 - 2025',
       role: 'Founder & Developer',
       summary:
-        'Built a real-time betting product with Frensurfer around live AI fighting matches; it reached public testing with 100+ testers and around 150 SOL in total volume.',
+        'Built a real-time betting product with Frensurfer around live AI fighting matches. Public test: 100+ testers, around 150 SOL in total volume.',
       bullets: [
-        'Owned the oracle, Twitch scraper and a lot of cross-service repo work.',
-        'Kept the frontend, backend, scraper, oracle and jackpot worker aligned during live mainnet testing.',
-        'Worked through timing bugs, invalid matches, refunds, payout paths and payment operations.',
+        'Owned the Twitch scraper, oracle and cross-service repo work.',
+        'Handled timing bugs, invalid matches, refunds and payout paths.',
       ],
       stack: [
         'TypeScript',
@@ -136,8 +108,8 @@ export const CV_CONTENT = {
       summary:
         'Completed the peer-reviewed 42 Common Core through low-level, systems and web projects.',
       bullets: [
-        'Built projects in C, C++, Unix, networking, graphics, Docker and web development.',
-        'Finished ft_transcendence, a real-time Pong platform with accounts, social flows, tournaments, WebSockets and a custom TypeScript SPA.',
+        'Built projects in C, C++, Unix, networking, graphics and Docker.',
+        'Finished ft_transcendence: WebSockets, tournaments and a custom TypeScript SPA.',
       ],
       stack: ['C', 'C++', 'Unix', 'Docker', 'TypeScript', 'WebSockets'],
     },
@@ -147,10 +119,10 @@ export const CV_CONTENT = {
       period: '2017 - 2021',
       role: 'Leather Artisan',
       summary:
-        'Worked in leather craft before moving into software; the job taught me patience, precision and care for finished work.',
+        'Worked in leather craft before moving into software; it taught me patience, precision and care for finished work.',
       bullets: [
         'Built the habit of checking details before they become visible defects.',
-        'Brought that same standard into frontend work, especially around spacing, motion and product polish.',
+        'Brought that same standard into frontend work, especially around spacing and motion.',
       ],
     },
     {
@@ -158,10 +130,9 @@ export const CV_CONTENT = {
       period: '2021 - 2024',
       role: 'Founder, Board Member',
       summary:
-        'Built product, community and strategy experience around digital products, online communities and crypto-native users.',
+        'Built product, community and strategy experience around digital projects and online communities.',
       bullets: [
-        'Handled communication, community operations, business development and strategic decisions.',
-        'Learned how online communities think, what they trust and where product promises break down.',
+        'Handled communication, operations, business development and strategic decisions.',
       ],
     },
   ] satisfies CvExperience[],
@@ -172,10 +143,8 @@ export const CV_CONTENT = {
       period: '2022 - 2023',
       role: 'Independent Leatherwork Consultant',
       summary:
-        'Joined a creative studio and worked on operational product lists and made-to-measure luxury goods.',
-      bullets: [
-        'Kept the same craft standard while working in a smaller, more flexible studio context.',
-      ],
+        'Joined a creative studio and worked on product lists and made-to-measure luxury goods.',
+      bullets: [],
     },
     {
       company: 'Hermes',
@@ -183,11 +152,8 @@ export const CV_CONTENT = {
       period: '2017 - 2021',
       role: 'Leather Artisan',
       summary:
-        'Worked in high-end manufacturing with strong expectations around precision, repeatability and finish quality.',
-      bullets: [
-        'Assembled over one hundred Kelly bags.',
-        'Supported tooling and team workflows on the workshop side.',
-      ],
+        'Worked in high-end manufacturing with strong expectations around precision and finish quality.',
+      bullets: ['Assembled over one hundred Kelly bags.'],
     },
     {
       company: 'EDA',
@@ -195,7 +161,7 @@ export const CV_CONTENT = {
       period: '2014 - 2016',
       role: 'Alternating Student, Technical Office',
       summary:
-        'Worked on estimates, manufacturing and installation drawings, safety reports and customer communication.',
+        'Worked on estimates, manufacturing drawings, safety reports and customer communication.',
       bullets: [
         'Built an early habit of turning technical constraints into documents other people could use.',
       ],
@@ -228,32 +194,19 @@ export const CV_CONTENT = {
       details: 'Scientific high school diploma.',
     },
   ],
-  sectorPositioning: [
-    {
-      label: 'Specialized Products',
-      details:
-        'Trading screens, prediction markets, dashboards, wallet-aware flows and products where users need clear feedback.',
-    },
-    {
-      label: 'Fintech / Banking / SaaS',
-      details:
-        'Data-heavy interfaces, API-connected dashboards, user workflows and screens where trust depends on clear states.',
-    },
-    {
-      label: 'Product Teams',
-      details:
-        'Founder mindset, frontend quality, business understanding and the ability to turn user needs into usable interfaces.',
-    },
-  ],
   stack: [
     'TypeScript',
+    'JavaScript',
     'React',
     'Next.js',
     'Tailwind CSS',
     'Node.js',
     'Fastify',
+    'REST APIs',
+    'WebSockets',
     'PostgreSQL',
     'Docker',
+    'Git',
     'Solana',
     'Web3.js',
     'C',
@@ -263,9 +216,9 @@ export const CV_CONTENT = {
     'Product sense',
     'Ownership',
     'Communication',
-    'Leadership',
-    'Autonomy',
-    'Adaptability',
+    'Code review',
+    'Mobile-first mindset',
+    'Attention to detail',
     'Business insight',
     'Community building',
   ],

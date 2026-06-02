@@ -221,9 +221,11 @@
     body {
       background: white;
       color: black;
+      margin: 0;
     }
 
     body:has(.cv-page) .custom-cursor,
+    body:has(.cv-page) .page-transition,
     body:has(.cv-page) .preloader,
     body:has(.cv-page) .scroll-progress-indicator,
     body:has(.cv-page) .topographic-background,
@@ -231,7 +233,7 @@
       display: none;
     }
 
-    body:has(.cv-page) main {
+    body:has(.cv-page) .custom-cursor-scope > main {
       display: block;
     }
 
@@ -241,12 +243,23 @@
     }
 
     body:has(.cv-page) .cv-print-sheet {
+      --background: 0 0% 100%;
+      --foreground: 0 0% 4%;
+      --muted-foreground: 0 0% 24%;
+      --primary: 0 0% 0%;
+      --primary-foreground: 0 0% 100%;
       width: 210mm;
-      min-height: 297mm;
+      height: 286mm;
+      min-height: 0;
       max-width: none;
       background: white;
       color: black;
       box-shadow: none;
+      break-after: avoid;
+      break-inside: avoid;
+      page-break-after: avoid;
+      page-break-inside: avoid;
+      print-color-adjust: exact;
     }
   }
 }
