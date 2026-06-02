@@ -1,6 +1,13 @@
 import { CV_CONTENT, GENERAL_INFO } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { ExternalLink, GitBranch, Mail, MapPin, Phone } from 'lucide-react';
+import {
+  ExternalLink,
+  GitBranch,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+} from 'lucide-react';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 
@@ -123,11 +130,18 @@ const CvHeader = () => (
           linkedin.com/in/talibabtou
         </a>
         <a
-          className="inline-flex items-center gap-2 sm:col-span-2"
+          className="inline-flex items-center gap-2"
           href="https://github.com/Talibabtou"
         >
           <GitBranch aria-hidden="true" className="size-3.5 text-primary" />
           github.com/Talibabtou
+        </a>
+        <a
+          className="inline-flex items-center gap-2"
+          href={GENERAL_INFO.websiteUrl}
+        >
+          <Globe aria-hidden="true" className="size-3.5 text-primary" />
+          talibabtou.dev
         </a>
       </div>
     </div>
