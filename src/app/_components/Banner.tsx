@@ -56,7 +56,12 @@ const Banner = () => {
             >
               View LinkedIn
             </Button>
-            <Button as="link" href={GENERAL_INFO.cvUrl} variant="secondary">
+            <Button
+              as="link"
+              className="bg-foreground text-background hover:bg-foreground/90"
+              href={GENERAL_INFO.cvUrl}
+              variant="secondary"
+            >
               View CV
             </Button>
           </div>

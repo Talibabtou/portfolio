@@ -2,6 +2,7 @@
 
 import Button from '@/components/Button';
 import TransitionLink from '@/components/TransitionLink';
+import { GENERAL_INFO } from '@/lib/data';
 import { ArrowLeft, Download, Languages, Printer } from 'lucide-react';
 
 const CvActions = () => {
@@ -33,7 +34,13 @@ const CvActions = () => {
             Print
           </span>
         </Button>
-        <Button as="button" className="px-6 text-sm" variant="primary">
+        <Button
+          as="link"
+          className="px-6 text-sm"
+          download="guillaume-dumas-cv.pdf"
+          href={GENERAL_INFO.cvPdfUrl}
+          variant="primary"
+        >
           <span className="inline-flex items-center gap-2 whitespace-nowrap">
             <Download aria-hidden="true" className="size-4" />
             PDF

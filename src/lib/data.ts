@@ -26,6 +26,7 @@ export const GENERAL_INFO = {
   phone: '+33 6 28 40 15 84',
   location: 'Grenoble, France',
   cvUrl: '/cv',
+  cvPdfUrl: '/cv/guillaume-dumas-cv.pdf',
   websiteUrl: 'https://talibabtou.dev',
   githubRepo: 'https://github.com/Talibabtou/portfolio',
   linkedinProfile: 'https://www.linkedin.com/in/talibabtou',

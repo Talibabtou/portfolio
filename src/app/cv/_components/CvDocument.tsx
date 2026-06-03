@@ -159,7 +159,7 @@ const CvHeader = () => (
 
 const CvDocument = () => {
   return (
-    <article className="cv-print-sheet mx-auto flex h-[297mm] w-full max-w-260 flex-col bg-background px-10 py-9 text-foreground print:max-w-none print:px-[10mm] print:py-[8mm]">
+    <article className="cv-print-sheet mx-auto flex min-h-[297mm] w-full max-w-260 flex-col bg-background px-10 py-9 text-foreground print:max-w-none print:px-[10mm] print:py-[8mm]">
       <CvHeader />
 
       <div className="mt-5 grid flex-1 items-stretch gap-7 md:grid-cols-[1fr_0.42fr] print:mt-2.5 print:grid-cols-[1fr_0.42fr] print:gap-5">
