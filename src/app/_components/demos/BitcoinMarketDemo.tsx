@@ -289,7 +289,7 @@ const TradingViewBitcoinChart = ({
   return (
     <div
       aria-label="Interactive BTC USD price chart"
-      className="min-h-86 flex-1 outline-none"
+      className="min-h-80 flex-1 outline-none lg:min-h-86"
       ref={chartContainerRef}
       role="img"
     />
@@ -376,8 +376,8 @@ const BitcoinMarketDemo = () => {
   };
 
   return (
-    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-5">
-      <div className="flex flex-wrap items-start justify-between gap-5 border-foreground/10 border-b pb-3">
+    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-3 lg:pt-5">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-foreground/10 border-b pb-2 lg:gap-5 lg:pb-3">
         <div>
           <span className="font-anton text-muted-foreground text-sm uppercase">
             BTC / USD
@@ -421,7 +421,7 @@ const BitcoinMarketDemo = () => {
         </fieldset>
       </div>
 
-      <div className="relative mt-3 flex min-h-86 flex-1 flex-col">
+      <div className="relative mt-2 flex min-h-72 flex-1 flex-col lg:mt-3 lg:min-h-86">
         {canRenderChart && isLoading ? <ChartLoadingIndicator /> : null}
         {isLoading && !canRenderChart ? (
           <div className="relative grid flex-1 place-items-center overflow-hidden border border-foreground/10 bg-background-light">
@@ -442,7 +442,7 @@ const BitcoinMarketDemo = () => {
               points={points}
             />
 
-            <div className="mt-3 grid gap-4 border-foreground/10 border-t pt-3 sm:grid-cols-4">
+            <div className="mt-3 grid grid-cols-4 gap-4 border-foreground/10 border-t pt-3">
               <div>
                 <span className="font-anton text-muted-foreground text-xs uppercase">
                   Date
@@ -486,7 +486,7 @@ const BitcoinMarketDemo = () => {
         )}
       </div>
 
-      <p className="mt-3 text-muted-foreground text-sm">
+      <p className="mt-2 text-muted-foreground text-sm lg:mt-3">
         Source: CoinGecko public API
         {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>

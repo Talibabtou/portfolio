@@ -7,17 +7,19 @@ import { useIntentPreload } from '@/hooks/use-intent-preload';
 import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 
 type DemoTrackButtonProps = {
   children: ReactNode;
+  className?: string;
   onActivate: () => void;
   track: DemoTrack;
 };
 
 const DemoTrackButton = ({
   children,
+  className,
   onActivate,
   track,
 }: DemoTrackButtonProps) => {
@@ -37,7 +39,10 @@ const DemoTrackButton = ({
 
   return (
     <button
-      className="relative flex h-full w-full min-w-0 flex-col p-5 text-left"
+      className={cn(
+        'relative flex h-full w-full min-w-0 flex-col p-5 text-left',
+        className,
+      )}
       onClick={activateTrack}
       onFocus={activateTrack}
       onKeyDown={handleKeyDown}
@@ -50,9 +55,186 @@ const DemoTrackButton = ({
   );
 };
 
+type DemoTracksProps = {
+  activeTrack: DemoTrack;
+  mountedTrackIds: Set<string>;
+  onActivateTrack: (trackId: string) => void;
+};
+
+const getTrackHeader = (track: DemoTrack, isActive: boolean) => {
+  const Icon = track.icon;
+
+  return isActive ? (
+    <div
+      className="relative z-1 flex items-center justify-between gap-4"
+      key={`${track.id}-header`}
+    >
+      <Icon className="text-primary" size={24} />
+      <span className="font-anton text-muted-foreground text-sm uppercase">
+        {track.eyebrow}
+      </span>
+    </div>
+  ) : (
+    <div
+      className="absolute inset-0 flex items-center justify-center"
+      key={`${track.id}-icon`}
+    >
+      <Icon className="text-primary" size={32} />
+    </div>
+  );
+};
+
+const DesktopDemoTracks = ({
+  activeTrack,
+  mountedTrackIds,
+  onActivateTrack,
+}: DemoTracksProps) => (
+  <div className="flex h-[min(--spacing(190),78svh)] min-h-150 gap-3">
+    {DEMO_TRACKS.map((track) => {
+      const isActive = track.id === activeTrack.id;
+      const TrackComponent = track.Component;
+      const trackHeader = getTrackHeader(track, isActive);
+
+      return (
+        <div
+          className={cn(
+            'group relative overflow-hidden border border-foreground/10 text-left transition-[flex,background-color,color] duration-300 ease-out',
+            {
+              'flex-6 bg-background': isActive,
+              'flex-[0.45] bg-background-light hover:bg-background': !isActive,
+            },
+          )}
+          key={track.id}
+        >
+          {!isActive &&
+          mountedTrackIds.has(track.id) &&
+          track.keepMountedWhenInactive !== false ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-0"
+            >
+              <TrackComponent isActive={false} />
+            </div>
+          ) : null}
+          {isActive ? (
+            <div className="relative flex h-full min-w-0 flex-col p-5">
+              {trackHeader}
+              {mountedTrackIds.has(track.id) ? (
+                <TrackComponent isActive />
+              ) : null}
+            </div>
+          ) : (
+            <DemoTrackButton
+              onActivate={() => onActivateTrack(track.id)}
+              track={track}
+            >
+              {trackHeader}
+
+              <div className="mt-auto translate-y-8 opacity-0 transition-all duration-300">
+                <div className="mb-8 flex flex-wrap gap-3">
+                  {track.metrics.map((metric) => (
+                    <span
+                      className="border border-foreground/15 px-3 py-1 font-anton text-sm"
+                      key={metric}
+                    >
+                      {metric}
+                    </span>
+                  ))}
+                </div>
+                <h3 className="max-w-155 font-anton text-5xl leading-none md:text-7xl">
+                  {track.title}
+                </h3>
+                <p className="mt-5 max-w-135 text-lg text-muted-foreground">
+                  {track.detail}
+                </p>
+              </div>
+            </DemoTrackButton>
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
+
+const MobileDemoTracks = ({
+  activeTrack,
+  mountedTrackIds,
+  onActivateTrack,
+}: DemoTracksProps) => (
+  <div className="flex flex-col gap-2">
+    {DEMO_TRACKS.map((track) => {
+      const isActive = track.id === activeTrack.id;
+      const TrackComponent = track.Component;
+      const trackHeader = getTrackHeader(track, isActive);
+
+      return (
+        <div
+          className={cn(
+            'group relative w-full overflow-hidden border border-foreground/10 text-left transition-[background-color,color] duration-300 ease-out',
+            {
+              'flex-none bg-background': isActive,
+              'h-[20.75rem] sm:h-[22.75rem]':
+                isActive && track.id === 'world-map',
+              'h-10 flex-none bg-background-light hover:bg-background':
+                !isActive,
+            },
+          )}
+          key={track.id}
+        >
+          {!isActive &&
+          mountedTrackIds.has(track.id) &&
+          track.keepMountedWhenInactive !== false ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-0"
+            >
+              <TrackComponent isActive={false} />
+            </div>
+          ) : null}
+          {isActive ? (
+            <div className="relative flex h-full min-w-0 flex-col p-3">
+              {trackHeader}
+              {mountedTrackIds.has(track.id) ? (
+                <div
+                  className={cn(
+                    'relative mt-3 h-68 min-h-0 overflow-hidden sm:h-76',
+                    {
+                      'absolute inset-0 mt-0 h-auto': track.id === 'world-map',
+                    },
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'absolute inset-0 flex h-[200%] w-[200%] origin-top-left scale-50 flex-col',
+                      {
+                        'h-full w-full scale-100': track.id === 'world-map',
+                      },
+                    )}
+                  >
+                    <TrackComponent isActive />
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <DemoTrackButton
+              className="p-4"
+              onActivate={() => onActivateTrack(track.id)}
+              track={track}
+            >
+              {trackHeader}
+            </DemoTrackButton>
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
+
 const DemoLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeTrackId, setActiveTrackId] = useState(DEMO_TRACKS[0].id);
+  const [isCompactLayout, setIsCompactLayout] = useState(false);
   const [visitedTrackIds, setVisitedTrackIds] = useState(
     () => new Set([DEMO_TRACKS[0].id]),
   );
@@ -71,6 +253,18 @@ const DemoLab = () => {
       return new Set([...currentVisitedTrackIds, trackId]);
     });
   };
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 1023px)');
+    const syncCompactLayout = () => setIsCompactLayout(mediaQuery.matches);
+
+    syncCompactLayout();
+    mediaQuery.addEventListener('change', syncCompactLayout);
+
+    return () => {
+      mediaQuery.removeEventListener('change', syncCompactLayout);
+    };
+  }, []);
 
   useRevealSectionGsap({
     scope: sectionRef,
@@ -96,93 +290,23 @@ const DemoLab = () => {
       id="demo-lab"
       ref={sectionRef}
     >
-      <div className="relative z-1 w-full px-15">
+      <div className="relative z-1 w-full px-4 sm:px-6 lg:px-15">
         <SectionTitle title="Demos" className="demo-reveal" />
 
-        <div className="demo-reveal flex h-[min(--spacing(190),78svh)] min-h-150 gap-3 max-lg:h-auto max-lg:min-h-0 max-lg:flex-col">
-          {DEMO_TRACKS.map((track) => {
-            const isActive = track.id === activeTrack.id;
-            const Icon = track.icon;
-            const TrackComponent = track.Component;
-            const trackHeader = isActive ? (
-              <div
-                className="relative z-1 flex items-center justify-between gap-4"
-                key={`${track.id}-header`}
-              >
-                <Icon className="text-primary" size={24} />
-                <span className="font-anton text-muted-foreground text-sm uppercase">
-                  {track.eyebrow}
-                </span>
-              </div>
-            ) : (
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                key={`${track.id}-icon`}
-              >
-                <Icon className="text-primary" size={32} />
-              </div>
-            );
-
-            return (
-              <div
-                className={cn(
-                  'group relative overflow-hidden border border-foreground/10 text-left transition-[flex,background-color,color] duration-300 ease-out',
-                  'max-lg:min-h-26 max-lg:w-full',
-                  {
-                    'flex-6 bg-background': isActive,
-                    'flex-[0.45] bg-background-light hover:bg-background':
-                      !isActive,
-                  },
-                )}
-                key={track.id}
-              >
-                {!isActive &&
-                mountedTrackIds.has(track.id) &&
-                track.keepMountedWhenInactive !== false ? (
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 opacity-0"
-                  >
-                    <TrackComponent isActive={false} />
-                  </div>
-                ) : null}
-                {isActive ? (
-                  <div className="relative flex h-full min-w-0 flex-col p-5">
-                    {trackHeader}
-                    {mountedTrackIds.has(track.id) ? (
-                      <TrackComponent isActive />
-                    ) : null}
-                  </div>
-                ) : (
-                  <DemoTrackButton
-                    onActivate={() => activateTrack(track.id)}
-                    track={track}
-                  >
-                    {trackHeader}
-
-                    <div className="mt-auto translate-y-8 opacity-0 transition-all duration-300 max-lg:translate-y-0 max-lg:opacity-100">
-                      <div className="mb-8 flex flex-wrap gap-3">
-                        {track.metrics.map((metric) => (
-                          <span
-                            className="border border-foreground/15 px-3 py-1 font-anton text-sm"
-                            key={metric}
-                          >
-                            {metric}
-                          </span>
-                        ))}
-                      </div>
-                      <h3 className="max-w-155 font-anton text-5xl leading-none md:text-7xl">
-                        {track.title}
-                      </h3>
-                      <p className="mt-5 max-w-135 text-lg text-muted-foreground">
-                        {track.detail}
-                      </p>
-                    </div>
-                  </DemoTrackButton>
-                )}
-              </div>
-            );
-          })}
+        <div className="demo-reveal">
+          {isCompactLayout ? (
+            <MobileDemoTracks
+              activeTrack={activeTrack}
+              mountedTrackIds={mountedTrackIds}
+              onActivateTrack={activateTrack}
+            />
+          ) : (
+            <DesktopDemoTracks
+              activeTrack={activeTrack}
+              mountedTrackIds={mountedTrackIds}
+              onActivateTrack={activateTrack}
+            />
+          )}
         </div>
       </div>
     </section>

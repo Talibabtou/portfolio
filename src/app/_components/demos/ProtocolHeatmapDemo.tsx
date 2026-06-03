@@ -206,6 +206,7 @@ const getTooltipPosition = (
 
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
+  const [isCompactDemo, setIsCompactDemo] = useState(false);
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [protocols, setProtocols] = useState<HeatmapProtocol[]>([]);
@@ -216,6 +217,18 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const { hasMounted, isVisible } = useDebouncedActivation(isActive, {
     delayMs: UI_TIMINGS.demoTabVisibilityDelayMs,
   });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 1023px)');
+    const syncCompactDemo = () => setIsCompactDemo(mediaQuery.matches);
+
+    syncCompactDemo();
+    mediaQuery.addEventListener('change', syncCompactDemo);
+
+    return () => {
+      mediaQuery.removeEventListener('change', syncCompactDemo);
+    };
+  }, []);
 
   useEffect(() => {
     let ignoreRequest = false;
@@ -275,8 +288,9 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           animationDuration: 0,
           animationDurationUpdate: 0,
           breadcrumb: { show: false },
-          roam: false,
+          ...(isCompactDemo ? { bottom: 35, left: 0, right: 0, top: 0 } : {}),
           nodeClick: false,
+          roam: false,
           data: treemapProtocols.map((protocol, index) => {
             const labelStyle = getTileLabelStyle(
               protocol.revenue30d / totalRevenue,
@@ -411,7 +425,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
         trigger: 'item',
       },
     };
-  }, [palette, protocolsById, treemapProtocols]);
+  }, [isCompactDemo, palette, protocolsById, treemapProtocols]);
 
   if (!hasMounted) return null;
 
@@ -432,7 +446,7 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
           <span className="max-w-96 text-muted-foreground">{error}</span>
         </div>
       ) : (
-        <div className="h-full p-2">
+        <div className="h-full p-2 max-lg:absolute max-lg:inset-0 max-lg:p-0">
           <ReactEChartsCore
             echarts={echarts}
             notMerge
@@ -441,22 +455,22 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
             style={{
               backgroundColor: 'transparent',
               height: '100%',
-              minHeight: '26rem',
+              minHeight: isCompactDemo ? '100%' : '26rem',
               width: '100%',
             }}
           />
         </div>
       )}
 
-      <p className="pointer-events-none absolute bottom-5 left-4 z-3 text-muted-foreground text-sm">
+      <p className="pointer-events-none absolute bottom-1 z-3 text-muted-foreground text-sm leading-none lg:bottom-5 lg:left-4 lg:text-sm lg:leading-normal">
         Source: DefiLlama free API
         {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
-      <div className="absolute right-4 bottom-5 z-3">
+      <div className="absolute right-0 bottom-0 z-3 lg:right-4 lg:bottom-5">
         <button
           aria-expanded={isFormulaOpen}
           aria-label="Business score formula"
-          className="grid size-7 place-items-center text-muted-foreground backdrop-blur-sm transition-colors hover:text-foreground"
+          className="grid size-7 place-items-center text-muted-foreground"
           onClick={() => setIsFormulaOpen((isOpen) => !isOpen)}
           type="button"
         >

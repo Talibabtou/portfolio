@@ -313,8 +313,8 @@ const WalletFlowDemo = () => {
   };
 
   return (
-    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-5">
-      <div className="flex flex-wrap items-start justify-between gap-5 border-foreground/10 border-b pb-3">
+    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-3 lg:pt-5">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-foreground/10 border-b pb-2 lg:gap-5 lg:pb-3">
         <div>
           <span className="font-anton text-muted-foreground text-sm uppercase">
             Wallet allocation
@@ -374,10 +374,10 @@ const WalletFlowDemo = () => {
         </form>
       </div>
 
-      <div className="mt-3 grid min-h-0 flex-1 grid-cols-[0.9fr_1.1fr] overflow-hidden border border-foreground/10 bg-background-light max-lg:grid-cols-1">
-        <div className="relative grid min-h-80 place-items-center border-foreground/10 border-r p-6 max-lg:border-r-0 max-lg:border-b">
+      <div className="mt-2 grid min-h-0 flex-1 grid-cols-[0.9fr_1.1fr] overflow-hidden border border-foreground/10 bg-background-light lg:mt-3">
+        <div className="relative grid min-h-72 place-items-center border-foreground/10 border-r p-5 lg:min-h-80 lg:p-6">
           <div
-            className="relative grid size-84 place-items-center"
+            className="relative grid size-76 place-items-center lg:size-84"
             onPointerLeave={() => setHoveredTokenMint(undefined)}
           >
             <svg
@@ -405,12 +405,12 @@ const WalletFlowDemo = () => {
                 );
               })}
             </svg>
-            <div className="pointer-events-none absolute grid size-38 place-items-center rounded-full border border-foreground/10 bg-background text-center">
+            <div className="pointer-events-none absolute grid size-34 place-items-center rounded-full border border-foreground/10 bg-background text-center lg:size-38">
               <div>
                 <span className="font-anton text-muted-foreground text-xs uppercase">
                   {highlightedToken ? highlightedToken.symbol : 'Total wallet'}
                 </span>
-                <p className="mt-1 font-anton text-4xl leading-none">
+                <p className="mt-1 font-anton text-3xl leading-none lg:text-4xl">
                   {highlightedToken
                     ? `${highlightedToken.percentage.toFixed(1)}%`
                     : snapshot

@@ -169,8 +169,8 @@ const GitHubRadarDemo = () => {
   };
 
   return (
-    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-5">
-      <div className="flex flex-wrap items-start justify-between gap-5 border-foreground/10 border-b pb-3">
+    <div className="mt-auto flex min-h-0 flex-1 flex-col pt-3 lg:pt-5">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-foreground/10 border-b pb-2 lg:gap-5 lg:pb-3">
         <div>
           <span className="font-anton text-muted-foreground text-sm uppercase">
             Public Search API
@@ -207,7 +207,7 @@ const GitHubRadarDemo = () => {
         </fieldset>
       </div>
 
-      <div className="relative mt-3 flex min-h-86 flex-1 flex-col">
+      <div className="relative mt-2 flex min-h-74 flex-1 flex-col lg:mt-3 lg:min-h-86">
         {shouldShowLoadingState ? (
           <div className="grid flex-1 place-items-center overflow-hidden border border-foreground/10 bg-background-light">
             <Loader2 className="animate-spin text-primary" size={30} />
@@ -236,7 +236,7 @@ const GitHubRadarDemo = () => {
               ) : null}
             </div>
 
-            <div className="grid min-h-0 flex-1 grid-rows-3 divide-y divide-foreground/10 overflow-hidden">
+            <div className="grid min-h-0 flex-1 grid-rows-3 divide-y divide-foreground/10 overflow-hidden max-lg:flex max-lg:flex-col">
               {visibleRepositories.map((repository, index) => {
                 const signal = getRepositorySignal(repository, activeTab);
                 const SignalIcon = signal.icon;
@@ -244,16 +244,16 @@ const GitHubRadarDemo = () => {
 
                 return (
                   <a
-                    className="grid min-h-0 grid-cols-[3rem_1fr_auto] items-center gap-4 px-5 py-4 transition-colors hover:bg-background"
+                    className="grid min-h-0 grid-cols-[3rem_1fr_auto] items-center gap-4 px-5 py-4 transition-colors hover:bg-background max-lg:flex-1 max-lg:grid-cols-[2.75rem_1fr_auto] max-lg:py-2.5"
                     href={repository.html_url}
                     key={repository.id}
                     rel="noreferrer"
                     target="_blank"
                   >
-                    <span className="font-anton text-4xl text-primary leading-none">
+                    <span className="font-anton text-4xl text-primary leading-none max-lg:self-center">
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <span className="min-w-0">
+                    <span className="min-w-0 max-lg:self-center">
                       <span className="flex items-center gap-3">
                         <span className="grid size-8 shrink-0 place-items-center overflow-hidden border border-foreground/10 bg-background">
                           {avatarUrl ? (
@@ -273,11 +273,11 @@ const GitHubRadarDemo = () => {
                           {repository.full_name}
                         </span>
                       </span>
-                      <span className="mt-2 line-clamp-2 text-muted-foreground text-sm leading-snug">
+                      <span className="mt-2 line-clamp-2 text-muted-foreground text-sm leading-snug max-lg:mt-1.5 max-lg:line-clamp-1">
                         {repository.description ?? 'No description provided'}
                       </span>
                     </span>
-                    <span className="flex min-w-20 flex-col items-end gap-1 font-anton">
+                    <span className="flex min-w-20 flex-col items-end gap-1 font-anton max-lg:self-center">
                       <span className="flex items-center gap-2 text-2xl text-primary leading-none">
                         <SignalIcon size={19} />
                         {signal.value}
@@ -294,7 +294,7 @@ const GitHubRadarDemo = () => {
         )}
       </div>
 
-      <p className="mt-3 text-muted-foreground text-sm">
+      <p className="mt-2 text-muted-foreground text-sm lg:mt-3">
         Source: GitHub public Search API
         {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>

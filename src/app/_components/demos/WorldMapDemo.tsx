@@ -33,11 +33,14 @@ const Globe = dynamic(() => import('react-globe.gl'), {
   ssr: false,
 });
 const MIN_EARTHQUAKE_MAGNITUDE = 4.5;
-const GLOBE_VIEWPOINT = { altitude: 1.5, lat: 42, lng: 8 };
+const GLOBE_VIEWPOINT = { altitude: 1.7, lat: 42, lng: 8 };
 const GLOBE_VIEW_TRANSITION = 900;
 const GLOBE_AUTO_ROTATE_SPEED = 0.18;
 const GLOBE_ROTATE_SPEED = 0.12;
 const GLOBE_ZOOM_SPEED = 0.35;
+const isCompactDemoViewport = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(max-width: 1023px)').matches;
 const getMagnitudeScale = (magnitude: number) => {
   const min = MIN_EARTHQUAKE_MAGNITUDE;
   const base = Math.max(0, magnitude - min + 1);
@@ -150,25 +153,38 @@ const GlobeSurface = ({
   }, []);
 
   useEffect(() => {
+    void isVisible;
+
     const container = containerRef.current;
     if (!container) return;
 
     const updateDimensions = () => {
       const rect = container.getBoundingClientRect();
+      const isCompactDemo = isCompactDemoViewport();
 
       setDimensions({
-        height: Math.max(1, Math.round(rect.height)),
-        width: Math.max(1, Math.round(rect.width)),
+        height: Math.max(
+          1,
+          isCompactDemo ? container.offsetHeight : Math.round(rect.height),
+        ),
+        width: Math.max(
+          1,
+          isCompactDemo ? container.offsetWidth : Math.round(rect.width),
+        ),
       });
     };
 
     updateDimensions();
+    const animationFrame = requestAnimationFrame(updateDimensions);
 
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(container);
 
-    return () => resizeObserver.disconnect();
-  }, []);
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+    };
+  }, [isVisible]);
 
   useEffect(() => {
     fetchCountries()
@@ -230,7 +246,7 @@ const GlobeSurface = ({
 
   return (
     <div
-      className="absolute inset-0 z-0 transition-opacity duration-150"
+      className="max-lg:[&>div]:!h-full max-lg:[&>div]:!w-full max-lg:[&_canvas]:!h-full max-lg:[&_canvas]:!w-full absolute inset-0 z-0 transition-opacity duration-150"
       ref={containerRef}
       style={{
         opacity: isVisible ? 1 : 0,
@@ -370,7 +386,7 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
           isLoading={isLoading}
         />
       ) : null}
-      <p className="pointer-events-none absolute bottom-5 left-4 z-1 text-muted-foreground text-sm">
+      <p className="pointer-events-none absolute bottom-2 left-3 z-1 text-[0.45rem] text-muted-foreground leading-none lg:bottom-5 lg:left-4 lg:text-sm lg:leading-normal">
         Source: USGS Earthquake Catalog
         {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
