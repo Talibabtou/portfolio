@@ -60,7 +60,7 @@ const AboutMe = () => {
           </div>
 
           <div className="md:col-span-6 md:flex md:justify-end">
-            <div className="portrait-hover slide-up-and-fade group relative w-full max-w-80">
+            <div className="portrait-hover slide-up-and-fade group relative mx-auto w-full max-w-80 md:mx-0">
               <span
                 aria-hidden="true"
                 className="portrait-border-wave absolute inset-0 border border-primary/60 opacity-0"

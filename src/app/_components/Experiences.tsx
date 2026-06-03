@@ -89,13 +89,13 @@ const Experiences = () => {
                     })}
                   >
                     {item.logo ? (
-                      <div className="flex size-18 items-center justify-center">
+                      <div className="flex h-18 w-28 items-center justify-center md:size-18">
                         <Image
                           src={item.logo}
                           alt={`${item.company} logo`}
-                          width="72"
+                          width="128"
                           height="72"
-                          className="h-full w-auto max-w-none object-contain"
+                          className="max-h-full w-auto max-w-full object-contain md:h-full md:max-w-none"
                         />
                       </div>
                     ) : (

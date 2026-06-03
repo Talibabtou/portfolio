@@ -17,31 +17,31 @@ type StackItemListProps = {
 };
 
 const StackItemList = ({ items }: StackItemListProps) => (
-  <div className="flex flex-wrap gap-x-11 gap-y-7">
+  <div className="flex flex-wrap gap-x-7 gap-y-5 sm:gap-x-11 sm:gap-y-7">
     {items.map((item) => (
       <div
-        className="slide-up flex items-center gap-3.5 leading-none"
+        className="slide-up flex items-center gap-2.5 leading-none sm:gap-3.5"
         key={item.name}
       >
         {item.icon ? (
-          <span className="inline-flex size-10 shrink-0 items-center justify-center">
+          <span className="inline-flex size-8 shrink-0 items-center justify-center sm:size-10">
             <Image
               src={item.icon}
               alt={item.name}
               width="40"
               height="40"
-              className="size-8 object-contain"
+              className="size-6.5 object-contain sm:size-8"
             />
           </span>
         ) : (
           <span
             aria-hidden="true"
-            className="inline-flex size-10 shrink-0 items-center justify-center rounded-sm bg-background-light font-anton text-primary text-sm"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-sm bg-background-light font-anton text-primary text-xs sm:size-10 sm:text-sm"
           >
             {item.name.slice(0, 2)}
           </span>
         )}
-        <span className="text-2xl capitalize">{item.name}</span>
+        <span className="text-xl capitalize sm:text-2xl">{item.name}</span>
       </div>
     ))}
   </div>
@@ -78,7 +78,7 @@ const Skills = () => {
           {Object.entries(MY_STACK).map(([key, value]) => (
             <div className="grid gap-y-2 sm:grid-cols-12 sm:gap-x-6" key={key}>
               <div className="sm:order-2 sm:col-span-5 sm:flex sm:items-center">
-                <p className="slide-up font-anton text-5xl text-muted-foreground uppercase leading-none">
+                <p className="slide-up font-anton text-4xl text-muted-foreground uppercase leading-none md:text-5xl">
                   {key}
                 </p>
               </div>
