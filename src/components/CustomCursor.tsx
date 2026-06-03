@@ -7,18 +7,26 @@ const CustomCursor = () => {
   useEffect(() => {
     if (window.innerWidth < 768) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const updateCursorPosition = (clientX: number, clientY: number) => {
       if (!svgRef.current) return;
-
-      const { clientX, clientY } = e;
 
       svgRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
     };
 
+    const handleMouseMove = (event: MouseEvent) => {
+      updateCursorPosition(event.clientX, event.clientY);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      updateCursorPosition(event.clientX, event.clientY);
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointermove', handlePointerMove);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointermove', handlePointerMove);
     };
   }, []);
 

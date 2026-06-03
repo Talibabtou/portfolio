@@ -1,30 +1,55 @@
 'use client';
 import { clamp01 } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
-import type { KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, PointerEvent } from 'react';
 
 const getScrollableHeight = () => {
   const { scrollHeight, clientHeight } = document.documentElement;
   return Math.max(0, scrollHeight - clientHeight);
 };
 
-const scrollToProgress = (progress: number) => {
+const scrollToProgress = (
+  progress: number,
+  behavior: ScrollBehavior = 'smooth',
+) => {
   window.scrollTo({
-    behavior: 'smooth',
+    behavior,
     top: getScrollableHeight() * clamp01(progress),
   });
 };
 
 const ScrollProgressIndicator = () => {
   const scrollBarRef = useRef<HTMLDivElement>(null);
+  const scrollTrackRef = useRef<HTMLSpanElement>(null);
+  const isDraggingRef = useRef(false);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (event.detail === 0) return;
+  const getProgressFromPointer = (clientY: number) => {
+    const trackRect = scrollTrackRef.current?.getBoundingClientRect();
+    if (!trackRect) return 0;
 
-    const trackRect = event.currentTarget.getBoundingClientRect();
-    const clickProgress = (event.clientY - trackRect.top) / trackRect.height;
+    return (clientY - trackRect.top) / trackRect.height;
+  };
 
-    scrollToProgress(clickProgress);
+  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    isDraggingRef.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    scrollToProgress(getProgressFromPointer(event.clientY), 'auto');
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!isDraggingRef.current) return;
+
+    event.preventDefault();
+    scrollToProgress(getProgressFromPointer(event.clientY), 'auto');
+  };
+
+  const handlePointerEnd = (event: PointerEvent<HTMLButtonElement>) => {
+    isDraggingRef.current = false;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -85,13 +110,19 @@ const ScrollProgressIndicator = () => {
   return (
     <button
       aria-label="Scroll to page position"
-      className="scroll-progress-indicator group fixed top-[50svh] right-[calc(2%-0.375rem)] z-5 h-25 w-5 -translate-y-1/2 cursor-none rounded-full bg-transparent focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-      onClick={handleClick}
       onKeyDown={handleKeyDown}
+      onPointerCancel={handlePointerEnd}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
       title="Scroll to page position"
       type="button"
+      className="scroll-progress-indicator group fixed top-[50svh] right-[calc(2%-0.375rem)] z-5 h-29 w-5 -translate-y-1/2 cursor-none touch-none rounded-full bg-transparent focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
     >
-      <span className="absolute top-0 left-1/2 h-full w-1.5 -translate-x-1/2 overflow-hidden rounded-full bg-background-light transition-colors group-hover:bg-foreground/15">
+      <span
+        className="absolute top-1/2 left-1/2 h-25 w-1.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-background-light transition-colors group-hover:bg-foreground/15"
+        ref={scrollTrackRef}
+      >
         <span
           className="block h-full w-full origin-top rounded-full bg-primary"
           ref={scrollBarRef}
