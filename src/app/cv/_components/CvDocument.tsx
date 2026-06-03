@@ -1,4 +1,4 @@
-import { CV_CONTENT, GENERAL_INFO } from '@/lib/data';
+import { GENERAL_INFO, type CvContent } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import {
   ExternalLink,
@@ -11,9 +11,15 @@ import {
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 
-const softwareExperience = CV_CONTENT.experience.filter(
-  (experience) => experience.company !== 'Hermes',
-);
+type CvLabels = {
+  about: string;
+  education: string;
+  experience: string;
+  hardStack: string;
+  languages: string;
+  previousCareer: string;
+  softSkills: string;
+};
 
 const CvSection = ({
   children,
@@ -66,7 +72,7 @@ const TagList = ({ items }: { items: string[] }) => (
 const ExperienceItem = ({
   experience,
 }: {
-  experience: (typeof softwareExperience)[number];
+  experience: CvContent['experience'][number];
 }) => (
   <div className="break-inside-avoid">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -90,17 +96,17 @@ const ExperienceItem = ({
   </div>
 );
 
-const CvHeader = () => (
+const CvHeader = ({ content }: { content: CvContent }) => (
   <header className="grid gap-7 border-foreground/15 border-b pb-5 md:grid-cols-[1fr_9rem] print:grid-cols-[1fr_5.8rem] print:gap-4 print:border-black/40 print:pb-2">
     <div>
       <p className="mb-2 font-anton text-primary text-sm uppercase tracking-[0.18em] print:mb-1.5 print:text-[0.76rem]">
-        {CV_CONTENT.headline}
+        {content.headline}
       </p>
       <h1 className="font-anton text-5xl leading-none md:text-6xl print:text-[2.32rem]">
         {GENERAL_INFO.name}
       </h1>
       <p className="mt-3 max-w-170 text-muted-foreground text-sm leading-snug print:mt-1 print:max-w-126 print:text-[0.72rem]">
-        {CV_CONTENT.subheadline}
+        {content.subheadline}
       </p>
 
       <div className="mt-4 grid gap-x-5 gap-y-2 text-[0.84rem] sm:grid-cols-2 print:mt-2 print:gap-y-0.5 print:text-[0.66rem]">
@@ -147,26 +153,36 @@ const CvHeader = () => (
     </div>
 
     <Image
-      alt={CV_CONTENT.photo.alt}
+      alt={content.photo.alt}
       className="aspect-3/4 w-32 justify-self-start object-cover saturate-[0.35] md:w-full print:w-full print:saturate-0"
       height={427}
       priority
-      src={CV_CONTENT.photo.src}
+      src={content.photo.src}
       width={320}
     />
   </header>
 );
 
-const CvDocument = () => {
+const CvDocument = ({
+  content,
+  labels,
+}: {
+  content: CvContent;
+  labels: CvLabels;
+}) => {
+  const softwareExperience = content.experience.filter(
+    (experience) => experience.company !== 'Hermes',
+  );
+
   return (
     <article className="cv-print-sheet mx-auto flex min-h-[297mm] w-full max-w-260 flex-col bg-background px-10 py-9 text-foreground print:max-w-none print:px-[10mm] print:py-[8mm]">
-      <CvHeader />
+      <CvHeader content={content} />
 
       <div className="mt-5 grid flex-1 items-stretch gap-7 md:grid-cols-[1fr_0.42fr] print:mt-2.5 print:grid-cols-[1fr_0.42fr] print:gap-5">
         <main className="flex h-full flex-col gap-5 print:gap-3.5">
-          <CvSection title="About">
+          <CvSection title={labels.about}>
             <div className="space-y-1.5 text-muted-foreground text-sm leading-snug print:space-y-1 print:text-[0.72rem]">
-              {CV_CONTENT.intro.map((paragraph) => (
+              {content.intro.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
@@ -175,7 +191,7 @@ const CvDocument = () => {
           <CvSection
             className="flex flex-1 flex-col"
             contentClassName="flex flex-1 flex-col justify-between gap-5 print:gap-3.5"
-            title="Experience"
+            title={labels.experience}
           >
             {softwareExperience.map((experience) => (
               <ExperienceItem
@@ -187,17 +203,17 @@ const CvDocument = () => {
         </main>
 
         <aside className="flex h-full flex-col justify-between">
-          <CvSection title="Hard Stack">
-            <TagList items={CV_CONTENT.stack} />
+          <CvSection title={labels.hardStack}>
+            <TagList items={content.stack} />
           </CvSection>
 
-          <CvSection title="Soft Skills">
-            <TagList items={CV_CONTENT.softSkills} />
+          <CvSection title={labels.softSkills}>
+            <TagList items={content.softSkills} />
           </CvSection>
 
-          <CvSection title="Previous Career">
+          <CvSection title={labels.previousCareer}>
             <div className="space-y-2.5 print:space-y-1.5">
-              {CV_CONTENT.previousCareer.slice(0, 2).map((experience) => (
+              {content.previousCareer.slice(0, 2).map((experience) => (
                 <div key={`${experience.company}-${experience.period}`}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="font-anton text-[0.92rem] leading-none print:text-[0.74rem]">
@@ -215,9 +231,9 @@ const CvDocument = () => {
             </div>
           </CvSection>
 
-          <CvSection title="Education">
+          <CvSection title={labels.education}>
             <div className="space-y-2 print:space-y-1.5">
-              {CV_CONTENT.education.map((education) => (
+              {content.education.map((education) => (
                 <div key={`${education.school}-${education.period}`}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="font-anton text-[0.86rem] leading-none print:text-[0.7rem]">
@@ -235,9 +251,9 @@ const CvDocument = () => {
             </div>
           </CvSection>
 
-          <CvSection title="Languages">
+          <CvSection title={labels.languages}>
             <p className="text-[0.84rem] print:text-[0.68rem]">
-              {CV_CONTENT.languages.join(' - ')}
+              {content.languages.join(' - ')}
             </p>
           </CvSection>
         </aside>

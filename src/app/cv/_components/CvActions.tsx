@@ -5,7 +5,14 @@ import TransitionLink from '@/components/TransitionLink';
 import { GENERAL_INFO } from '@/lib/data';
 import { ArrowLeft, Download, Languages, Printer } from 'lucide-react';
 
-const CvActions = () => {
+type CvActionsProps = {
+  language: 'en' | 'fr';
+  onToggleLanguage: () => void;
+};
+
+const CvActions = ({ language, onToggleLanguage }: CvActionsProps) => {
+  const nextLanguageLabel = language === 'en' ? 'FR' : 'EN';
+
   return (
     <div className="mx-auto mb-6 flex w-full max-w-260 items-center justify-between gap-4 print:hidden">
       <TransitionLink
@@ -17,10 +24,15 @@ const CvActions = () => {
       </TransitionLink>
 
       <div className="flex flex-wrap justify-end gap-3">
-        <Button as="button" className="px-6 text-sm" variant="primary">
+        <Button
+          as="button"
+          className="px-6 text-sm"
+          onClick={onToggleLanguage}
+          variant="primary"
+        >
           <span className="inline-flex items-center gap-2 whitespace-nowrap">
             <Languages aria-hidden="true" className="size-4" />
-            EN
+            {nextLanguageLabel}
           </span>
         </Button>
         <Button

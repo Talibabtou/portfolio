@@ -46,14 +46,15 @@ export const SOCIAL_LINKS = [
 export const CV_CONTENT = {
   headline: 'Frontend / Product Developer',
   subheadline:
-    'React, TypeScript, APIs and real-time web apps, with enough backend awareness to understand the whole flow.',
+    'React/Next.js, TypeScript, APIs and real-time web apps, with enough backend awareness to understand the whole flow.',
   photo: {
     src: '/cv/gdumas.jpg',
-    alt: 'Guillaume Dumas in a computer lab',
+    alt: 'Guillaume Dumas in 42 school',
   },
   intro: [
-    'Frontend developer from Grenoble, trained at 42 Lyon after a first career in high-end leather craft. I like work where the UI has to make real data understandable: dashboards, trading screens, internal tools and API-connected flows.',
-    'I care about mobile behavior, loading states and the small defects users feel before they can name them.',
+    'Frontend developer from Grenoble, trained at 42 School Lyon after a first career in high-end leather craft.',
+    'I like turning complex product flows into clear, readable interfaces that feel easy to pick up.',
+    'I care about details and the small defects users feel before they can describe them.',
   ],
   experience: [
     {
@@ -75,7 +76,7 @@ export const CV_CONTENT = {
       period: 'Late 2025',
       role: 'Frontend Intern',
       summary:
-        'Joined a trading product team and shipped roughly 30 merged PRs across UI, swaps and small API work.',
+        'Joined a trading product team and shipped roughly 30 merged PRs across UI, swaps and optimized API work.',
       bullets: [
         'Reworked trading UI, token selector, staking leaderboard and ALP screens.',
         'Integrated Jupiter swaps, campaign UI and mobile layout fixes.',
@@ -88,10 +89,10 @@ export const CV_CONTENT = {
       period: '2024 - 2025',
       role: 'Founder & Developer',
       summary:
-        'Built a real-time betting product with Frensurfer around live AI fighting matches. Public test: 100+ testers, around 150 SOL in total volume.',
+        'Built a real-time betting product around live AI fighting matches. Public testing: 100+ testers, around 100 SOL in total volume.',
       bullets: [
-        'Owned the Twitch scraper, oracle and cross-service repo work.',
-        'Handled timing bugs, invalid matches, refunds and payout paths.',
+        'Owned the Twitch scraper, oracle and monorepo work.',
+        'Handled timing bugs, invalid matches, refunds and payout logic.',
       ],
       stack: [
         'TypeScript',
@@ -111,24 +112,12 @@ export const CV_CONTENT = {
         'Completed the peer-reviewed 42 Common Core through low-level, systems and web projects.',
       bullets: [
         'Built projects in C, C++, Unix, networking, graphics and Docker.',
-        'Finished ft_transcendence: WebSockets, tournaments and a custom TypeScript SPA.',
+        'Finished ft_transcendence: a Pong platform with multiplayer tournaments in a TypeScript SPA.',
       ],
-      stack: ['C', 'C++', 'Unix', 'Docker', 'TypeScript', 'WebSockets'],
+      stack: ['C', 'C++', 'Unix', 'Docker', 'TypeScript'],
     },
     {
-      company: 'Hermes',
-      location: 'France',
-      period: '2017 - 2021',
-      role: 'Leather Artisan',
-      summary:
-        'Worked in leather craft before moving into software; it taught me patience, precision and care for finished work.',
-      bullets: [
-        'Built the habit of checking details before they become visible defects.',
-        'Brought that same standard into frontend work, especially around spacing and motion.',
-      ],
-    },
-    {
-      company: 'Magicake / Doge Capital',
+      company: 'Magicake & Doge Capital',
       period: '2021 - 2024',
       role: 'Founder, Board Member',
       summary:
@@ -144,8 +133,7 @@ export const CV_CONTENT = {
       location: 'Barcelona, Spain',
       period: '2022 - 2023',
       role: 'Independent Leatherwork Consultant',
-      summary:
-        'Joined a creative studio and worked on product lists and made-to-measure luxury goods.',
+      summary: 'Joined a creative studio and worked on luxury goods.',
       bullets: [],
     },
     {
@@ -154,7 +142,7 @@ export const CV_CONTENT = {
       period: '2017 - 2021',
       role: 'Leather Artisan',
       summary:
-        'Worked in high-end manufacturing with strong expectations around precision and finish quality.',
+        'Worked in high-end manufacturing with strong expectations around precision and craftsmanship.',
       bullets: ['Assembled over one hundred Kelly bags.'],
     },
     {
@@ -198,7 +186,6 @@ export const CV_CONTENT = {
   ],
   stack: [
     'TypeScript',
-    'JavaScript',
     'React',
     'Next.js',
     'Tailwind CSS',
@@ -215,17 +202,174 @@ export const CV_CONTENT = {
     'C++',
   ],
   softSkills: [
-    'Product sense',
+    'Product understanding',
     'Ownership',
     'Communication',
     'Code review',
-    'Mobile-first mindset',
+    'Design sense',
     'Attention to detail',
     'Business insight',
     'Community building',
   ],
   languages: ['French native', 'English fluent'],
 };
+
+export type CvContent = typeof CV_CONTENT;
+
+export const CV_CONTENT_FR = {
+  headline: 'Développeur Frontend / Produit',
+  subheadline:
+    'React/Next.js, TypeScript, APIs et applications temps réel, avec assez de recul backend pour comprendre le flux complet.',
+  photo: {
+    src: '/cv/gdumas.jpg',
+    alt: 'Guillaume Dumas à 42 School',
+  },
+  intro: [
+    'Développeur frontend basé à Grenoble, formé à 42 School Lyon après une première carrière dans la maroquinerie haut de gamme.',
+    "J'aime transformer des parcours produit complexes en interfaces claires, lisibles et simples à prendre en main.",
+    'Je fais attention aux détails et aux petits défauts que les utilisateurs ressentent avant même de pouvoir les décrire.',
+  ],
+  experience: [
+    {
+      company: 'Jupiter',
+      location: 'Télétravail',
+      period: 'Début 2026',
+      role: 'Consultant Frontend',
+      summary:
+        'Travail frontend sur Jupiter Predict, un produit de marché live dans une large codebase React et TypeScript.',
+      bullets: [
+        "Refonte de la page d'activité, For You, live option et leaderboard.",
+        "Amélioration du comportement des charts, de l'UI de paiement et des états desktop/mobile.",
+      ],
+      stack: ['TypeScript', 'React', 'Tailwind CSS', 'Solana', 'Charts'],
+    },
+    {
+      company: 'Adrena',
+      location: 'Télétravail',
+      period: 'Fin 2025',
+      role: 'Stagiaire Frontend',
+      summary:
+        "Intégration dans une équipe produit trading et livraison d'environ 30 PR mergées sur l'UI, les swaps et des optimisations API.",
+      bullets: [
+        "Refonte de l'UI trading, du sélecteur de token, du leaderboard de staking et de la page ALP.",
+        "Intégration des swaps Jupiter, d'interfaces de campagne et de corrections mobile.",
+      ],
+      stack: ['TypeScript', 'React', 'Tailwind CSS', 'Web3.js', 'APIs'],
+    },
+    {
+      company: 'Versus',
+      location: 'Télétravail',
+      period: '2024 - 2025',
+      role: 'Fondateur & Développeur',
+      summary:
+        "Création d'un produit de pari temps réel autour de combats IA diffusés en live. Test public : 100+ testeurs, environ 100 SOL de volume total.",
+      bullets: [
+        "Responsable du scraper Twitch, de l'oracle et du travail monorepo.",
+        'Gestion des bugs de timing, matchs invalides, remboursements et logique de paiement.',
+      ],
+      stack: [
+        'TypeScript',
+        'Next.js',
+        'Fastify',
+        'PostgreSQL',
+        'Solana',
+        'SSE',
+      ],
+    },
+    {
+      company: '42 Lyon',
+      location: 'Lyon, France',
+      period: 'Fin 2023 - Mi 2025',
+      role: 'Diplômé du Common Core',
+      summary:
+        'Validation du Common Core 42, fondé sur les projets, la revue par les pairs et la soutenance technique.',
+      bullets: [
+        'Projets en C, C++, Unix, réseau, graphisme et Docker.',
+        'Finalisation de ft_transcendence : plateforme Pong avec tournois multijoueurs dans une SPA TypeScript.',
+      ],
+      stack: ['C', 'C++', 'Unix', 'Docker', 'TypeScript'],
+    },
+    {
+      company: 'Magicake & Doge Capital',
+      period: '2021 - 2024',
+      role: 'Fondateur, Board Member',
+      summary:
+        'Expérience produit, communauté et stratégie autour de projets digitaux et de communautés en ligne.',
+      bullets: [
+        'Gestion de la communication, des opérations, du développement business et des décisions stratégiques.',
+      ],
+    },
+  ] satisfies CvExperience[],
+  previousCareer: [
+    {
+      company: 'Tali',
+      location: 'Barcelone, Espagne',
+      period: '2022 - 2023',
+      role: 'Consultant indépendant en maroquinerie',
+      summary: 'Collaboration avec un studio créatif sur des produits de luxe.',
+      bullets: [],
+    },
+    {
+      company: 'Hermes',
+      location: 'France',
+      period: '2017 - 2021',
+      role: 'Artisan maroquinier',
+      summary:
+        'Travail en fabrication haut de gamme, avec de fortes exigences de précision et de qualité.',
+      bullets: ['Assemblage de plus de cent sacs Kelly.'],
+    },
+    {
+      company: 'EDA',
+      location: 'France',
+      period: '2014 - 2016',
+      role: 'Alternant, bureau technique',
+      summary:
+        'Travail sur devis, plans de fabrication, rapports de sécurité et communication client.',
+      bullets: [
+        "Première habitude prise : transformer des contraintes techniques en documents utilisables par d'autres.",
+      ],
+    },
+  ] satisfies CvExperience[],
+  education: [
+    {
+      school: '42 Lyon',
+      period: 'Fin 2023 - Mi 2025',
+      title: 'Common Core',
+      details:
+        'Cursus de développement logiciel en peer-to-peer, centré sur les projets, la revue de code et la défense technique.',
+    },
+    {
+      school: 'GRETA Lyon',
+      period: '2018',
+      title: 'CAP Maroquinier',
+      details: 'Formation professionnelle en maroquinerie.',
+    },
+    {
+      school: 'ISCO Grenoble',
+      period: '2016',
+      title: "Bachelor chargé d'affaires bâtiment",
+      details: "Formation en gestion technique du bâtiment et bureau d'études.",
+    },
+    {
+      school: 'Lycée Champollion',
+      period: '2012',
+      title: 'Baccalauréat scientifique',
+      details: 'Diplôme du secondaire, filière scientifique.',
+    },
+  ],
+  stack: CV_CONTENT.stack,
+  softSkills: [
+    'Compréhension produit',
+    'Engagement',
+    'Communication',
+    'Revue de code',
+    'Sens design',
+    'Attention du détail',
+    'Vision business',
+    'Animation de communauté',
+  ],
+  languages: ['Français natif', 'Anglais courant'],
+} satisfies CvContent;
 
 export const MY_EXPERIENCE = [
   {

@@ -1,5 +1,4 @@
-import CvActions from '@/app/cv/_components/CvActions';
-import CvDocument from '@/app/cv/_components/CvDocument';
+import CvClient from '@/app/cv/_components/CvClient';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,8 +10,7 @@ export const metadata: Metadata = {
 const CvPage = () => {
   return (
     <section className="cv-page px-4 pt-5 pb-16 print:p-0">
-      <CvActions />
-      <CvDocument />
+      <CvClient />
     </section>
   );
 };
