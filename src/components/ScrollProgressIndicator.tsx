@@ -117,7 +117,7 @@ const ScrollProgressIndicator = () => {
       onPointerUp={handlePointerEnd}
       title="Scroll to page position"
       type="button"
-      className="scroll-progress-indicator group fixed top-[50svh] right-[calc(2%-0.375rem)] z-5 h-29 w-5 -translate-y-1/2 cursor-none touch-none rounded-full bg-transparent focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
+      className="scroll-progress-indicator group fixed top-[50svh] right-[calc(2%-0.375rem)] z-2 h-29 w-5 -translate-y-1/2 cursor-none touch-none rounded-full bg-transparent focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
     >
       <span
         className="absolute top-1/2 left-1/2 h-25 w-1.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-background-light transition-colors group-hover:bg-foreground/15"

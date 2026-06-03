@@ -1,6 +1,5 @@
 'use client';
 import { THEME_CLASS, THEME_VALUES } from '@/lib/constants';
-import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
 import {
   useThemePreference,
   writeThemePreference,
@@ -16,6 +15,7 @@ import { Moon, MoveUpRight, Sun } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import type { ThemePreference } from '@/types';
 import { useEffect, useState } from 'react';
+import SocialLinks from '@/components/SocialLinks';
 
 const COLORS = [
   'bg-yellow-500 text-black',
@@ -117,16 +117,16 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
 
   return (
     <>
-      <div className="sticky top-0 z-4">
+      <div className="sticky top-0 z-5">
         <button
           aria-label={
             isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
           }
           className={cn(
-            'fixed top-5 z-4 flex size-12 items-center justify-center text-foreground transition-[right,color] duration-700 md:hover:text-primary',
+            'fixed top-5 z-5 flex size-12 items-center justify-center text-foreground transition-[right,color] duration-700 md:hover:text-primary',
             {
               'right-20 md:right-24': !isMenuOpen,
-              'right-[calc(min(clamp(20rem,20vw,26rem),calc(100vw-3rem))-4.25rem)]':
+              'right-[calc(min(clamp(16.5rem,22vw,22rem),calc(100vw-3rem))-4.25rem)]':
                 isMenuOpen,
             },
           )}
@@ -137,7 +137,7 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
         </button>
 
         <button
-          className={cn('group fixed top-5 right-5 z-4 size-12 md:right-10')}
+          className={cn('group fixed top-5 right-5 z-5 size-12 md:right-10')}
           type="button"
           aria-label={
             isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
@@ -169,7 +169,7 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
       <button
         aria-label="Close navigation menu"
         className={cn(
-          'fixed inset-0 z-2 bg-black/70 transition-all duration-150',
+          'fixed inset-0 z-3 bg-black/70 transition-all duration-150',
           {
             'pointer-events-none invisible opacity-0': !isMenuOpen,
           },
@@ -180,8 +180,8 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
 
       <div
         className={cn(
-          'fixed top-0 right-0 z-3 h-dvh w-[clamp(20rem,20vw,26rem)] max-w-[calc(100vw-3rem)] translate-x-full transform overflow-hidden transition-transform duration-700',
-          'flex flex-col justify-between gap-y-14 py-10',
+          'fixed top-0 right-0 z-4 h-dvh w-[clamp(16.5rem,22vw,22rem)] max-w-[calc(100vw-3rem)] translate-x-full transform overflow-hidden transition-transform duration-700',
+          'grid grid-rows-[1fr_auto_1fr] py-8',
           { 'translate-x-0': isMenuOpen },
         )}
       >
@@ -194,15 +194,14 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
           )}
         ></div>
 
-        <div className="mx-8 w-full max-w-75 pt-12 sm:mx-auto">
-          <p className="mb-5 text-muted-foreground md:mb-8">MENU</p>
-          <ul className="space-y-3">
+        <div className="row-start-2 mx-auto w-full max-w-48 self-center px-6">
+          <ul className="space-y-2.5">
             {MENU_LINKS.map((link, idx) => (
               <li key={link.name}>
                 <button
                   type="button"
                   onClick={() => navigateToMenuLink(link.url)}
-                  className="group flex items-center gap-3 text-xl"
+                  className="group flex items-center gap-3 text-left text-xl"
                 >
                   <span
                     className={cn(
@@ -222,28 +221,8 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
           </ul>
         </div>
 
-        <div className="mx-8 w-full max-w-75 space-y-8 sm:mx-auto">
-          <div>
-            <p className="mb-5 text-muted-foreground md:mb-8">SOCIAL</p>
-            <ul className="space-y-3">
-              {SOCIAL_LINKS.map((link) => (
-                <li key={link.name}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-lg capitalize hover:underline"
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <p className="mb-4 text-muted-foreground">GET IN TOUCH</p>
-            <a href={`mailto:${GENERAL_INFO.email}`}>{GENERAL_INFO.email}</a>
-          </div>
+        <div className="row-start-3 mx-auto w-full max-w-56 self-end px-6">
+          <SocialLinks className="justify-center" />
         </div>
       </div>
     </>

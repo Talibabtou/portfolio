@@ -39,9 +39,9 @@ export const GENERAL_INFO = {
 export const SOCIAL_LINKS = [
   { name: 'github', url: 'https://github.com/Talibabtou' },
   { name: 'linkedin', url: GENERAL_INFO.linkedinProfile },
-  { name: 'twitter', url: 'https://x.com/Talibabtou' },
+  { name: 'x', url: 'https://x.com/Talibabtou' },
   { name: 'cv', url: GENERAL_INFO.cvUrl },
-];
+] as const;
 
 export const CV_CONTENT = {
   headline: 'Frontend / Product Developer',

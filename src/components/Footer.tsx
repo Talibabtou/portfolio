@@ -1,8 +1,9 @@
 'use client';
 
-import { GENERAL_INFO, SOCIAL_LINKS } from '@/lib/data';
+import { GENERAL_INFO } from '@/lib/data';
 import { GitFork, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import SocialLinks from '@/components/SocialLinks';
 
 interface RepoStats {
   stargazers_count: number;
@@ -60,19 +61,7 @@ const Footer = () => {
           {GENERAL_INFO.email}
         </a>
 
-        <div className="flex justify-center gap-5 text-muted-foreground">
-          {SOCIAL_LINKS.map((link) => (
-            <a
-              key={link.name}
-              href={link.url}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="capitalize hover:text-white hover:underline"
-            >
-              {link.name}
-            </a>
-          ))}
-        </div>
+        <SocialLinks className="justify-center text-muted-foreground" />
 
         <a
           href={GENERAL_INFO.githubRepo}

@@ -60,12 +60,12 @@ export default async function RootLayout({
           <main>{children}</main>
           <Footer />
           <StickyEmail />
+          <ScrollProgressIndicator />
         </div>
 
         <CustomCursor />
         <PageTransitionOverlay />
         <Preloader />
-        <ScrollProgressIndicator />
         <TopographicBackground />
         <Analytics />
         <SpeedInsights />
