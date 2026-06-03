@@ -1,44 +1,62 @@
 import { gsap, useGSAP } from '@/lib/gsap';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ArrowAnimation = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const arrow1Ref = useRef<SVGPathElement>(null);
   const arrow2Ref = useRef<SVGPathElement>(null);
+  const [shouldRenderArrow, setShouldRenderArrow] = useState(false);
 
-  useGSAP(() => {
-    gsap.set('#banner-arrow-svg', { fill: 'transparent', autoAlpha: 0 });
-    gsap.set('.svg-arrow-1', {
-      strokeDasharray: arrow1Ref.current?.getTotalLength(),
-      strokeDashoffset: arrow1Ref.current?.getTotalLength(),
-    });
-    gsap.set('.svg-arrow-2', {
-      strokeDasharray: arrow2Ref.current?.getTotalLength(),
-      strokeDashoffset: arrow2Ref.current?.getTotalLength(),
-    });
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const syncArrowVisibility = () => setShouldRenderArrow(mediaQuery.matches);
 
-    const tl = gsap.timeline({ repeat: -1 });
+    syncArrowVisibility();
+    mediaQuery.addEventListener('change', syncArrowVisibility);
 
-    tl.to('#banner-arrow-svg', { autoAlpha: 1, duration: 0.1 });
-    tl.to('.svg-arrow', {
-      duration: 2,
-      delay: 1,
-      strokeDashoffset: 0,
-    });
-    tl.to('#banner-arrow-svg', {
-      duration: 0.5,
-      delay: 0.5,
-      fill: 'var(--scroll-arrow-fill)',
-    });
-    tl.to('#banner-arrow-svg', {
-      duration: 1,
-      y: 300,
-    });
-    tl.to('#banner-arrow-svg', {
-      duration: 0,
-      autoAlpha: 0,
-    });
-  });
+    return () => mediaQuery.removeEventListener('change', syncArrowVisibility);
+  }, []);
+
+  useGSAP(
+    () => {
+      if (!shouldRenderArrow) return;
+
+      gsap.set('#banner-arrow-svg', { fill: 'transparent', autoAlpha: 0 });
+      gsap.set('.svg-arrow-1', {
+        strokeDasharray: arrow1Ref.current?.getTotalLength(),
+        strokeDashoffset: arrow1Ref.current?.getTotalLength(),
+      });
+      gsap.set('.svg-arrow-2', {
+        strokeDasharray: arrow2Ref.current?.getTotalLength(),
+        strokeDashoffset: arrow2Ref.current?.getTotalLength(),
+      });
+
+      const tl = gsap.timeline({ repeat: -1 });
+
+      tl.to('#banner-arrow-svg', { autoAlpha: 1, duration: 0.1 });
+      tl.to('.svg-arrow', {
+        duration: 2,
+        delay: 1,
+        strokeDashoffset: 0,
+      });
+      tl.to('#banner-arrow-svg', {
+        duration: 0.5,
+        delay: 0.5,
+        fill: 'var(--scroll-arrow-fill)',
+      });
+      tl.to('#banner-arrow-svg', {
+        duration: 1,
+        y: 300,
+      });
+      tl.to('#banner-arrow-svg', {
+        duration: 0,
+        autoAlpha: 0,
+      });
+    },
+    { dependencies: [shouldRenderArrow] },
+  );
+
+  if (!shouldRenderArrow) return null;
 
   return (
     <svg

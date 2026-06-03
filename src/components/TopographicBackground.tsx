@@ -56,10 +56,10 @@ const TopographicBackground = () => {
   if (!topography) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div className="topographic-background pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <svg
         aria-hidden="true"
-        className="absolute overflow-visible text-foreground"
+        className="absolute origin-center rotate-90 overflow-visible text-foreground lg:rotate-0"
         height={topography.height}
         style={{
           left: topography.originX,
