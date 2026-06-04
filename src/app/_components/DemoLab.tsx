@@ -173,8 +173,7 @@ const MobileDemoTracks = ({
             'group relative w-full overflow-hidden border border-foreground/10 text-left transition-[background-color,color] duration-300 ease-out',
             {
               'flex-none bg-background': isActive,
-              'h-[20.75rem] sm:h-[22.75rem]':
-                isActive && track.id === 'world-map',
+              'h-83 sm:h-99': isActive && track.id === 'world-map',
               'h-10 flex-none bg-background-light hover:bg-background':
                 !isActive,
             },
@@ -199,7 +198,8 @@ const MobileDemoTracks = ({
                   className={cn(
                     'relative mt-3 h-68 min-h-0 overflow-hidden sm:h-76',
                     {
-                      'absolute inset-0 mt-0 h-auto': track.id === 'world-map',
+                      'absolute inset-0 mt-0 h-auto sm:h-auto':
+                        track.id === 'world-map',
                     },
                   )}
                 >

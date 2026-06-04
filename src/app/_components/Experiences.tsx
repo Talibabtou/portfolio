@@ -96,6 +96,7 @@ const Experiences = () => {
                           width="128"
                           height="72"
                           className="max-h-full w-auto max-w-full object-contain md:h-full md:max-w-none"
+                          style={{ width: 'auto' }}
                         />
                       </div>
                     ) : (

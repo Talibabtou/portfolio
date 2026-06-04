@@ -104,7 +104,7 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
   return (
     <TransitionLink
       href={`/projects/${project.slug}`}
-      className="group first:!pt-0 md:hover:!opacity-100 py-5 leading-none transition-all last:border-none last:pb-0 md:border-b md:group-hover/projects:opacity-30"
+      className="group py-5 leading-none transition-all first:pt-0! last:border-none last:pb-0 md:border-b md:group-hover/projects:opacity-30 md:hover:opacity-100!"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -124,7 +124,7 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           _{(index + 1).toString().padStart(2, '0')}.
         </div>
         <div className="">
-          <h4 className="flex gap-4 bg-[length:200%] bg-gradient-to-r bg-right from-[50%] from-primary to-[50%] to-foreground bg-clip-text font-anton text-4xl text-transparent transition-all duration-700 group-hover:bg-left md:text-5xl">
+          <h4 className="flex gap-4 bg-linear-to-r bg-right bg-size-[200%] from-50% from-primary to-50% to-foreground bg-clip-text font-anton text-4xl text-transparent transition-all duration-700 group-hover:bg-left md:text-5xl">
             {project.title}
             <span className="text-foreground opacity-0 transition-all group-hover:opacity-100">
               <svg

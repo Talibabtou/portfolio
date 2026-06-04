@@ -244,9 +244,21 @@ const GlobeSurface = ({
     globe.pauseAnimation();
   }, [hoveredEarthquakeId, isActive, isGlobeReady, isVisible]);
 
+  useEffect(() => {
+    if (!isGlobeReady || !isCompactDemoViewport()) return;
+
+    const globe = globeRef.current;
+    if (!globe) return;
+
+    const renderer = globe.renderer();
+
+    renderer.setSize(dimensions.width, dimensions.height, true);
+    globe.controls().update();
+  }, [dimensions.height, dimensions.width, isGlobeReady]);
+
   return (
     <div
-      className="max-lg:[&>div]:!h-full max-lg:[&>div]:!w-full max-lg:[&_canvas]:!h-full max-lg:[&_canvas]:!w-full absolute inset-0 z-0 transition-opacity duration-150"
+      className="absolute inset-0 z-0 transition-opacity duration-150 max-lg:[&>div]:h-full! max-lg:[&>div]:w-full! max-lg:[&_canvas]:h-full! max-lg:[&_canvas]:w-full!"
       ref={containerRef}
       style={{
         opacity: isVisible ? 1 : 0,

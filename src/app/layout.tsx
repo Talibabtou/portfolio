@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { Anton, Roboto_Flex } from 'next/font/google';
+import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -15,17 +15,17 @@ import TopographicBackground from '@/components/TopographicBackground';
 import { THEME_CLASS, THEME_COOKIE_NAME, THEME_VALUES } from '@/lib/constants';
 import './globals.css';
 
-const antonFont = Anton({
+const antonFont = localFont({
+  src: '../../public/fonts/Anton-Regular.ttf',
   weight: '400',
   style: 'normal',
-  subsets: ['latin'],
   variable: '--font-anton',
 });
 
-const robotoFlex = Roboto_Flex({
-  weight: ['100', '400', '500', '600', '700', '800'],
+const robotoFlex = localFont({
+  src: '../../public/fonts/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf',
+  weight: '100 800',
   style: 'normal',
-  subsets: ['latin'],
   variable: '--font-roboto-flex',
 });
 
