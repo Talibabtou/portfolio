@@ -12,8 +12,8 @@ import {
   type GitHubRepository,
   type LeaderboardTabId,
 } from '@/app/_components/demos/data/GitHubRadarDemo';
-import type { DemoTrack } from '@/app/_components/demos/types';
 import { cn, formatCompactNumber, formatMinutesAgo } from '@/lib/utils';
+import type { DemoTrack } from '@/types';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';

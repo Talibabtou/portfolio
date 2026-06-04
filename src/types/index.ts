@@ -1,3 +1,6 @@
+import type { LucideIcon } from 'lucide-react';
+import type { ComponentType } from 'react';
+
 export type Next_Page_Url = string;
 
 export type Variant =
@@ -16,6 +19,23 @@ export type ThemePreference = 'dark' | 'light';
 
 export type UserPreferences = {
   theme: ThemePreference;
+};
+
+export type DemoComponentProps = {
+  isActive?: boolean;
+};
+
+export type DemoTrack = {
+  Component: ComponentType<DemoComponentProps>;
+  detail: string;
+  eyebrow: string;
+  icon: LucideIcon;
+  id: string;
+  keepMountedWhenInactive?: boolean;
+  label: string;
+  metrics: string[];
+  preload?: () => void;
+  title: string;
 };
 
 export interface IProject {

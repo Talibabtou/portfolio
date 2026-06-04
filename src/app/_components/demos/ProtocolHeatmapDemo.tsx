@@ -1,9 +1,5 @@
 'use client';
 
-import type {
-  DemoComponentProps,
-  DemoTrack,
-} from '@/app/_components/demos/types';
 import {
   fetchProtocolRevenueSnapshot,
   preloadProtocolHeatmapDemo,
@@ -21,6 +17,7 @@ import {
   formatSignedPercent,
   normalizeLogRange,
 } from '@/lib/utils';
+import type { DemoComponentProps, DemoTrack } from '@/types';
 import type {
   EChartsOption,
   TooltipComponentFormatterCallbackParams,

@@ -11,7 +11,6 @@ import {
   type CachedMarketPoints,
   type MarketPoint,
 } from '@/app/_components/demos/data/BitcoinMarketDemo';
-import type { DemoTrack } from '@/app/_components/demos/types';
 import { MILLISECONDS_IN_DAY } from '@/lib/constants';
 import {
   cn,
@@ -22,6 +21,7 @@ import {
   formatUsd,
   getCssHslVariable,
 } from '@/lib/utils';
+import type { DemoTrack } from '@/types';
 import { LineChart } from 'lucide-react';
 import {
   AreaSeries,

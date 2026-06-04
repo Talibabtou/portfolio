@@ -11,15 +11,15 @@ import {
   type WalletToken,
   type WalletTransaction,
 } from '@/app/_components/demos/data/WalletFlowDemo';
-import type { DemoTrack } from '@/app/_components/demos/types';
+import { THEME_VALUES } from '@/lib/constants';
+import { useThemePreference } from '@/lib/theme-preference';
 import {
   cn,
   formatCompactNumber,
   formatCompactUsd,
   formatMinutesAgo,
 } from '@/lib/utils';
-import { THEME_VALUES } from '@/lib/constants';
-import { useThemePreference } from '@/lib/theme-preference';
+import type { DemoTrack } from '@/types';
 import { Loader2, Search, WalletCards } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';

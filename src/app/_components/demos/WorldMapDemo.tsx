@@ -1,9 +1,5 @@
 'use client';
 
-import type {
-  DemoComponentProps,
-  DemoTrack,
-} from '@/app/_components/demos/types';
 import {
   fetchCountries,
   fetchEarthquakes,
@@ -23,6 +19,7 @@ import {
   formatShortDateTime,
   getLegacyCssHslVariable,
 } from '@/lib/utils';
+import type { DemoComponentProps, DemoTrack } from '@/types';
 import { Globe2, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';

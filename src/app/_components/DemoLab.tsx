@@ -2,10 +2,10 @@
 
 import SectionTitle from '@/components/SectionTitle';
 import { DEMO_TRACKS } from '@/app/_components/demos/demo-tracks';
-import type { DemoTrack } from '@/app/_components/demos/types';
 import { useIntentPreload } from '@/hooks/use-intent-preload';
 import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
+import type { DemoTrack } from '@/types';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
