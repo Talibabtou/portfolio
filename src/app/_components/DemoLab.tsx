@@ -3,11 +3,12 @@
 import SectionTitle from '@/components/SectionTitle';
 import { DEMO_TRACKS } from '@/app/_components/demos/demo-tracks';
 import { useIntentPreload } from '@/hooks/use-intent-preload';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
 import type { DemoTrack } from '@/types';
 import type { ReactNode } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 
 type DemoTrackButtonProps = {
@@ -234,7 +235,7 @@ const MobileDemoTracks = ({
 const DemoLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeTrackId, setActiveTrackId] = useState(DEMO_TRACKS[0].id);
-  const [isCompactLayout, setIsCompactLayout] = useState(false);
+  const isCompactLayout = useMediaQuery('(max-width: 1023px)');
   const [visitedTrackIds, setVisitedTrackIds] = useState(
     () => new Set([DEMO_TRACKS[0].id]),
   );
@@ -253,18 +254,6 @@ const DemoLab = () => {
       return new Set([...currentVisitedTrackIds, trackId]);
     });
   };
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 1023px)');
-    const syncCompactLayout = () => setIsCompactLayout(mediaQuery.matches);
-
-    syncCompactLayout();
-    mediaQuery.addEventListener('change', syncCompactLayout);
-
-    return () => {
-      mediaQuery.removeEventListener('change', syncCompactLayout);
-    };
-  }, []);
 
   useRevealSectionGsap({
     scope: sectionRef,

@@ -23,6 +23,7 @@ const antonFont = localFont({
 });
 
 const robotoFlex = localFont({
+  preload: false,
   src: '../../public/fonts/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf',
   weight: '100 800',
   style: 'normal',
@@ -53,7 +54,7 @@ export default async function RootLayout({
     >
       <head />
       <body
-        className={`${antonFont.variable} ${robotoFlex.variable} antialiased`}
+        className={`${antonFont.variable} ${robotoFlex.variable} ${robotoFlex.className} antialiased`}
       >
         <div className="custom-cursor-scope relative z-1">
           <Navbar initialTheme={initialTheme} />

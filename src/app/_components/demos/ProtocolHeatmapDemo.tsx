@@ -7,6 +7,7 @@ import {
   type HeatmapProtocol,
 } from '@/app/_components/demos/data/ProtocolHeatmapDemo';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { THEME_VALUES, UI_TIMINGS } from '@/lib/constants';
 import { useThemePreference } from '@/lib/theme-preference';
 import {
@@ -203,7 +204,7 @@ const getTooltipPosition = (
 
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
-  const [isCompactDemo, setIsCompactDemo] = useState(false);
+  const isCompactDemo = useMediaQuery('(max-width: 1023px)');
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [protocols, setProtocols] = useState<HeatmapProtocol[]>([]);
@@ -214,18 +215,6 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const { hasMounted, isVisible } = useDebouncedActivation(isActive, {
     delayMs: UI_TIMINGS.demoTabVisibilityDelayMs,
   });
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 1023px)');
-    const syncCompactDemo = () => setIsCompactDemo(mediaQuery.matches);
-
-    syncCompactDemo();
-    mediaQuery.addEventListener('change', syncCompactDemo);
-
-    return () => {
-      mediaQuery.removeEventListener('change', syncCompactDemo);
-    };
-  }, []);
 
   useEffect(() => {
     let ignoreRequest = false;

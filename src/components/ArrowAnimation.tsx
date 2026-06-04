@@ -1,21 +1,12 @@
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { gsap, useGSAP } from '@/lib/gsap';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const ArrowAnimation = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const arrow1Ref = useRef<SVGPathElement>(null);
   const arrow2Ref = useRef<SVGPathElement>(null);
-  const [shouldRenderArrow, setShouldRenderArrow] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 768px)');
-    const syncArrowVisibility = () => setShouldRenderArrow(mediaQuery.matches);
-
-    syncArrowVisibility();
-    mediaQuery.addEventListener('change', syncArrowVisibility);
-
-    return () => mediaQuery.removeEventListener('change', syncArrowVisibility);
-  }, []);
+  const shouldRenderArrow = useMediaQuery('(min-width: 768px)');
 
   useGSAP(
     () => {
