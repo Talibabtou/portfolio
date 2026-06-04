@@ -14,16 +14,16 @@ const CvActions = ({ language, onToggleLanguage }: CvActionsProps) => {
   const nextLanguageLabel = language === 'en' ? 'FR' : 'EN';
 
   return (
-    <div className="mx-auto mb-6 flex w-full max-w-260 items-center justify-between gap-4 print:hidden">
+    <div className="mx-auto mb-6 flex w-full max-w-260 flex-col items-center gap-4 md:grid md:grid-cols-[1fr_auto_1fr] lg:flex lg:flex-row lg:justify-between print:hidden">
       <TransitionLink
-        className="group inline-flex h-12 items-center gap-2"
+        className="group inline-flex h-12 items-center gap-2 md:justify-self-start"
         href="/#banner"
       >
         <ArrowLeft className="size-5 transition-all duration-300 group-hover:-translate-x-1 group-hover:text-primary" />
         Back
       </TransitionLink>
 
-      <div className="flex flex-wrap justify-end gap-3">
+      <div className="flex flex-wrap justify-center gap-3 md:col-start-2 lg:col-auto lg:justify-end">
         <Button
           as="button"
           className="px-6 text-sm"
