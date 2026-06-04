@@ -89,14 +89,13 @@ const Experiences = () => {
                     })}
                   >
                     {item.logo ? (
-                      <div className="flex h-18 w-28 items-center justify-center md:size-18">
+                      <div className="relative flex h-18 w-28 items-center justify-center md:size-18">
                         <Image
                           src={item.logo}
                           alt={`${item.company} logo`}
-                          width="128"
-                          height="72"
-                          className="h-auto max-h-full w-auto max-w-full object-contain"
-                          style={{ height: 'auto', width: 'auto' }}
+                          fill
+                          sizes="(min-width: 768px) 4.5rem, 7rem"
+                          className="object-contain"
                         />
                       </div>
                     ) : (
