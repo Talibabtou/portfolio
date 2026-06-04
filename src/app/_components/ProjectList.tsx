@@ -143,9 +143,10 @@ const ProjectList = () => {
                 alt={`${selectedProjectData.title} preview`}
                 width={selectedProjectData.thumbnailWidth ?? 600}
                 height={selectedProjectData.thumbnailHeight ?? 400}
-                className="h-auto w-full transition-opacity duration-500"
+                className="transition-opacity duration-500"
                 key={selectedProjectData.slug}
                 loading="eager"
+                style={{ height: 'auto', width: '100%' }}
               />
             </div>
           )}

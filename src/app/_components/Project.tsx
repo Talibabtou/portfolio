@@ -114,9 +114,10 @@ const Project = ({ index, project, selectedProject, onMouseEnter }: Props) => {
           alt={`${project.title} preview`}
           width={project.thumbnailWidth ?? 600}
           height={project.thumbnailHeight ?? 400}
-          className={cn('mb-6 h-auto w-full')}
+          className={cn('mb-6')}
           key={project.slug}
           loading={index === 0 ? 'eager' : 'lazy'}
+          style={{ height: 'auto', width: '100%' }}
         />
       )}
       <div className="flex gap-2 md:gap-5">

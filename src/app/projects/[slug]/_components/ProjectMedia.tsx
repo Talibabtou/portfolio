@@ -197,11 +197,11 @@ const ProjectImageStack = ({
         <ProjectMediaFrame key={image}>
           <Image
             alt={`${projectTitle} ${mediaLabel}`}
-            className="h-auto w-full"
             height={800}
             loading="lazy"
             sizes="(min-width: 1024px) 50rem, calc(100vw - 2rem)"
             src={image}
+            style={{ height: 'auto', width: '100%' }}
             unoptimized={image.endsWith('.gif')}
             width={1200}
           />

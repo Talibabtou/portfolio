@@ -69,7 +69,7 @@ const Experiences = () => {
         <div className="relative mx-auto max-w-230">
           <div
             aria-hidden="true"
-            className="absolute top-0 bottom-0 left-1/2 hidden w-px -translate-x-1/2 bg-foreground/15 md:block"
+            className="absolute top-0 bottom-0 left-2 w-px -translate-x-1/2 bg-foreground/15 md:left-1/2"
           />
 
           <div className="grid gap-14 md:gap-0">
@@ -79,11 +79,11 @@ const Experiences = () => {
 
               return (
                 <div
-                  className="experience-item relative grid items-center gap-5 md:grid-cols-[1fr_5rem_1fr] md:gap-0 md:py-8"
+                  className="experience-item relative grid grid-cols-[1rem_1fr] items-start gap-x-5 gap-y-5 md:grid-cols-[1fr_5rem_1fr] md:items-center md:gap-0 md:py-8"
                   key={`${item.company}-${item.title}`}
                 >
                   <div
-                    className={cn('flex md:px-8', {
+                    className={cn('col-start-2 flex md:col-auto md:px-8', {
                       'justify-start md:order-3': isReversed,
                       'justify-start md:justify-end': !isReversed,
                     })}
@@ -105,12 +105,12 @@ const Experiences = () => {
                     )}
                   </div>
 
-                  <div className="relative hidden justify-center md:order-2 md:flex">
+                  <div className="relative col-start-1 row-span-2 flex justify-center pt-7 md:order-2 md:col-auto md:row-auto md:pt-0">
                     <div className="relative z-1 size-4 rounded-full border border-primary bg-background shadow-[0_0_0_0.5rem_hsl(var(--background))]" />
                   </div>
 
                   <div
-                    className={cn('md:px-8', {
+                    className={cn('col-start-2 md:col-auto md:px-8', {
                       'md:order-1 md:text-right': isReversed,
                       'md:order-3': !isReversed,
                     })}
