@@ -2,7 +2,7 @@ import {
   DEFAULT_TAB,
   fetchGitHubLeaderboard,
   type LeaderboardTabId,
-} from '@/app/_components/demos/data/GitHubRadarDemo';
+} from '@/lib/demos/github-radar';
 
 export const revalidate = 3600;
 

@@ -10,7 +10,7 @@ import {
   type CountryFeature,
   type CachedEarthquakes,
   type EarthquakePulse,
-} from '@/app/_components/demos/data/WorldMapDemo';
+} from '@/lib/demos/world-map';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { UI_TIMINGS } from '@/lib/constants';
 import {

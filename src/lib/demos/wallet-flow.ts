@@ -9,6 +9,9 @@ const SOLANA_WALLET_NAMESPACE = createStorageNamespace(
   'demos.solana-wallet.v2',
 );
 
+export const SAMPLE_SOLANA_ADDRESS =
+  'CreQJ2t94QK5dsxUZGXfPJ8Nx7wA9LHr5chxjSMkbNft';
+
 export type WalletToken = {
   amount: number;
   logoUrl?: string;
@@ -170,4 +173,10 @@ export const fetchSolanaWalletSnapshot = async (
   }
 
   return setWalletCache((await response.json()) as WalletSnapshot);
+};
+
+export const preloadWalletFlowDemo = async () => {
+  if (typeof window === 'undefined') return;
+
+  await fetchSolanaWalletSnapshot(SAMPLE_SOLANA_ADDRESS).catch(() => undefined);
 };

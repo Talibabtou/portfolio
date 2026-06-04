@@ -5,7 +5,7 @@ import {
   preloadProtocolHeatmapDemo,
   type CachedProtocolRevenueSnapshot,
   type HeatmapProtocol,
-} from '@/app/_components/demos/data/ProtocolHeatmapDemo';
+} from '@/lib/demos/protocol-heatmap';
 import { useDebouncedActivation } from '@/hooks/use-debounced-activation';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { THEME_VALUES, UI_TIMINGS } from '@/lib/constants';

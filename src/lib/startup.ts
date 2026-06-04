@@ -5,16 +5,19 @@ let warmTasksStarted = false;
 
 const preloadDemoData = () => {
   void Promise.allSettled([
-    import('@/app/_components/demos/data/BitcoinMarketDemo').then((module) =>
+    import('@/lib/demos/bitcoin-market').then((module) =>
       module.preloadBitcoinMarketDemo(),
     ),
-    import('@/app/_components/demos/data/ProtocolHeatmapDemo').then((module) =>
+    import('@/lib/demos/protocol-heatmap').then((module) =>
       module.preloadProtocolHeatmapDemo(),
     ),
-    import('@/app/_components/demos/data/GitHubRadarDemo').then((module) =>
+    import('@/lib/demos/wallet-flow').then((module) =>
+      module.preloadWalletFlowDemo(),
+    ),
+    import('@/lib/demos/github-radar').then((module) =>
       module.preloadGitHubRadarDemo(),
     ),
-    import('@/app/_components/demos/data/WorldMapDemo').then((module) =>
+    import('@/lib/demos/world-map').then((module) =>
       module.preloadWorldMapDemo(),
     ),
   ]);

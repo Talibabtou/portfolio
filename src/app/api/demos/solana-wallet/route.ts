@@ -3,7 +3,7 @@ import {
   normalizeHeliusTransactions,
   normalizeHeliusWalletResponse,
   normalizeSolanaAddress,
-} from '@/app/_components/demos/data/WalletFlowDemo';
+} from '@/lib/demos/wallet-flow';
 
 const HELIUS_ENHANCED_API_BASE_URL = 'https://api-mainnet.helius-rpc.com/v0';
 const HELIUS_WALLET_API_BASE_URL = 'https://api.helius.xyz/v1/wallet';

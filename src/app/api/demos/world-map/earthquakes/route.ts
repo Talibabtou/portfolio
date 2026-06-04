@@ -1,4 +1,4 @@
-import { fetchEarthquakes } from '@/app/_components/demos/data/WorldMapDemo';
+import { fetchEarthquakes } from '@/lib/demos/world-map';
 
 export const revalidate = 86400;
 

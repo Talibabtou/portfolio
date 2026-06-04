@@ -45,6 +45,29 @@ type Props = {
   variant?: Variant;
 } & (ComponentProps<typeof Link> | ButtonProps);
 
+type ButtonContentProps = {
+  children: ReactNode | ReactNode[];
+  icon: boolean;
+  loading?: boolean;
+  variant?: Variant;
+};
+
+const ButtonContent = ({
+  children,
+  icon,
+  loading,
+  variant,
+}: ButtonContentProps) => (
+  <>
+    {variant !== 'link' && (
+      <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0" />
+    )}
+    <span className="z-1">
+      {loading ? <LoadingIndicator icon={icon} /> : children}
+    </span>
+  </>
+);
+
 const Button = ({
   loading,
   variant,
@@ -89,24 +112,18 @@ const Button = ({
           {...props}
           href={props.href.toString() || '#'}
         >
-          {variant !== 'link' && (
-            <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
-          )}
-          <span className="z-1">
-            {loading ? <LoadingIndicator icon={icon} /> : children}
-          </span>
+          <ButtonContent icon={icon} loading={loading} variant={variant}>
+            {children}
+          </ButtonContent>
         </a>
       );
     }
 
     return (
       <Link className={buttonClasses} {...props} href={props.href || '#'}>
-        {variant !== 'link' && (
-          <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
-        )}
-        <span className="z-1">
-          {loading ? <LoadingIndicator icon={icon} /> : children}
-        </span>
+        <ButtonContent icon={icon} loading={loading} variant={variant}>
+          {children}
+        </ButtonContent>
       </Link>
     );
   } else if (as === 'button') {
@@ -114,12 +131,9 @@ const Button = ({
 
     return (
       <button className={buttonClasses} type="button" {...props}>
-        {variant !== 'link' && (
-          <span className="absolute top-[200%] right-0 left-0 h-full scale-150 rounded-[50%] bg-white/20 transition-all duration-500 group-hover:top-0"></span>
-        )}
-        <span className="z-1">
-          {loading ? <LoadingIndicator icon={icon} /> : children}
-        </span>
+        <ButtonContent icon={icon} loading={loading} variant={variant}>
+          {children}
+        </ButtonContent>
       </button>
     );
   }

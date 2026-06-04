@@ -1,11 +1,13 @@
 'use client';
 
 import { getMediaLabel } from '@/app/projects/[slug]/_components/project-media';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import {
+  ProjectMediaFrame,
+  ProjectMediaOpenButton,
+  projectMediaControlClassName,
+} from '@/app/projects/[slug]/_components/ProjectMediaFrame';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-
-const carouselControlClassName =
-  'inline-flex h-11 w-11 items-center justify-center bg-background-light text-foreground transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 
 type ProjectVideoCarouselProps = {
   videos: string[];
@@ -66,7 +68,7 @@ const ProjectVideoCarousel = ({ videos }: ProjectVideoCarouselProps) => {
             <>
               <button
                 aria-label="Previous video"
-                className={carouselControlClassName}
+                className={projectMediaControlClassName}
                 onClick={showPreviousVideo}
                 type="button"
               >
@@ -77,7 +79,7 @@ const ProjectVideoCarousel = ({ videos }: ProjectVideoCarouselProps) => {
               </button>
               <button
                 aria-label="Next video"
-                className={carouselControlClassName}
+                className={projectMediaControlClassName}
                 onClick={showNextVideo}
                 type="button"
               >
@@ -88,22 +90,14 @@ const ProjectVideoCarousel = ({ videos }: ProjectVideoCarouselProps) => {
               </button>
             </>
           ) : null}
-          <a
-            aria-label="Open current video"
-            className={carouselControlClassName}
+          <ProjectMediaOpenButton
             href={activeVideo}
-            rel="noopener"
-            target="_blank"
-          >
-            <ExternalLink
-              aria-hidden="true"
-              className="pointer-events-none size-5"
-            />
-          </a>
+            label="Open current video"
+          />
         </div>
       </div>
 
-      <div className="project-media-frame group relative w-full overflow-hidden bg-background-light">
+      <ProjectMediaFrame>
         <video
           autoPlay
           className="h-auto w-full"
@@ -118,7 +112,7 @@ const ProjectVideoCarousel = ({ videos }: ProjectVideoCarouselProps) => {
         >
           <track kind="captions" />
         </video>
-      </div>
+      </ProjectMediaFrame>
 
       {videos.length > 1 ? (
         <div className="mt-4 flex flex-wrap gap-2">

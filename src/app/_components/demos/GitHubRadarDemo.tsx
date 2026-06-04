@@ -11,7 +11,7 @@ import {
   RISING_CANDIDATE_COUNT,
   type GitHubRepository,
   type LeaderboardTabId,
-} from '@/app/_components/demos/data/GitHubRadarDemo';
+} from '@/lib/demos/github-radar';
 import { cn, formatCompactNumber, formatMinutesAgo } from '@/lib/utils';
 import type { DemoTrack } from '@/types';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';

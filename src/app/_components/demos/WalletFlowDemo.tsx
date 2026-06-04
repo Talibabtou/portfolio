@@ -7,10 +7,12 @@ import {
   getWalletCache,
   isSolanaAddress,
   normalizeSolanaAddress,
+  preloadWalletFlowDemo,
+  SAMPLE_SOLANA_ADDRESS,
   type WalletSnapshot,
   type WalletToken,
   type WalletTransaction,
-} from '@/app/_components/demos/data/WalletFlowDemo';
+} from '@/lib/demos/wallet-flow';
 import { THEME_VALUES } from '@/lib/constants';
 import { useThemePreference } from '@/lib/theme-preference';
 import {
@@ -25,7 +27,6 @@ import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
 
 const MAX_VISIBLE_TOKENS = 10;
-const SAMPLE_SOLANA_ADDRESS = 'CreQJ2t94QK5dsxUZGXfPJ8Nx7wA9LHr5chxjSMkbNft';
 const DONUT_CENTER = 50;
 const DONUT_INNER_RADIUS = 28;
 const DONUT_OUTER_RADIUS = 48;
@@ -562,6 +563,7 @@ const WalletFlowDemo = () => {
 export const walletFlowDemo = {
   ...walletFlowContent,
   Component: WalletFlowDemo,
+  preload: preloadWalletFlowDemo,
 } satisfies DemoTrack;
 
 export default WalletFlowDemo;

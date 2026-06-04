@@ -2,7 +2,7 @@ import {
   DEFAULT_BITCOIN_RANGE,
   fetchBitcoinMarketSnapshot,
   type BitcoinRange,
-} from '@/app/_components/demos/data/BitcoinMarketDemo';
+} from '@/lib/demos/bitcoin-market';
 
 export const revalidate = 300;
 

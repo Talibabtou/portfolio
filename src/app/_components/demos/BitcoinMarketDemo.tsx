@@ -10,7 +10,7 @@ import {
   type BitcoinRange,
   type CachedMarketPoints,
   type MarketPoint,
-} from '@/app/_components/demos/data/BitcoinMarketDemo';
+} from '@/lib/demos/bitcoin-market';
 import { MILLISECONDS_IN_DAY } from '@/lib/constants';
 import {
   cn,

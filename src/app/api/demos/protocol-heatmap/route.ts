@@ -1,4 +1,4 @@
-import { fetchProtocolRevenueSnapshot } from '@/app/_components/demos/data/ProtocolHeatmapDemo';
+import { fetchProtocolRevenueSnapshot } from '@/lib/demos/protocol-heatmap';
 
 export const revalidate = 3600;
 
