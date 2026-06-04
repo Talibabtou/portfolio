@@ -47,27 +47,15 @@ const Footer = () => {
   const { stargazers_count, forks_count } = repoStats;
 
   return (
-    <footer className="pt-section pb-5 text-center" id="contact">
+    <footer className="pt-3 pb-3 text-center" id="contact">
       <div className="container">
-        <p className="text-lg">
-          Need a frontend for a Web3 or fintech product?
-        </p>
-        <a
-          href={`mailto:${GENERAL_INFO.email}?subject=${encodeURIComponent(
-            GENERAL_INFO.emailSubject,
-          )}&body=${encodeURIComponent(GENERAL_INFO.emailBody)}`}
-          className="mt-5 mb-8 inline-block font-anton text-3xl hover:underline sm:text-4xl"
-        >
-          {GENERAL_INFO.email}
-        </a>
-
         <SocialLinks className="justify-center text-muted-foreground" />
 
         <a
           href={GENERAL_INFO.githubRepo}
           target="_blank"
           rel="noreferrer noopener"
-          className="mx-auto mt-6 inline-flex items-center justify-center gap-5 text-muted-foreground text-sm hover:text-white"
+          className="mx-auto mt-3 inline-flex items-center justify-center gap-4 text-muted-foreground text-sm hover:text-white"
         >
           <span>Talibabtou/portfolio</span>
           <span className="flex items-center gap-2">
@@ -78,7 +66,7 @@ const Footer = () => {
           </span>
         </a>
 
-        <p className="mt-6 text-muted-foreground text-sm">
+        <p className="mt-3 text-muted-foreground text-sm">
           Built and written by Guillaume Dumas.
         </p>
       </div>

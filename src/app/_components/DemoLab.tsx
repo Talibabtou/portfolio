@@ -275,7 +275,7 @@ const DemoLab = () => {
 
   return (
     <section
-      className="relative flex min-h-svh items-center overflow-hidden pt-section pb-6"
+      className="relative overflow-hidden pt-section pb-6 lg:flex lg:min-h-svh lg:items-center"
       id="demo-lab"
       ref={sectionRef}
     >
