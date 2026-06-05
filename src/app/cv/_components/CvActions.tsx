@@ -49,8 +49,8 @@ const CvActions = ({ language, onToggleLanguage }: CvActionsProps) => {
         <Button
           as="link"
           className="px-6 text-sm"
-          download="guillaume-dumas-cv.pdf"
-          href={GENERAL_INFO.cvPdfUrl}
+          download={`guillaume-dumas-cv-${language}.pdf`}
+          href={GENERAL_INFO.cvPdfUrls[language]}
           variant="primary"
         >
           <span className="inline-flex items-center gap-2 whitespace-nowrap">
