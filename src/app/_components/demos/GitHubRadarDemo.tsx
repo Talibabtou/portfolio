@@ -7,13 +7,11 @@ import {
   getRepositoryAvatarUrl,
   getRepositoryStarsPerDay,
   isGitHubLeaderboardFresh,
-  preloadGitHubRadarDemo,
   RISING_CANDIDATE_COUNT,
   type GitHubRepository,
   type LeaderboardTabId,
 } from '@/lib/demos/github-radar';
 import { cn, formatCompactNumber, formatMinutesAgo } from '@/lib/utils';
-import type { DemoTrack } from '@/types';
 import { Flame, GitFork, Loader2, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
@@ -39,17 +37,6 @@ const leaderboardTabs: {
     label: 'Most forked',
   },
 ];
-
-const githubRadarContent = {
-  detail:
-    'A recruiter-friendly demo for API integration, ranking, pagination, rate-limit handling and skeleton states.',
-  eyebrow: 'GitHub Radar',
-  icon: GitFork,
-  id: 'github-radar',
-  label: 'GitHub Radar',
-  metrics: ['Stars', 'Forks', 'Velocity'],
-  title: 'GitHub repository leaderboards from the public Search API.',
-};
 
 const getRepositorySignal = (
   repository: GitHubRepository,
@@ -302,8 +289,4 @@ const GitHubRadarDemo = () => {
   );
 };
 
-export const githubRadarDemo = {
-  ...githubRadarContent,
-  Component: GitHubRadarDemo,
-  preload: preloadGitHubRadarDemo,
-} satisfies DemoTrack;
+export default GitHubRadarDemo;

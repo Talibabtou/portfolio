@@ -6,7 +6,6 @@ import {
   getCountriesCache,
   getEarthquakesCache,
   isEarthquakesFresh,
-  preloadWorldMapDemo,
   type CountryFeature,
   type CachedEarthquakes,
   type EarthquakePulse,
@@ -19,8 +18,8 @@ import {
   formatShortDateTime,
   getLegacyCssHslVariable,
 } from '@/lib/utils';
-import type { DemoComponentProps, DemoTrack } from '@/types';
-import { Globe2, Loader2 } from 'lucide-react';
+import type { DemoComponentProps } from '@/types';
+import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { GlobeMethods } from 'react-globe.gl';
@@ -42,17 +41,6 @@ const getMagnitudeScale = (magnitude: number) => {
   const min = MIN_EARTHQUAKE_MAGNITUDE;
   const base = Math.max(0, magnitude - min + 1);
   return Math.max(0, base ** 1.7 / 6);
-};
-
-const worldMapContent = {
-  detail:
-    'Real earthquake coordinates from the past year, scaled by magnitude.',
-  eyebrow: 'Seismic Activity',
-  icon: Globe2,
-  id: 'world-map',
-  label: 'World Map',
-  metrics: ['USGS', 'Real geo', '365 days'],
-  title: 'A rotating map of global earthquakes from public geodata.',
 };
 
 const getGlobeTheme = () => {
@@ -403,9 +391,4 @@ const WorldMapDemo = ({ isActive = false }: DemoComponentProps) => {
   );
 };
 
-export const worldMapDemo = {
-  ...worldMapContent,
-  Component: WorldMapDemo,
-  keepMountedWhenInactive: false,
-  preload: preloadWorldMapDemo,
-} satisfies DemoTrack;
+export default WorldMapDemo;

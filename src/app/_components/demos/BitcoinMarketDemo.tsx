@@ -6,7 +6,6 @@ import {
   fetchBitcoinMarketSnapshot,
   getBitcoinMarketSnapshot,
   getClosestPoint,
-  preloadBitcoinMarketDemo,
   type BitcoinRange,
   type CachedMarketPoints,
   type MarketPoint,
@@ -21,8 +20,6 @@ import {
   formatUsd,
   getCssHslVariable,
 } from '@/lib/utils';
-import type { DemoTrack } from '@/types';
-import { LineChart } from 'lucide-react';
 import {
   AreaSeries,
   ColorType,
@@ -493,18 +490,5 @@ const BitcoinMarketDemo = () => {
     </div>
   );
 };
-
-export const bitcoinMarketDemo = {
-  Component: BitcoinMarketDemo,
-  detail:
-    'A custom chart surface using public market data, responsive SVG rendering, range state and pointer readouts.',
-  eyebrow: 'Market interface',
-  icon: LineChart,
-  id: 'trading-view',
-  label: 'BTC Chart',
-  metrics: ['BTC / USD', '1D / 7D / 30D', 'CoinGecko'],
-  preload: preloadBitcoinMarketDemo,
-  title: 'BTC / USD market chart with live API data.',
-} satisfies DemoTrack;
 
 export default BitcoinMarketDemo;

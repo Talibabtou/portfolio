@@ -7,7 +7,6 @@ import {
   getWalletCache,
   isSolanaAddress,
   normalizeSolanaAddress,
-  preloadWalletFlowDemo,
   SAMPLE_SOLANA_ADDRESS,
   type WalletSnapshot,
   type WalletToken,
@@ -21,8 +20,7 @@ import {
   formatCompactUsd,
   formatMinutesAgo,
 } from '@/lib/utils';
-import type { DemoTrack } from '@/types';
-import { Loader2, Search, WalletCards } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -41,17 +39,6 @@ const tokenPriceFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0,
   style: 'currency',
 });
-
-const walletFlowContent = {
-  detail:
-    'Read a Solana wallet, normalize SPL balances, price holdings and visualize allocation risk in one view.',
-  eyebrow: 'Solana wallet',
-  icon: WalletCards,
-  id: 'wallet-flow',
-  label: 'Wallet Viewer',
-  metrics: ['SPL tokens', 'USD value', 'Allocation'],
-  title: 'A Solana wallet viewer with token proportions.',
-};
 
 const shortenAddress = (address: string) =>
   `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -559,11 +546,5 @@ const WalletFlowDemo = () => {
     </div>
   );
 };
-
-export const walletFlowDemo = {
-  ...walletFlowContent,
-  Component: WalletFlowDemo,
-  preload: preloadWalletFlowDemo,
-} satisfies DemoTrack;
 
 export default WalletFlowDemo;

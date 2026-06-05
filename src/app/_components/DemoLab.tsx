@@ -8,7 +8,7 @@ import { useRevealSectionGsap } from '@/hooks/use-section-gsap';
 import { cn } from '@/lib/utils';
 import type { DemoTrack } from '@/types';
 import type { ReactNode } from 'react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 
 type DemoTrackButtonProps = {
@@ -235,7 +235,8 @@ const MobileDemoTracks = ({
 const DemoLab = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeTrackId, setActiveTrackId] = useState(DEMO_TRACKS[0].id);
-  const isCompactLayout = useMediaQuery('(max-width: 1023px)');
+  const isCompactLayout = useMediaQuery('(max-width: 1023px)', true);
+  const [canMountCompactDemo, setCanMountCompactDemo] = useState(false);
   const [visitedTrackIds, setVisitedTrackIds] = useState(
     () => new Set([DEMO_TRACKS[0].id]),
   );
@@ -245,15 +246,46 @@ const DemoLab = () => {
     () => new Set([...visitedTrackIds, activeTrack.id]),
     [activeTrack.id, visitedTrackIds],
   );
+  const compactMountedTrackIds = useMemo(
+    () =>
+      !isCompactLayout || canMountCompactDemo
+        ? mountedTrackIds
+        : new Set<string>(),
+    [canMountCompactDemo, isCompactLayout, mountedTrackIds],
+  );
 
   const activateTrack = (trackId: string) => {
     setActiveTrackId(trackId);
+    setCanMountCompactDemo(true);
     setVisitedTrackIds((currentVisitedTrackIds) => {
       if (currentVisitedTrackIds.has(trackId)) return currentVisitedTrackIds;
 
       return new Set([...currentVisitedTrackIds, trackId]);
     });
   };
+
+  useEffect(() => {
+    if (!isCompactLayout) {
+      return;
+    }
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        setCanMountCompactDemo(true);
+        observer.disconnect();
+      },
+      { rootMargin: '320px 0px' },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, [isCompactLayout]);
 
   useRevealSectionGsap({
     scope: sectionRef,
@@ -286,7 +318,7 @@ const DemoLab = () => {
           {isCompactLayout ? (
             <MobileDemoTracks
               activeTrack={activeTrack}
-              mountedTrackIds={mountedTrackIds}
+              mountedTrackIds={compactMountedTrackIds}
               onActivateTrack={activateTrack}
             />
           ) : (

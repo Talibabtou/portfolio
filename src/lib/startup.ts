@@ -1,5 +1,3 @@
-import { preloadTopography } from '@/lib/topography';
-
 let startupPromise: Promise<void> | null = null;
 let warmTasksStarted = false;
 
@@ -28,6 +26,10 @@ const scheduleWarmStartupTasks = () => {
     return;
   }
 
+  if (!window.matchMedia('(min-width: 1024px)').matches) {
+    return;
+  }
+
   warmTasksStarted = true;
 
   if ('requestIdleCallback' in window) {
@@ -43,10 +45,16 @@ export const runStartupTasks = () => {
     return Promise.resolve();
   }
 
+  if (!window.matchMedia('(min-width: 1024px)').matches) {
+    return Promise.resolve();
+  }
+
   if (!startupPromise) {
-    startupPromise = preloadTopography().then(() => {
-      scheduleWarmStartupTasks();
-    });
+    startupPromise = import('@/lib/topography')
+      .then((module) => module.preloadTopography())
+      .then(() => {
+        scheduleWarmStartupTasks();
+      });
   }
 
   return startupPromise;

@@ -2,7 +2,6 @@
 
 import {
   fetchProtocolRevenueSnapshot,
-  preloadProtocolHeatmapDemo,
   type CachedProtocolRevenueSnapshot,
   type HeatmapProtocol,
 } from '@/lib/demos/protocol-heatmap';
@@ -18,7 +17,7 @@ import {
   formatSignedPercent,
   normalizeLogRange,
 } from '@/lib/utils';
-import type { DemoComponentProps, DemoTrack } from '@/types';
+import type { DemoComponentProps } from '@/types';
 import type {
   EChartsOption,
   TooltipComponentFormatterCallbackParams,
@@ -28,7 +27,7 @@ import { TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { BarChart3, CircleHelp, Loader2 } from 'lucide-react';
+import { CircleHelp, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 echarts.use([TreemapChart, TooltipComponent, CanvasRenderer]);
@@ -39,16 +38,6 @@ const MIN_LABEL_AREA_SHARE = 0.008;
 const REVENUE_SCORE_FLOOR = 100_000;
 const REVENUE_SCORE_CEILING = 100_000_000;
 const GROWTH_SCORE_CAP = 50;
-
-const protocolHeatmapContent = {
-  detail: 'Protocol revenue and growth from DefiLlama’s free API.',
-  eyebrow: 'Crypto Protocol Heatmap',
-  icon: BarChart3,
-  id: 'protocol-heatmap',
-  label: 'Crypto Protocol Heatmap',
-  metrics: ['Revenue', 'Growth', 'TVL'],
-  title: 'A dense treemap for crypto protocol fundamentals.',
-};
 
 type ThemePalette = {
   primary: string;
@@ -499,8 +488,4 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   );
 };
 
-export const protocolHeatmapDemo = {
-  ...protocolHeatmapContent,
-  Component: ProtocolHeatmapDemo,
-  preload: preloadProtocolHeatmapDemo,
-} satisfies DemoTrack;
+export default ProtocolHeatmapDemo;
