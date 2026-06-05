@@ -51,7 +51,7 @@ const AboutMe = () => {
                 API-connected interfaces.
               </p>
               <p className="slide-up-and-fade mt-3">
-                Before code, I made leather goods at Hermes.
+                Before coding, I made leather goods at Hermes.
                 <br />
                 42 Lyon gave me the engineering base; craft gave me patience,
                 precision and a high bar for finished work.
