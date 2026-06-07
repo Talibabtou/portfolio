@@ -5,8 +5,7 @@ import {
   writeThemePreference,
 } from '@/lib/theme-preference';
 import {
-  getHomeHashUrl,
-  getSectionIdFromHomeHash,
+  navigateToHomeHashUrl,
   PENDING_SECTION_KEY,
   scrollToSection,
 } from '@/lib/section-navigation';
@@ -57,6 +56,141 @@ type NavbarProps = {
   initialTheme?: ThemePreference;
 };
 
+type ThemeToggleButtonProps = {
+  isDarkMode: boolean;
+  isMenuOpen: boolean;
+  onToggleTheme: () => void;
+};
+
+const ThemeToggleButton = ({
+  isDarkMode,
+  isMenuOpen,
+  onToggleTheme,
+}: ThemeToggleButtonProps) => (
+  <button
+    aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+    className={cn(
+      'fixed top-5 z-5 flex size-12 items-center justify-center text-foreground transition-[right,color] duration-700 md:hover:text-primary',
+      {
+        'right-20 md:right-24': !isMenuOpen,
+        'right-[calc(min(clamp(16.5rem,22vw,22rem),calc(100vw-3rem))-4.25rem)]':
+          isMenuOpen,
+      },
+    )}
+    onClick={onToggleTheme}
+    type="button"
+  >
+    {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+  </button>
+);
+
+type MenuToggleButtonProps = {
+  isMenuOpen: boolean;
+  onToggleMenu: () => void;
+};
+
+const MenuToggleButton = ({
+  isMenuOpen,
+  onToggleMenu,
+}: MenuToggleButtonProps) => (
+  <button
+    className={cn('group fixed top-5 right-5 z-5 size-12 md:right-10')}
+    type="button"
+    aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+    aria-expanded={isMenuOpen}
+    onClick={onToggleMenu}
+  >
+    <span
+      className={cn(
+        'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 -translate-y-1.25 rounded-full bg-foreground duration-300',
+        {
+          '-translate-y-1/2 rotate-45': isMenuOpen,
+          'md:group-hover:rotate-12': !isMenuOpen,
+        },
+      )}
+    ></span>
+    <span
+      className={cn(
+        'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 translate-y-1.25 rounded-full bg-foreground duration-300',
+        {
+          '-translate-y-1/2 -rotate-45': isMenuOpen,
+          'md:group-hover:-rotate-12': !isMenuOpen,
+        },
+      )}
+    ></span>
+  </button>
+);
+
+type MenuPanelProps = {
+  isMenuOpen: boolean;
+  onCloseMenu: () => void;
+  onNavigate: (url: string) => void;
+};
+
+const MenuPanel = ({ isMenuOpen, onCloseMenu, onNavigate }: MenuPanelProps) => (
+  <>
+    <button
+      aria-label="Close navigation menu"
+      className={cn(
+        'fixed inset-0 z-3 bg-black/70 transition-all duration-150',
+        {
+          'pointer-events-none invisible opacity-0': !isMenuOpen,
+        },
+      )}
+      onClick={onCloseMenu}
+      type="button"
+    ></button>
+
+    <div
+      className={cn(
+        'fixed top-0 right-0 z-4 h-dvh w-[clamp(16.5rem,22vw,22rem)] max-w-[calc(100vw-3rem)] translate-x-full transform overflow-hidden transition-transform duration-700',
+        'grid grid-rows-[1fr_auto_1fr] py-8',
+        { 'translate-x-0': isMenuOpen },
+      )}
+    >
+      <div
+        className={cn(
+          'fixed inset-0 z-[-1] translate-x-1/2 scale-150 rounded-[50%] bg-background-light delay-150 duration-700 dark:bg-background',
+          {
+            'translate-x-0': isMenuOpen,
+          },
+        )}
+      ></div>
+
+      <div className="row-start-2 mx-auto w-full max-w-48 self-center px-6">
+        <ul className="space-y-2.5">
+          {MENU_LINKS.map((link, idx) => (
+            <li key={link.name}>
+              <button
+                type="button"
+                onClick={() => onNavigate(link.url)}
+                className="group flex items-center gap-3 text-left text-xl"
+              >
+                <span
+                  className={cn(
+                    'flex size-3.5 items-center justify-center rounded-full bg-white/20 transition-all group-hover:scale-[200%]',
+                    COLORS[idx],
+                  )}
+                >
+                  <MoveUpRight
+                    size={8}
+                    className="scale-0 transition-all group-hover:scale-100"
+                  />
+                </span>
+                {link.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="row-start-3 mx-auto w-full max-w-56 self-end px-6">
+        <SocialLinks className="justify-center" />
+      </div>
+    </div>
+  </>
+);
+
 const Navbar = ({ initialTheme }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useThemePreference(initialTheme);
@@ -77,7 +211,7 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
     sessionStorage.removeItem(PENDING_SECTION_KEY);
     const frame = requestAnimationFrame(() => {
       scrollToSection(pendingSectionId, 'auto');
-      window.history.replaceState(null, '', getHomeHashUrl(pendingSectionId));
+      window.history.replaceState(null, '', `/#${pendingSectionId}`);
     });
 
     return () => cancelAnimationFrame(frame);
@@ -98,133 +232,28 @@ const Navbar = ({ initialTheme }: NavbarProps) => {
       return;
     }
 
-    const sectionId = getSectionIdFromHomeHash(url);
-
-    if (!sectionId) {
-      router.push(url);
-      return;
-    }
-
-    if (pathname !== '/') {
-      sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
-      router.push('/');
-      return;
-    }
-
-    window.history.pushState(null, '', getHomeHashUrl(sectionId));
-    scrollToSection(sectionId);
+    navigateToHomeHashUrl({ pathname, push: router.push, url });
   };
 
   return (
     <>
       <div className="sticky top-0 z-5">
-        <button
-          aria-label={
-            isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
-          }
-          className={cn(
-            'fixed top-5 z-5 flex size-12 items-center justify-center text-foreground transition-[right,color] duration-700 md:hover:text-primary',
-            {
-              'right-20 md:right-24': !isMenuOpen,
-              'right-[calc(min(clamp(16.5rem,22vw,22rem),calc(100vw-3rem))-4.25rem)]':
-                isMenuOpen,
-            },
-          )}
-          onClick={toggleTheme}
-          type="button"
-        >
-          {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
-        </button>
-
-        <button
-          className={cn('group fixed top-5 right-5 z-5 size-12 md:right-10')}
-          type="button"
-          aria-label={
-            isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
-          }
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <span
-            className={cn(
-              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 -translate-y-1.25 rounded-full bg-foreground duration-300',
-              {
-                '-translate-y-1/2 rotate-45': isMenuOpen,
-                'md:group-hover:rotate-12': !isMenuOpen,
-              },
-            )}
-          ></span>
-          <span
-            className={cn(
-              'absolute top-1/2 left-1/2 inline-block h-0.5 w-3/5 -translate-x-1/2 translate-y-1.25 rounded-full bg-foreground duration-300',
-              {
-                '-translate-y-1/2 -rotate-45': isMenuOpen,
-                'md:group-hover:-rotate-12': !isMenuOpen,
-              },
-            )}
-          ></span>
-        </button>
+        <ThemeToggleButton
+          isDarkMode={isDarkMode}
+          isMenuOpen={isMenuOpen}
+          onToggleTheme={toggleTheme}
+        />
+        <MenuToggleButton
+          isMenuOpen={isMenuOpen}
+          onToggleMenu={() => setIsMenuOpen(!isMenuOpen)}
+        />
       </div>
 
-      <button
-        aria-label="Close navigation menu"
-        className={cn(
-          'fixed inset-0 z-3 bg-black/70 transition-all duration-150',
-          {
-            'pointer-events-none invisible opacity-0': !isMenuOpen,
-          },
-        )}
-        onClick={() => setIsMenuOpen(false)}
-        type="button"
-      ></button>
-
-      <div
-        className={cn(
-          'fixed top-0 right-0 z-4 h-dvh w-[clamp(16.5rem,22vw,22rem)] max-w-[calc(100vw-3rem)] translate-x-full transform overflow-hidden transition-transform duration-700',
-          'grid grid-rows-[1fr_auto_1fr] py-8',
-          { 'translate-x-0': isMenuOpen },
-        )}
-      >
-        <div
-          className={cn(
-            'fixed inset-0 z-[-1] translate-x-1/2 scale-150 rounded-[50%] bg-background-light delay-150 duration-700 dark:bg-background',
-            {
-              'translate-x-0': isMenuOpen,
-            },
-          )}
-        ></div>
-
-        <div className="row-start-2 mx-auto w-full max-w-48 self-center px-6">
-          <ul className="space-y-2.5">
-            {MENU_LINKS.map((link, idx) => (
-              <li key={link.name}>
-                <button
-                  type="button"
-                  onClick={() => navigateToMenuLink(link.url)}
-                  className="group flex items-center gap-3 text-left text-xl"
-                >
-                  <span
-                    className={cn(
-                      'flex size-3.5 items-center justify-center rounded-full bg-white/20 transition-all group-hover:scale-[200%]',
-                      COLORS[idx],
-                    )}
-                  >
-                    <MoveUpRight
-                      size={8}
-                      className="scale-0 transition-all group-hover:scale-100"
-                    />
-                  </span>
-                  {link.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="row-start-3 mx-auto w-full max-w-56 self-end px-6">
-          <SocialLinks className="justify-center" />
-        </div>
-      </div>
+      <MenuPanel
+        isMenuOpen={isMenuOpen}
+        onCloseMenu={() => setIsMenuOpen(false)}
+        onNavigate={navigateToMenuLink}
+      />
     </>
   );
 };

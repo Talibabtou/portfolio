@@ -153,6 +153,239 @@ const ChartLoadingIndicator = () => (
   </div>
 );
 
+const useBitcoinMarketState = () => {
+  const [activeRange, setActiveRange] = useState<BitcoinRange>(
+    DEFAULT_BITCOIN_RANGE,
+  );
+  const [activePoint, setActivePoint] = useState<MarketPoint>();
+  const [error, setError] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [points, setPoints] = useState<MarketPoint[]>([]);
+  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
+
+  useEffect(() => {
+    const cachedSnapshot = getBitcoinMarketSnapshot(activeRange);
+    if (cachedSnapshot) {
+      queueMicrotask(() => {
+        setPoints(cachedSnapshot.points);
+        setSnapshotSavedAt(cachedSnapshot.savedAt);
+        setError(undefined);
+        setIsLoading(false);
+      });
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetchBitcoinMarketSnapshot(activeRange, { signal: controller.signal })
+      .then((snapshot: CachedMarketPoints) => {
+        setPoints(snapshot.points);
+        setSnapshotSavedAt(snapshot.savedAt);
+      })
+      .catch((fetchError: Error) => {
+        if (fetchError.name === 'AbortError') return;
+
+        setError('CoinGecko public API unavailable. Try again in a moment.');
+        setPoints([]);
+        setSnapshotSavedAt(undefined);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [activeRange]);
+
+  const updateRange = (range: BitcoinRange) => {
+    setActivePoint(undefined);
+    setActiveRange(range);
+    setError(undefined);
+
+    const cachedSnapshot = getBitcoinMarketSnapshot(range);
+    if (cachedSnapshot) {
+      setPoints(cachedSnapshot.points);
+      setSnapshotSavedAt(cachedSnapshot.savedAt);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+  };
+
+  return {
+    activePoint,
+    activeRange,
+    error,
+    isLoading,
+    points,
+    setActivePoint,
+    snapshotSavedAt,
+    updateRange,
+  };
+};
+
+const BitcoinRangeControls = ({
+  activeRange,
+  onRangeChange,
+}: {
+  activeRange: BitcoinRange;
+  onRangeChange: (range: BitcoinRange) => void;
+}) => (
+  <fieldset className="flex border border-foreground/10">
+    <legend className="sr-only">Bitcoin chart range</legend>
+    {BITCOIN_RANGES.map((range) => (
+      <button
+        aria-pressed={range.days === activeRange}
+        className={cn(
+          'h-10 min-w-12 border-foreground/10 border-l px-4 font-anton text-sm transition-colors first:border-l-0 hover:bg-foreground hover:text-background',
+          {
+            'bg-foreground text-background': range.days === activeRange,
+            'text-muted-foreground': range.days !== activeRange,
+          },
+        )}
+        key={range.days}
+        onClick={() => onRangeChange(range.days)}
+        type="button"
+      >
+        {range.label}
+      </button>
+    ))}
+  </fieldset>
+);
+
+const BitcoinMarketHeader = ({
+  activeRange,
+  changePercent,
+  isPositiveChange,
+  latestPoint,
+  onRangeChange,
+}: {
+  activeRange: BitcoinRange;
+  changePercent?: number;
+  isPositiveChange: boolean;
+  latestPoint?: MarketPoint;
+  onRangeChange: (range: BitcoinRange) => void;
+}) => (
+  <div className="flex flex-wrap items-start justify-between gap-4 border-foreground/10 border-b pb-2 lg:gap-5 lg:pb-3">
+    <div>
+      <span className="font-anton text-muted-foreground text-sm uppercase">
+        BTC / USD
+      </span>
+      <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+        <strong className="font-anton text-5xl leading-none md:text-7xl">
+          {latestPoint ? formatUsd(latestPoint.price) : '--'}
+        </strong>
+        {typeof changePercent === 'number' ? (
+          <span
+            className={cn('font-anton text-xl', {
+              [MARKET_CHANGE_COLORS.negative]: !isPositiveChange,
+              [MARKET_CHANGE_COLORS.positive]: isPositiveChange,
+            })}
+          >
+            {formatPreciseSignedPercent(changePercent)} 24h
+          </span>
+        ) : null}
+      </div>
+    </div>
+
+    <BitcoinRangeControls
+      activeRange={activeRange}
+      onRangeChange={onRangeChange}
+    />
+  </div>
+);
+
+const marketMetricItems = [
+  {
+    getValue: (point?: MarketPoint) =>
+      point ? formatShortDateTime(point.timestamp) : '--',
+    label: 'Date',
+  },
+  {
+    getValue: (point?: MarketPoint) => (point ? formatUsd(point.price) : '--'),
+    label: 'Price',
+  },
+  {
+    getValue: (point?: MarketPoint) =>
+      point?.volume ? formatCompactUsd(point.volume) : '--',
+    label: 'Volume',
+  },
+  {
+    getValue: (point?: MarketPoint) =>
+      point?.marketCap ? formatCompactUsd(point.marketCap) : '--',
+    label: 'Market Cap',
+  },
+] as const;
+
+const BitcoinMarketMetrics = ({
+  displayedPoint,
+}: {
+  displayedPoint?: MarketPoint;
+}) => (
+  <div className="mt-3 grid grid-cols-4 gap-4 border-foreground/10 border-t pt-3">
+    {marketMetricItems.map((metric) => (
+      <div key={metric.label}>
+        <span className="font-anton text-muted-foreground text-xs uppercase">
+          {metric.label}
+        </span>
+        <p className="mt-0.5 font-anton text-base">
+          {metric.getValue(displayedPoint)}
+        </p>
+      </div>
+    ))}
+  </div>
+);
+
+const BitcoinMarketChartBody = ({
+  canRenderChart,
+  displayedPoint,
+  error,
+  isLoading,
+  latestPoint,
+  onPointChange,
+  points,
+}: {
+  canRenderChart: boolean;
+  displayedPoint?: MarketPoint;
+  error?: string;
+  isLoading: boolean;
+  latestPoint?: MarketPoint;
+  onPointChange: (point?: MarketPoint) => void;
+  points: MarketPoint[];
+}) => {
+  if (isLoading && !canRenderChart) {
+    return (
+      <div className="relative grid flex-1 place-items-center overflow-hidden border border-foreground/10 bg-background-light">
+        <ChartLoadingIndicator />
+        <span className="font-anton text-muted-foreground text-sm uppercase">
+          Loading BTC market data
+        </span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="grid flex-1 place-items-center border border-foreground/10 bg-background-light px-6 text-center">
+        <span className="max-w-80 text-muted-foreground">{error}</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <TradingViewBitcoinChart
+        latestPoint={latestPoint}
+        onPointChange={onPointChange}
+        points={points}
+      />
+      <BitcoinMarketMetrics displayedPoint={displayedPoint} />
+    </>
+  );
+};
+
 const TradingViewBitcoinChart = ({
   latestPoint,
   onPointChange,
@@ -294,49 +527,16 @@ const TradingViewBitcoinChart = ({
 };
 
 const BitcoinMarketDemo = () => {
-  const [activeRange, setActiveRange] = useState<BitcoinRange>(
-    DEFAULT_BITCOIN_RANGE,
-  );
-  const [activePoint, setActivePoint] = useState<MarketPoint>();
-  const [error, setError] = useState<string>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [points, setPoints] = useState<MarketPoint[]>([]);
-  const [snapshotSavedAt, setSnapshotSavedAt] = useState<number>();
-
-  useEffect(() => {
-    const cachedSnapshot = getBitcoinMarketSnapshot(activeRange);
-    if (cachedSnapshot) {
-      queueMicrotask(() => {
-        setPoints(cachedSnapshot.points);
-        setSnapshotSavedAt(cachedSnapshot.savedAt);
-        setError(undefined);
-        setIsLoading(false);
-      });
-      return;
-    }
-
-    const controller = new AbortController();
-
-    fetchBitcoinMarketSnapshot(activeRange, { signal: controller.signal })
-      .then((snapshot: CachedMarketPoints) => {
-        setPoints(snapshot.points);
-        setSnapshotSavedAt(snapshot.savedAt);
-      })
-      .catch((fetchError: Error) => {
-        if (fetchError.name === 'AbortError') return;
-
-        setError('CoinGecko public API unavailable. Try again in a moment.');
-        setPoints([]);
-        setSnapshotSavedAt(undefined);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => controller.abort();
-  }, [activeRange]);
+  const {
+    activePoint,
+    activeRange,
+    error,
+    isLoading,
+    points,
+    setActivePoint,
+    snapshotSavedAt,
+    updateRange,
+  } = useBitcoinMarketState();
 
   const latestPoint = points.at(-1);
   const displayedPoint = activePoint ?? latestPoint;
@@ -352,135 +552,34 @@ const BitcoinMarketDemo = () => {
     typeof changePercent === 'number' && changePercent >= 0;
   const canRenderChart = points.length > 0;
 
-  const handlePointChange = useCallback((point?: MarketPoint) => {
-    setActivePoint(point);
-  }, []);
-
-  const handleRangeChange = (range: BitcoinRange) => {
-    setActivePoint(undefined);
-    setActiveRange(range);
-    setError(undefined);
-    const cachedSnapshot = getBitcoinMarketSnapshot(range);
-
-    if (cachedSnapshot) {
-      setPoints(cachedSnapshot.points);
-      setSnapshotSavedAt(cachedSnapshot.savedAt);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-  };
+  const handlePointChange = useCallback(
+    (point?: MarketPoint) => {
+      setActivePoint(point);
+    },
+    [setActivePoint],
+  );
 
   return (
     <div className="mt-auto flex min-h-0 flex-1 flex-col pt-3 lg:pt-5">
-      <div className="flex flex-wrap items-start justify-between gap-4 border-foreground/10 border-b pb-2 lg:gap-5 lg:pb-3">
-        <div>
-          <span className="font-anton text-muted-foreground text-sm uppercase">
-            BTC / USD
-          </span>
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-            <strong className="font-anton text-5xl leading-none md:text-7xl">
-              {latestPoint ? formatUsd(latestPoint.price) : '--'}
-            </strong>
-            {typeof changePercent === 'number' ? (
-              <span
-                className={cn('font-anton text-xl', {
-                  [MARKET_CHANGE_COLORS.negative]: !isPositiveChange,
-                  [MARKET_CHANGE_COLORS.positive]: isPositiveChange,
-                })}
-              >
-                {formatPreciseSignedPercent(changePercent)} 24h
-              </span>
-            ) : null}
-          </div>
-        </div>
-
-        <fieldset className="flex border border-foreground/10">
-          <legend className="sr-only">Bitcoin chart range</legend>
-          {BITCOIN_RANGES.map((range) => (
-            <button
-              aria-pressed={range.days === activeRange}
-              className={cn(
-                'h-10 min-w-12 border-foreground/10 border-l px-4 font-anton text-sm transition-colors first:border-l-0 hover:bg-foreground hover:text-background',
-                {
-                  'bg-foreground text-background': range.days === activeRange,
-                  'text-muted-foreground': range.days !== activeRange,
-                },
-              )}
-              key={range.days}
-              onClick={() => handleRangeChange(range.days)}
-              type="button"
-            >
-              {range.label}
-            </button>
-          ))}
-        </fieldset>
-      </div>
+      <BitcoinMarketHeader
+        activeRange={activeRange}
+        changePercent={changePercent}
+        isPositiveChange={isPositiveChange}
+        latestPoint={latestPoint}
+        onRangeChange={updateRange}
+      />
 
       <div className="relative mt-2 flex min-h-72 flex-1 flex-col lg:mt-3 lg:min-h-86">
         {canRenderChart && isLoading ? <ChartLoadingIndicator /> : null}
-        {isLoading && !canRenderChart ? (
-          <div className="relative grid flex-1 place-items-center overflow-hidden border border-foreground/10 bg-background-light">
-            <ChartLoadingIndicator />
-            <span className="font-anton text-muted-foreground text-sm uppercase">
-              Loading BTC market data
-            </span>
-          </div>
-        ) : error ? (
-          <div className="grid flex-1 place-items-center border border-foreground/10 bg-background-light px-6 text-center">
-            <span className="max-w-80 text-muted-foreground">{error}</span>
-          </div>
-        ) : (
-          <>
-            <TradingViewBitcoinChart
-              latestPoint={latestPoint}
-              onPointChange={handlePointChange}
-              points={points}
-            />
-
-            <div className="mt-3 grid grid-cols-4 gap-4 border-foreground/10 border-t pt-3">
-              <div>
-                <span className="font-anton text-muted-foreground text-xs uppercase">
-                  Date
-                </span>
-                <p className="mt-0.5 font-anton text-base">
-                  {displayedPoint
-                    ? formatShortDateTime(displayedPoint.timestamp)
-                    : '--'}
-                </p>
-              </div>
-              <div>
-                <span className="font-anton text-muted-foreground text-xs uppercase">
-                  Price
-                </span>
-                <p className="mt-0.5 font-anton text-base">
-                  {displayedPoint ? formatUsd(displayedPoint.price) : '--'}
-                </p>
-              </div>
-              <div>
-                <span className="font-anton text-muted-foreground text-xs uppercase">
-                  Volume
-                </span>
-                <p className="mt-0.5 font-anton text-base">
-                  {displayedPoint?.volume
-                    ? formatCompactUsd(displayedPoint.volume)
-                    : '--'}
-                </p>
-              </div>
-              <div>
-                <span className="font-anton text-muted-foreground text-xs uppercase">
-                  Market Cap
-                </span>
-                <p className="mt-0.5 font-anton text-base">
-                  {displayedPoint?.marketCap
-                    ? formatCompactUsd(displayedPoint.marketCap)
-                    : '--'}
-                </p>
-              </div>
-            </div>
-          </>
-        )}
+        <BitcoinMarketChartBody
+          canRenderChart={canRenderChart}
+          displayedPoint={displayedPoint}
+          error={error}
+          isLoading={isLoading}
+          latestPoint={latestPoint}
+          onPointChange={handlePointChange}
+          points={points}
+        />
       </div>
 
       <p className="mt-2 text-muted-foreground text-sm lg:mt-3">

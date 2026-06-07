@@ -31,8 +31,34 @@ export const scrollToSection = (
   });
 };
 
-export const getSectionIdFromHomeHash = (url: string) => {
+const getSectionIdFromHomeHash = (url: string) => {
   return url.startsWith('/#') ? url.slice(2) : '';
 };
 
-export const getHomeHashUrl = (sectionId: string) => `/#${sectionId}`;
+const getHomeHashUrl = (sectionId: string) => `/#${sectionId}`;
+
+export const navigateToHomeHashUrl = ({
+  pathname,
+  push,
+  url,
+}: {
+  pathname: string;
+  push: (url: string) => void;
+  url: string;
+}) => {
+  const sectionId = getSectionIdFromHomeHash(url);
+
+  if (!sectionId) {
+    push(url);
+    return;
+  }
+
+  if (pathname !== '/') {
+    sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
+    push('/');
+    return;
+  }
+
+  window.history.pushState(null, '', getHomeHashUrl(sectionId));
+  scrollToSection(sectionId);
+};

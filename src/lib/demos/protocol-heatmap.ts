@@ -243,6 +243,66 @@ const resolveDirectoryProtocol = (
   return undefined;
 };
 
+const findProtocolIdentifier = (candidates: Array<string | undefined>) =>
+  candidates.find(isValidProtocolIdentifier);
+
+const findProtocolName = (candidates: Array<string | undefined>) =>
+  candidates.find(
+    (candidate): candidate is string =>
+      typeof candidate === 'string' && candidate.length > 0,
+  );
+
+const getProtocolIdentity = (
+  overviewProtocol: LlamaOverviewProtocol,
+  lookupProtocol?: LlamaProtocolDirectoryItem,
+) => {
+  const slug = findProtocolIdentifier([
+    lookupProtocol?.slug,
+    overviewProtocol.parentProtocol,
+    overviewProtocol.module,
+  ]);
+  const name = findProtocolName([
+    lookupProtocol?.name,
+    overviewProtocol.name,
+    overviewProtocol.module,
+  ]);
+  const detailSlug = findProtocolIdentifier([
+    overviewProtocol.parentProtocol,
+    overviewProtocol.module,
+    slug,
+  ]);
+
+  if (!slug || !name || !detailSlug) return undefined;
+
+  return { detailSlug, name, slug };
+};
+
+const getProtocolGrowth30d = (
+  overviewProtocol: LlamaOverviewProtocol,
+  revenue30d: number,
+) => {
+  return (
+    normalizePercent(overviewProtocol.change_1m) ||
+    computeGrowth(revenue30d, getProtocolPreviousRevenue30d(overviewProtocol))
+  );
+};
+
+const getPrimaryChain = (
+  overviewProtocol: LlamaOverviewProtocol,
+  lookupProtocol?: LlamaProtocolDirectoryItem,
+) =>
+  lookupProtocol?.chains?.[0] ?? overviewProtocol.chains?.[0] ?? 'Multi-chain';
+
+const getProtocolId = ({
+  detailSlug,
+  primaryChain,
+  slug,
+}: {
+  detailSlug: string;
+  primaryChain: string;
+  slug: string;
+}) => `${detailSlug}:${primaryChain}:${slug}`;
+
 const normalizeProtocol = (
   overviewProtocol: LlamaOverviewProtocol,
   directoryLookup: Map<string, LlamaProtocolDirectoryItem>,
@@ -252,43 +312,25 @@ const normalizeProtocol = (
     overviewProtocol.module,
     overviewProtocol.name,
   ]);
-  const slug =
-    lookupProtocol?.slug ??
-    overviewProtocol.parentProtocol ??
-    overviewProtocol.module;
-  const name =
-    lookupProtocol?.name ?? overviewProtocol.name ?? overviewProtocol.module;
-  const detailSlug =
-    overviewProtocol.parentProtocol ?? overviewProtocol.module ?? slug;
-
-  if (
-    !isValidProtocolIdentifier(slug) ||
-    !name ||
-    !isValidProtocolIdentifier(detailSlug)
-  ) {
-    return undefined;
-  }
+  const identity = getProtocolIdentity(overviewProtocol, lookupProtocol);
+  if (!identity) return undefined;
 
   const revenue30d = getProtocolRevenue30d(overviewProtocol);
   if (revenue30d <= 0) return undefined;
 
+  const primaryChain = getPrimaryChain(overviewProtocol, lookupProtocol);
   const tvl = toFiniteNumber(lookupProtocol?.tvl);
-  const growth30d =
-    normalizePercent(overviewProtocol.change_1m) ||
-    computeGrowth(revenue30d, getProtocolPreviousRevenue30d(overviewProtocol));
+  const growth30d = getProtocolGrowth30d(overviewProtocol, revenue30d);
 
   return {
     category: lookupProtocol?.category ?? overviewProtocol.category ?? 'Other',
-    detailSlug,
+    detailSlug: identity.detailSlug,
     growth30d,
-    id: `${detailSlug}:${lookupProtocol?.chains?.[0] ?? overviewProtocol.chains?.[0] ?? 'multi'}:${slug}`,
-    name,
-    primaryChain:
-      lookupProtocol?.chains?.[0] ??
-      overviewProtocol.chains?.[0] ??
-      'Multi-chain',
+    id: getProtocolId({ ...identity, primaryChain }),
+    name: identity.name,
+    primaryChain,
     revenue30d,
-    slug,
+    slug: identity.slug,
     tvl,
   };
 };

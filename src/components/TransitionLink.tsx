@@ -4,12 +4,7 @@ import {
   PAGE_TRANSITION_INNER_SELECTOR,
   PAGE_TRANSITION_SELECTOR,
 } from '@/lib/page-transition';
-import {
-  getHomeHashUrl,
-  getSectionIdFromHomeHash,
-  PENDING_SECTION_KEY,
-  scrollToSection,
-} from '@/lib/section-navigation';
+import { navigateToHomeHashUrl } from '@/lib/section-navigation';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import type { ComponentProps, MouseEvent } from 'react';
@@ -17,6 +12,28 @@ import type { ComponentProps, MouseEvent } from 'react';
 interface Props extends ComponentProps<typeof Link> {
   back?: boolean;
 }
+
+const runPageTransition = () => {
+  gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 1, yPercent: 100 });
+  gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
+
+  return gsap
+    .timeline()
+    .to(PAGE_TRANSITION_SELECTOR, {
+      yPercent: 0,
+      duration: 0.28,
+      ease: 'power2.out',
+    })
+    .to(
+      PAGE_TRANSITION_INNER_SELECTOR,
+      {
+        yPercent: 0,
+        duration: 0.22,
+        ease: 'power2.out',
+      },
+      '-=0.12',
+    );
+};
 
 const TransitionLink = ({
   href,
@@ -37,47 +54,20 @@ const TransitionLink = ({
 
     e.preventDefault();
 
-    gsap.set(PAGE_TRANSITION_SELECTOR, { autoAlpha: 1, yPercent: 100 });
-    gsap.set(PAGE_TRANSITION_INNER_SELECTOR, { yPercent: 100 });
+    runPageTransition().then(() => {
+      if (back) {
+        router.back();
+        return;
+      }
 
-    gsap
-      .timeline()
-      .to(PAGE_TRANSITION_SELECTOR, {
-        yPercent: 0,
-        duration: 0.28,
-        ease: 'power2.out',
-      })
-      .to(
-        PAGE_TRANSITION_INNER_SELECTOR,
-        {
-          yPercent: 0,
-          duration: 0.22,
-          ease: 'power2.out',
-        },
-        '-=0.12',
-      )
-      .then(() => {
-        if (back) {
-          router.back();
-        } else if (href) {
-          const url = href.toString();
-          const sectionId = getSectionIdFromHomeHash(url);
-
-          if (sectionId && pathname !== '/') {
-            sessionStorage.setItem(PENDING_SECTION_KEY, sectionId);
-            router.push('/');
-            return;
-          }
-
-          if (sectionId && pathname === '/') {
-            window.history.pushState(null, '', getHomeHashUrl(sectionId));
-            scrollToSection(sectionId);
-            return;
-          }
-
-          router.push(url);
-        }
-      });
+      if (href) {
+        navigateToHomeHashUrl({
+          pathname,
+          push: router.push,
+          url: href.toString(),
+        });
+      }
+    });
   });
 
   return (

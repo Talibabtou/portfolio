@@ -18,6 +18,23 @@ const scrollToProgress = (
   });
 };
 
+const getKeyboardProgress = (
+  event: KeyboardEvent<HTMLButtonElement>,
+  currentProgress: number,
+) => {
+  const progressStep = event.shiftKey ? 0.2 : 0.08;
+  const progressByKey: Partial<Record<string, number>> = {
+    ArrowDown: currentProgress + progressStep,
+    ArrowUp: currentProgress - progressStep,
+    End: 1,
+    Home: 0,
+    PageDown: currentProgress + progressStep,
+    PageUp: currentProgress - progressStep,
+  };
+
+  return progressByKey[event.key];
+};
+
 const ScrollProgressIndicator = () => {
   const scrollBarRef = useRef<HTMLDivElement>(null);
   const scrollTrackRef = useRef<HTMLSpanElement>(null);
@@ -57,26 +74,8 @@ const ScrollProgressIndicator = () => {
     if (scrollableHeight === 0) return;
 
     const currentProgress = window.scrollY / scrollableHeight;
-    const progressStep = event.shiftKey ? 0.2 : 0.08;
-    let nextProgress: number | null = null;
-
-    if (event.key === 'ArrowDown' || event.key === 'PageDown') {
-      nextProgress = currentProgress + progressStep;
-    }
-
-    if (event.key === 'ArrowUp' || event.key === 'PageUp') {
-      nextProgress = currentProgress - progressStep;
-    }
-
-    if (event.key === 'Home') {
-      nextProgress = 0;
-    }
-
-    if (event.key === 'End') {
-      nextProgress = 1;
-    }
-
-    if (nextProgress === null) return;
+    const nextProgress = getKeyboardProgress(event, currentProgress);
+    if (nextProgress === undefined) return;
 
     event.preventDefault();
     scrollToProgress(nextProgress);
