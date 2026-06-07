@@ -22,6 +22,7 @@ import type { DemoComponentProps } from '@/types';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import type { GlobeMethods } from 'react-globe.gl';
 import { MeshPhongMaterial } from 'three';
 
@@ -90,39 +91,10 @@ const getPointLabel = (point: object) => {
   `;
 };
 
-type GlobeSurfaceProps = {
-  earthquakes: EarthquakePulse[];
-  isActive: boolean;
-  isVisible: boolean;
-  isLoading: boolean;
-};
+type GlobeTheme = ReturnType<typeof getGlobeTheme>;
 
-const GlobeSurface = ({
-  earthquakes,
-  isActive,
-  isVisible,
-  isLoading,
-}: GlobeSurfaceProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const globeRef = useRef<GlobeMethods | undefined>(undefined);
-  const [countries, setCountries] = useState<CountryFeature[]>(
-    () => getCountriesCache({ allowStale: true })?.countries ?? [],
-  );
-  const [dimensions, setDimensions] = useState({ height: 1, width: 1 });
-  const [hoveredEarthquakeId, setHoveredEarthquakeId] = useState<string>();
-  const [isGlobeReady, setIsGlobeReady] = useState(false);
-  const [theme, setTheme] = useState(getInitialGlobeTheme);
-  const globeMaterial = useMemo(() => {
-    if (typeof window === 'undefined') return undefined;
-
-    return new MeshPhongMaterial({
-      color: theme.globe,
-      emissive: theme.globe,
-      emissiveIntensity: 0.12,
-      shininess: 4,
-      transparent: true,
-    });
-  }, [theme.globe]);
+const useGlobeTheme = () => {
+  const [theme, setTheme] = useState<GlobeTheme>(getInitialGlobeTheme);
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -136,6 +108,29 @@ const GlobeSurface = ({
 
     return () => observer.disconnect();
   }, []);
+
+  return theme;
+};
+
+const useGlobeMaterial = (theme: GlobeTheme) => {
+  return useMemo(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    return new MeshPhongMaterial({
+      color: theme.globe,
+      emissive: theme.globe,
+      emissiveIntensity: 0.12,
+      shininess: 4,
+      transparent: true,
+    });
+  }, [theme.globe]);
+};
+
+const useGlobeDimensions = (
+  containerRef: RefObject<HTMLDivElement | null>,
+  isVisible: boolean,
+) => {
+  const [dimensions, setDimensions] = useState({ height: 1, width: 1 });
 
   useEffect(() => {
     void isVisible;
@@ -169,7 +164,15 @@ const GlobeSurface = ({
       cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
     };
-  }, [isVisible]);
+  }, [containerRef, isVisible]);
+
+  return dimensions;
+};
+
+const useCountries = () => {
+  const [countries, setCountries] = useState<CountryFeature[]>(
+    () => getCountriesCache({ allowStale: true })?.countries ?? [],
+  );
 
   useEffect(() => {
     fetchCountries()
@@ -177,6 +180,16 @@ const GlobeSurface = ({
       .catch(() => setCountries([]));
   }, []);
 
+  return countries;
+};
+
+const useInitialGlobeControls = ({
+  globeRef,
+  isGlobeReady,
+}: {
+  globeRef: RefObject<GlobeMethods | undefined>;
+  isGlobeReady: boolean;
+}) => {
   useEffect(() => {
     if (!isGlobeReady) return;
 
@@ -207,8 +220,22 @@ const GlobeSurface = ({
       canvas.style.cursor = '';
       cancelAnimationFrame(animationFrame);
     };
-  }, [isGlobeReady]);
+  }, [globeRef, isGlobeReady]);
+};
 
+const useGlobeActivity = ({
+  globeRef,
+  hoveredEarthquakeId,
+  isActive,
+  isGlobeReady,
+  isVisible,
+}: {
+  globeRef: RefObject<GlobeMethods | undefined>;
+  hoveredEarthquakeId?: string;
+  isActive: boolean;
+  isGlobeReady: boolean;
+  isVisible: boolean;
+}) => {
   useEffect(() => {
     if (!isGlobeReady) return;
 
@@ -227,8 +254,18 @@ const GlobeSurface = ({
     controls.autoRotate = false;
     controls.enabled = false;
     globe.pauseAnimation();
-  }, [hoveredEarthquakeId, isActive, isGlobeReady, isVisible]);
+  }, [globeRef, hoveredEarthquakeId, isActive, isGlobeReady, isVisible]);
+};
 
+const useCompactGlobeSize = ({
+  dimensions,
+  globeRef,
+  isGlobeReady,
+}: {
+  dimensions: { height: number; width: number };
+  globeRef: RefObject<GlobeMethods | undefined>;
+  isGlobeReady: boolean;
+}) => {
   useEffect(() => {
     if (!isGlobeReady || !isCompactDemoViewport()) return;
 
@@ -239,7 +276,40 @@ const GlobeSurface = ({
 
     renderer.setSize(dimensions.width, dimensions.height, true);
     globe.controls().update();
-  }, [dimensions.height, dimensions.width, isGlobeReady]);
+  }, [dimensions.height, dimensions.width, globeRef, isGlobeReady]);
+};
+
+type GlobeSurfaceProps = {
+  earthquakes: EarthquakePulse[];
+  isActive: boolean;
+  isVisible: boolean;
+  isLoading: boolean;
+};
+
+const GlobeSurface = ({
+  earthquakes,
+  isActive,
+  isVisible,
+  isLoading,
+}: GlobeSurfaceProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<GlobeMethods | undefined>(undefined);
+  const [hoveredEarthquakeId, setHoveredEarthquakeId] = useState<string>();
+  const [isGlobeReady, setIsGlobeReady] = useState(false);
+  const countries = useCountries();
+  const theme = useGlobeTheme();
+  const dimensions = useGlobeDimensions(containerRef, isVisible);
+  const globeMaterial = useGlobeMaterial(theme);
+
+  useInitialGlobeControls({ globeRef, isGlobeReady });
+  useGlobeActivity({
+    globeRef,
+    hoveredEarthquakeId,
+    isActive,
+    isGlobeReady,
+    isVisible,
+  });
+  useCompactGlobeSize({ dimensions, globeRef, isGlobeReady });
 
   return (
     <div

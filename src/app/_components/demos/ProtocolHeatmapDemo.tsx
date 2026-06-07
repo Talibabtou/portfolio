@@ -191,6 +191,245 @@ const getTooltipPosition = (
   ];
 };
 
+const getTreemapData = ({
+  palette,
+  protocols,
+  totalRevenue,
+}: {
+  palette: ThemePalette;
+  protocols: HeatmapProtocol[];
+  totalRevenue: number;
+}) => {
+  return protocols.map((protocol, index) => {
+    const labelStyle = getTileLabelStyle(protocol.revenue30d / totalRevenue);
+    const rankOpacity = getTileRankOpacity(index, protocols.length);
+
+    return {
+      id: protocol.id,
+      emphasis: {
+        itemStyle: {
+          color: palette.tileHoverColor(rankOpacity),
+        },
+      },
+      itemStyle: {
+        borderColor: 'transparent',
+        borderWidth: 0,
+        color: palette.tileColor(rankOpacity),
+      },
+      label: {
+        color: palette.textPrimary,
+        fontFamily: 'Impact, Anton, sans-serif',
+        fontSize: labelStyle.fontSize,
+        fontWeight: 900,
+        lineHeight: labelStyle.lineHeight,
+        overflow: 'truncate' as const,
+        padding: 0,
+        show: labelStyle.show,
+      },
+      name: protocol.name,
+      protocolId: protocol.id,
+      value: Math.max(protocol.revenue30d, 1),
+    };
+  });
+};
+
+const getProtocolTooltipHtml = (
+  protocol: HeatmapProtocol,
+  palette: ThemePalette,
+) => {
+  const name = escapeHtml(protocol.name);
+  const chain = escapeHtml(protocol.primaryChain);
+  const category = escapeHtml(protocol.category);
+  const businessScore = getProtocolBusinessScore(protocol);
+  const tvlRow = hasRealisticTvl(protocol.tvl)
+    ? `<div><span style="color:${palette.textMuted};">TVL</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.tvl)}</span></div>`
+    : '';
+
+  return `
+    <div style="min-width: 12rem; font-family: var(--font-roboto-flex), sans-serif; color: ${palette.textPrimary};">
+      <div style="font-family: var(--font-anton), sans-serif; font-size: 1.05rem; line-height: 1; color: ${palette.textPrimary};">
+        ${name}
+      </div>
+      <div style="margin-top: 0.35rem; font-size: 0.72rem; color: ${palette.textMuted}; text-transform: uppercase;">
+        ${chain} · ${category}
+      </div>
+      <div style="margin-top: 0.75rem; display: grid; gap: 0.4rem; font-size: 0.78rem;">
+        <div><span style="color:${palette.textMuted};">Business score</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${businessScore}</span></div>
+        <div><span style="color:${palette.textMuted};">30D revenue</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.revenue30d)}</span></div>
+        ${tvlRow}
+        <div><span style="color:${palette.textMuted};">30D growth</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatGrowth(protocol.growth30d)}</span></div>
+      </div>
+    </div>
+  `;
+};
+
+const getProtocolFromTooltipParams = (
+  params: TooltipComponentFormatterCallbackParams,
+  protocolsById: Map<string, HeatmapProtocol>,
+) => {
+  if (Array.isArray(params)) return undefined;
+
+  const protocolId = (params as TreemapDataParams).data?.protocolId;
+
+  return protocolId ? protocolsById.get(protocolId) : undefined;
+};
+
+const createProtocolHeatmapOption = ({
+  isCompactDemo,
+  palette,
+  protocolsById,
+  treemapProtocols,
+}: {
+  isCompactDemo: boolean;
+  palette: ThemePalette;
+  protocolsById: Map<string, HeatmapProtocol>;
+  treemapProtocols: HeatmapProtocol[];
+}): EChartsOption => {
+  const totalRevenue = Math.max(
+    treemapProtocols.reduce((sum, protocol) => sum + protocol.revenue30d, 0),
+    1,
+  );
+
+  return {
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
+    backgroundColor: palette.tileGap,
+    series: [
+      {
+        animation: false,
+        animationDuration: 0,
+        animationDurationUpdate: 0,
+        breadcrumb: { show: false },
+        ...(isCompactDemo ? { bottom: 35, left: 0, right: 0, top: 0 } : {}),
+        nodeClick: false,
+        roam: false,
+        data: getTreemapData({
+          palette,
+          protocols: treemapProtocols,
+          totalRevenue,
+        }),
+        emphasis: {
+          itemStyle: {
+            borderColor: 'transparent',
+            borderWidth: 0,
+            shadowBlur: 0,
+          },
+          label: {
+            color: palette.textPrimary,
+          },
+        },
+        itemStyle: {
+          color: 'transparent',
+          borderJoin: 'round',
+          borderWidth: 0,
+          gapWidth: 5,
+        },
+        label: {
+          color: palette.textPrimary,
+          fontFamily: 'Impact, Anton, sans-serif',
+          fontSize: 22,
+          fontWeight: 900,
+          formatter: (params) => {
+            const data = params.data as TreemapNodeData | undefined;
+
+            return data?.protocolId ? params.name : '';
+          },
+          lineHeight: 25,
+          overflow: 'truncate' as const,
+          padding: 0,
+          show: true,
+        },
+        leafDepth: 1,
+        levels: [
+          {
+            itemStyle: {
+              borderColor: 'transparent',
+              borderWidth: 0,
+              gapWidth: 5,
+            },
+          },
+        ],
+        sort: 'desc',
+        squareRatio: 1.5,
+        type: 'treemap',
+        visibleMin: 1,
+      },
+    ],
+    tooltip: {
+      appendToBody: false,
+      backgroundColor: palette.tooltipBackground,
+      borderColor: palette.tooltipBorder,
+      borderWidth: 0,
+      className: 'protocol-heatmap-tooltip',
+      confine: true,
+      extraCssText:
+        'box-shadow:none;border-radius:0;padding:12px 14px;width:14rem;',
+      formatter: (params: TooltipComponentFormatterCallbackParams) => {
+        const protocol = getProtocolFromTooltipParams(params, protocolsById);
+
+        return protocol ? getProtocolTooltipHtml(protocol, palette) : '';
+      },
+      textStyle: {
+        color: palette.textPrimary,
+        fontFamily: 'var(--font-roboto-flex)',
+      },
+      position: getTooltipPosition,
+      trigger: 'item',
+    },
+  };
+};
+
+const ProtocolHeatmapFormulaPopover = ({
+  isOpen,
+  onToggle,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+}) => (
+  <div className="absolute right-0 bottom-0 z-3 lg:right-4 lg:bottom-5">
+    <button
+      aria-expanded={isOpen}
+      aria-label="Business score formula"
+      className="grid size-7 place-items-center text-muted-foreground"
+      onClick={onToggle}
+      type="button"
+    >
+      <CircleHelp aria-hidden="true" size={15} strokeWidth={1.8} />
+    </button>
+    {isOpen ? (
+      <div className="absolute right-3 bottom-9 w-115 border border-foreground/15 bg-background/95 p-3 text-foreground text-xs shadow-none backdrop-blur">
+        <p className="font-anton text-sm uppercase">Business score formula</p>
+        <div className="mt-2 space-y-2 text-muted-foreground leading-relaxed">
+          <div className="flex items-center gap-2">
+            <span className="whitespace-nowrap font-mono">
+              Business Score&nbsp;=
+            </span>
+            <span className="font-mono text-xs md:text-sm">
+              0.65 ×{' '}
+              <span className="font-semibold">
+                Revenue<sub>30D</sub>
+              </span>
+              &nbsp;+&nbsp; 0.35 ×{' '}
+              <span className="font-semibold">
+                Growth<sub>30D</sub>
+              </span>
+            </span>
+          </div>
+          <ul className="ml-5 list-disc space-y-1 text-xs md:text-sm">
+            <li>
+              <b>Revenue:</b> log-scaled from $100K to $100M
+            </li>
+            <li>
+              <b>Growth:</b> capped between –50% and +50%
+            </li>
+          </ul>
+        </div>
+      </div>
+    ) : null}
+  </div>
+);
+
 const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
   const [error, setError] = useState<string>();
   const isCompactDemo = useMediaQuery('(max-width: 1023px)');
@@ -246,161 +485,16 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
     [treemapProtocols],
   );
 
-  const chartOption = useMemo<EChartsOption>(() => {
-    const totalRevenue = Math.max(
-      treemapProtocols.reduce((sum, protocol) => sum + protocol.revenue30d, 0),
-      1,
-    );
-
-    return {
-      animation: false,
-      animationDuration: 0,
-      animationDurationUpdate: 0,
-      backgroundColor: palette.tileGap,
-      series: [
-        {
-          animation: false,
-          animationDuration: 0,
-          animationDurationUpdate: 0,
-          breadcrumb: { show: false },
-          ...(isCompactDemo ? { bottom: 35, left: 0, right: 0, top: 0 } : {}),
-          nodeClick: false,
-          roam: false,
-          data: treemapProtocols.map((protocol, index) => {
-            const labelStyle = getTileLabelStyle(
-              protocol.revenue30d / totalRevenue,
-            );
-
-            return {
-              id: protocol.id,
-              emphasis: {
-                itemStyle: {
-                  color: palette.tileHoverColor(
-                    getTileRankOpacity(index, treemapProtocols.length),
-                  ),
-                },
-              },
-              itemStyle: {
-                borderColor: 'transparent',
-                borderWidth: 0,
-                color: palette.tileColor(
-                  getTileRankOpacity(index, treemapProtocols.length),
-                ),
-              },
-              label: {
-                color: palette.textPrimary,
-                fontFamily: 'Impact, Anton, sans-serif',
-                fontSize: labelStyle.fontSize,
-                fontWeight: 900,
-                lineHeight: labelStyle.lineHeight,
-                overflow: 'truncate',
-                padding: 0,
-                show: labelStyle.show,
-              },
-              name: protocol.name,
-              protocolId: protocol.id,
-              value: Math.max(protocol.revenue30d, 1),
-            };
-          }),
-          emphasis: {
-            itemStyle: {
-              borderColor: 'transparent',
-              borderWidth: 0,
-              shadowBlur: 0,
-            },
-            label: {
-              color: palette.textPrimary,
-            },
-          },
-          itemStyle: {
-            color: 'transparent',
-            borderJoin: 'round',
-            borderWidth: 0,
-            gapWidth: 5,
-          },
-          label: {
-            color: palette.textPrimary,
-            fontFamily: 'Impact, Anton, sans-serif',
-            fontSize: 22,
-            fontWeight: 900,
-            formatter: (params) => {
-              const data = params.data as TreemapNodeData | undefined;
-
-              return data?.protocolId ? params.name : '';
-            },
-            lineHeight: 25,
-            overflow: 'truncate',
-            padding: 0,
-            show: true,
-          },
-          leafDepth: 1,
-          levels: [
-            {
-              itemStyle: {
-                borderColor: 'transparent',
-                borderWidth: 0,
-                gapWidth: 5,
-              },
-            },
-          ],
-          sort: 'desc',
-          squareRatio: 1.5,
-          type: 'treemap',
-          visibleMin: 1,
-        },
-      ],
-      tooltip: {
-        appendToBody: false,
-        backgroundColor: palette.tooltipBackground,
-        borderColor: palette.tooltipBorder,
-        borderWidth: 0,
-        className: 'protocol-heatmap-tooltip',
-        confine: true,
-        extraCssText:
-          'box-shadow:none;border-radius:0;padding:12px 14px;width:14rem;',
-        formatter: (params: TooltipComponentFormatterCallbackParams) => {
-          if (Array.isArray(params)) return '';
-
-          const protocolId = (params as TreemapDataParams).data?.protocolId;
-          const protocol = protocolId
-            ? protocolsById.get(protocolId)
-            : undefined;
-          if (!protocol) return '';
-
-          const name = escapeHtml(protocol.name);
-          const chain = escapeHtml(protocol.primaryChain);
-          const category = escapeHtml(protocol.category);
-          const businessScore = getProtocolBusinessScore(protocol);
-          const tvlRow = hasRealisticTvl(protocol.tvl)
-            ? `<div><span style="color:${palette.textMuted};">TVL</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.tvl)}</span></div>`
-            : '';
-
-          return `
-            <div style="min-width: 12rem; font-family: var(--font-roboto-flex), sans-serif; color: ${palette.textPrimary};">
-              <div style="font-family: var(--font-anton), sans-serif; font-size: 1.05rem; line-height: 1; color: ${palette.textPrimary};">
-                ${name}
-              </div>
-              <div style="margin-top: 0.35rem; font-size: 0.72rem; color: ${palette.textMuted}; text-transform: uppercase;">
-                ${chain} · ${category}
-              </div>
-              <div style="margin-top: 0.75rem; display: grid; gap: 0.4rem; font-size: 0.78rem;">
-                <div><span style="color:${palette.textMuted};">Business score</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${businessScore}</span></div>
-                <div><span style="color:${palette.textMuted};">30D revenue</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatCurrency(protocol.revenue30d)}</span></div>
-                ${tvlRow}
-                <div><span style="color:${palette.textMuted};">30D growth</span> <span style="font-family: var(--font-anton), sans-serif; color:${palette.textPrimary};">${formatGrowth(protocol.growth30d)}</span></div>
-              </div>
-            </div>
-          `;
-        },
-        textStyle: {
-          color: palette.textPrimary,
-          fontFamily: 'var(--font-roboto-flex)',
-        },
-        position: getTooltipPosition,
-        trigger: 'item',
-      },
-    };
-  }, [isCompactDemo, palette, protocolsById, treemapProtocols]);
+  const chartOption = useMemo(
+    () =>
+      createProtocolHeatmapOption({
+        isCompactDemo,
+        palette,
+        protocolsById,
+        treemapProtocols,
+      }),
+    [isCompactDemo, palette, protocolsById, treemapProtocols],
+  );
 
   if (!hasMounted) return null;
 
@@ -441,49 +535,10 @@ const ProtocolHeatmapDemo = ({ isActive = false }: DemoComponentProps) => {
         Source: DefiLlama free API
         {snapshotSavedAt ? ` (${formatMinutesAgo(snapshotSavedAt)})` : ''}.
       </p>
-      <div className="absolute right-0 bottom-0 z-3 lg:right-4 lg:bottom-5">
-        <button
-          aria-expanded={isFormulaOpen}
-          aria-label="Business score formula"
-          className="grid size-7 place-items-center text-muted-foreground"
-          onClick={() => setIsFormulaOpen((isOpen) => !isOpen)}
-          type="button"
-        >
-          <CircleHelp aria-hidden="true" size={15} strokeWidth={1.8} />
-        </button>
-        {isFormulaOpen ? (
-          <div className="absolute right-3 bottom-9 w-115 border border-foreground/15 bg-background/95 p-3 text-foreground text-xs shadow-none backdrop-blur">
-            <p className="font-anton text-sm uppercase">
-              Business score formula
-            </p>
-            <div className="mt-2 space-y-2 text-muted-foreground leading-relaxed">
-              <div className="flex items-center gap-2">
-                <span className="whitespace-nowrap font-mono">
-                  Business Score&nbsp;=
-                </span>
-                <span className="font-mono text-xs md:text-sm">
-                  0.65 ×{' '}
-                  <span className="font-semibold">
-                    Revenue<sub>30D</sub>
-                  </span>
-                  &nbsp;+&nbsp; 0.35 ×{' '}
-                  <span className="font-semibold">
-                    Growth<sub>30D</sub>
-                  </span>
-                </span>
-              </div>
-              <ul className="ml-5 list-disc space-y-1 text-xs md:text-sm">
-                <li>
-                  <b>Revenue:</b> log-scaled from $100K to $100M
-                </li>
-                <li>
-                  <b>Growth:</b> capped between –50% and +50%
-                </li>
-              </ul>
-            </div>
-          </div>
-        ) : null}
-      </div>
+      <ProtocolHeatmapFormulaPopover
+        isOpen={isFormulaOpen}
+        onToggle={() => setIsFormulaOpen((isOpen) => !isOpen)}
+      />
     </div>
   );
 };
