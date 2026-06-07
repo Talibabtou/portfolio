@@ -54,7 +54,7 @@ const MENU_LINKS = [
 ];
 
 type NavbarProps = {
-  initialTheme: ThemePreference;
+  initialTheme?: ThemePreference;
 };
 
 const Navbar = ({ initialTheme }: NavbarProps) => {

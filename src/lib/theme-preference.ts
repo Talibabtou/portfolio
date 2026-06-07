@@ -55,7 +55,7 @@ const writeThemeCookie = async (theme: ThemePreference) => {
   writeCookieFallback(theme);
 };
 
-export const readThemePreference = (): UserPreferences => {
+const readThemePreference = (): UserPreferences => {
   if (typeof window === 'undefined') return DEFAULT_THEME_PREFERENCE;
 
   const theme = readThemeCookie();

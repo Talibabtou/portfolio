@@ -1,7 +1,7 @@
 import { readStorageValue, writeStorageValue } from '@/lib/storage';
 import { getIsoDateDaysAgo, toFiniteNumber } from '@/lib/utils';
 
-export const preloadGlobeLibrary = () => import('react-globe.gl');
+const preloadGlobeLibrary = () => import('react-globe.gl');
 
 export type EarthquakePulse = {
   depth: number;
@@ -87,7 +87,7 @@ const getEarthquakeStartDate = () =>
 export const isEarthquakesFresh = (cache: CachedEarthquakes) =>
   Date.now() - cache.savedAt < WORLD_MAP_CACHE_TTL;
 
-export const isCountriesCacheFresh = (cache: CachedCountries) =>
+const isCountriesCacheFresh = (cache: CachedCountries) =>
   Date.now() - cache.savedAt < WORLD_MAP_CACHE_TTL;
 
 export const getEarthquakesCache = (options: { allowStale?: boolean } = {}) => {

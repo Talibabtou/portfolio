@@ -318,7 +318,7 @@ const getSafeOrigin = (canvasSize: number, viewportSize: number) => {
   return randomBetween(viewportSize - canvasSize + safePadding, -safePadding);
 };
 
-export const generateTopography = (): Topography => {
+const generateTopography = (): Topography => {
   const width = window.innerWidth * randomBetween(...CANVAS_WIDTH_VW_RANGE);
   const height = window.innerHeight * randomBetween(...CANVAS_HEIGHT_VH_RANGE);
   const thresholds = generateThresholds();

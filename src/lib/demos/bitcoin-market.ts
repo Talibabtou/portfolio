@@ -66,9 +66,6 @@ export const getBitcoinMarketSnapshot = (range: BitcoinRange) => {
   return isFresh && rangeCache.points.length > 0 ? rangeCache : undefined;
 };
 
-export const getBitcoinMarketCache = (range: BitcoinRange) =>
-  getBitcoinMarketSnapshot(range)?.points;
-
 const setBitcoinMarketCache = (range: BitcoinRange, points: MarketPoint[]) => {
   const cache = {
     points,
@@ -137,7 +134,7 @@ export const fetchBitcoinMarketSnapshot = (
     });
 };
 
-export const fetchBitcoinMarketPoints = (
+const fetchBitcoinMarketPoints = (
   range: BitcoinRange,
   options: { signal?: AbortSignal } = {},
 ) =>

@@ -62,6 +62,37 @@ type DemoTracksProps = {
   onActivateTrack: (trackId: string) => void;
 };
 
+type InactiveMountedDemoProps = {
+  isActive: boolean;
+  mountedTrackIds: Set<string>;
+  track: DemoTrack;
+};
+
+const InactiveMountedDemo = ({
+  isActive,
+  mountedTrackIds,
+  track,
+}: InactiveMountedDemoProps) => {
+  if (
+    isActive ||
+    !mountedTrackIds.has(track.id) ||
+    track.keepMountedWhenInactive === false
+  ) {
+    return null;
+  }
+
+  const TrackComponent = track.Component;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 opacity-0"
+    >
+      <TrackComponent isActive={false} />
+    </div>
+  );
+};
+
 const getTrackHeader = (track: DemoTrack, isActive: boolean) => {
   const Icon = track.icon;
 
@@ -107,16 +138,11 @@ const DesktopDemoTracks = ({
           )}
           key={track.id}
         >
-          {!isActive &&
-          mountedTrackIds.has(track.id) &&
-          track.keepMountedWhenInactive !== false ? (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-0"
-            >
-              <TrackComponent isActive={false} />
-            </div>
-          ) : null}
+          <InactiveMountedDemo
+            isActive={isActive}
+            mountedTrackIds={mountedTrackIds}
+            track={track}
+          />
           {isActive ? (
             <div className="relative flex h-full min-w-0 flex-col p-5">
               {trackHeader}
@@ -181,16 +207,11 @@ const MobileDemoTracks = ({
           )}
           key={track.id}
         >
-          {!isActive &&
-          mountedTrackIds.has(track.id) &&
-          track.keepMountedWhenInactive !== false ? (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-0"
-            >
-              <TrackComponent isActive={false} />
-            </div>
-          ) : null}
+          <InactiveMountedDemo
+            isActive={isActive}
+            mountedTrackIds={mountedTrackIds}
+            track={track}
+          />
           {isActive ? (
             <div className="relative flex h-full min-w-0 flex-col p-3">
               {trackHeader}

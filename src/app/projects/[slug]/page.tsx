@@ -7,13 +7,18 @@ export const generateStaticParams = async () => {
   return PROJECTS.map((project) => ({ slug: project.slug }));
 };
 
+const findProjectByParams = async (params: Promise<{ slug: string }>) => {
+  const { slug } = await params;
+
+  return PROJECTS.find((project) => project.slug === slug);
+};
+
 export const generateMetadata = async ({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) => {
-  const { slug } = await params;
-  const project = PROJECTS.find((project) => project.slug === slug);
+  const project = await findProjectByParams(params);
 
   if (!project) {
     return {
@@ -30,9 +35,7 @@ export const generateMetadata = async ({
 };
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
-
-  const project = PROJECTS.find((project) => project.slug === slug);
+  const project = await findProjectByParams(params);
 
   if (!project) {
     return notFound();

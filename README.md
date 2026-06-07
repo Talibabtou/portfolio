@@ -17,7 +17,7 @@ Personal site for **Guillaume Dumas** — frontend product engineer focused on W
 | Framework | [Next.js](https://nextjs.org/) 16 (App Router), [React](https://react.dev/) 19, TypeScript |
 | Styling | [Tailwind CSS](https://tailwindcss.com/) 4, CSS variables in `src/app/globals.css` |
 | Motion | [GSAP](https://gsap.com/) (`src/lib/gsap.ts`, section hooks) |
-| Data viz / 3D | lightweight-charts, d3-geo, react-globe.gl, Three.js |
+| Data viz / 3D | lightweight-charts, react-globe.gl, Three.js |
 | Quality | Biome, ESLint, strict `pnpm run check` |
 | Hosting | [Vercel](https://vercel.com/) — deploy gated by GitHub Actions |
 

@@ -1,5 +1,5 @@
 export const PENDING_SECTION_KEY = 'portfolio:pending-section';
-export const SECTION_SCROLL_OFFSET = 50;
+const SECTION_SCROLL_OFFSET = 50;
 
 const getLayoutTop = (element: HTMLElement) => {
   let top = 0;

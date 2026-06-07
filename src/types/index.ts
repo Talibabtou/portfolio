@@ -1,8 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ComponentType } from 'react';
 
-export type Next_Page_Url = string;
-
 export type Variant =
   | 'primary'
   | 'secondary'

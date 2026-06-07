@@ -93,7 +93,7 @@ export const writeStorageValue = <Value>(
   });
 };
 
-export const removeStorageValue = (area: StorageArea, key: string) => {
+const removeStorageValue = (area: StorageArea, key: string) => {
   const currentState = readStorageState(area);
 
   if (!(key in currentState.values)) return;
@@ -107,14 +107,11 @@ export const removeStorageValue = (area: StorageArea, key: string) => {
   });
 };
 
-export const clearStorageArea = (area: StorageArea) => {
+const clearStorageArea = (area: StorageArea) => {
   writeStorageState(area, createEmptyStorageState());
 };
 
-export const subscribeToStorage = (
-  area: StorageArea,
-  onStoreChange: () => void,
-) => {
+const subscribeToStorage = (area: StorageArea, onStoreChange: () => void) => {
   const storageKey = getStorageKey(area);
   const storageChangeEvent = getStorageChangeEvent(area);
 

@@ -44,3 +44,5 @@ Setup, scripts, CI, and project tree: **`README.md`**.
 ```bash
 pnpm run check
 ```
+
+After a substantial new feature or broad refactor, also run `npx fallow` and review the report for dead code, wasteful patterns, and avoidable bundle/performance issues. Do not make it part of every small copy or styling change.

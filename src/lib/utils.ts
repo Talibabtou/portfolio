@@ -6,9 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 const usdFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
   maximumFractionDigits: 0,
@@ -52,7 +49,7 @@ export const clamp = (value: number, min: number, max: number) =>
 
 export const clamp01 = (value: number) => clamp(value, 0, 1);
 
-export const normalizeRange = (value: number, min: number, max: number) => {
+const normalizeRange = (value: number, min: number, max: number) => {
   if (min === max) return 0;
 
   return clamp01((value - min) / (max - min));
@@ -84,16 +81,6 @@ export function toFiniteNumber<Fallback>(
 export function toFiniteNumber(value: unknown, fallback = 0) {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
-
-export const createNumberFormatter = (
-  options: Intl.NumberFormatOptions,
-  locales: Intl.LocalesArgument = 'en-US',
-) => new Intl.NumberFormat(locales, options);
-
-export const createDateTimeFormatter = (
-  options: Intl.DateTimeFormatOptions,
-  locales: Intl.LocalesArgument = 'en-US',
-) => new Intl.DateTimeFormat(locales, options);
 
 export const formatUsd = (value: number) => usdFormatter.format(value);
 
