@@ -570,6 +570,9 @@ export const MY_STACK: Record<string, StackCategory> = {
       {
         name: 'Verification',
       },
+      {
+        name: 'Agent Skills',
+      },
     ],
   },
 };

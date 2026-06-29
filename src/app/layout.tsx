@@ -27,9 +27,26 @@ const robotoFlex = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Portfolio - Talibabtou',
+  metadataBase: new URL('https://talibabtou.dev'),
+  title: 'Guillaume Dumas — Portfolio',
   description:
-    'Frontend developer focused on Web3, fintech, trading, prediction markets, wallet-aware UX and product interfaces.',
+    'Full stack leaning frontend product engineer building Web3, fintech, trading and real-time interfaces with React, Next.js and TypeScript.',
+  openGraph: {
+    type: 'website',
+    url: '/',
+    siteName: 'Talibabtou.dev',
+    title: 'Guillaume Dumas — Portfolio',
+    description:
+      'Web3, fintech, trading and real-time product interfaces built with React, Next.js and TypeScript.',
+    images: ['/preview.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Guillaume Dumas — Portfolio',
+    description:
+      'Web3, fintech, trading and real-time product interfaces.',
+    images: ['/preview.png'],
+  },
 };
 
 export default function RootLayout({
