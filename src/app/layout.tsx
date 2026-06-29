@@ -43,8 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Guillaume Dumas — Portfolio',
-    description:
-      'Web3, fintech, trading and real-time product interfaces.',
+    description: 'Web3, fintech, trading and real-time product interfaces.',
     images: ['/preview.png'],
   },
 };
